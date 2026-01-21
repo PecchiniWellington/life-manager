@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "48295636467",
+    "project_id": "life-manager-36ed2",
+    "storage_bucket": "life-manager-36ed2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48295636467:android:b58bc71fe3a40cee15f686",
+        "android_client_info": {
+          "package_name": "com.lifemanager.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaEghuweld5b8OWtJg7exisF7c2TO_-qw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

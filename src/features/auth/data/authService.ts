@@ -1,25 +1,16 @@
 /**
  * Auth Service - Firebase Integration
  * Questo file gestisce tutte le chiamate a Firebase Auth
+ * Usa @react-native-firebase/auth per integrazione nativa
  */
 
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { User } from '../domain/types';
-
-// Firebase imports - da configurare
-// import { auth } from '@app/config/firebase';
-// import {
-//   signInWithEmailAndPassword,
-//   createUserWithEmailAndPassword,
-//   signOut,
-//   updateProfile,
-//   onAuthStateChanged,
-//   User as FirebaseUser,
-// } from 'firebase/auth';
 
 /**
  * Converte un FirebaseUser in User della nostra app
  */
-function mapFirebaseUser(firebaseUser: any): User {
+function mapFirebaseUser(firebaseUser: FirebaseAuthTypes.User): User {
   return {
     id: firebaseUser.uid,
     email: firebaseUser.email || '',
@@ -38,65 +29,59 @@ export const authService = {
    * Login con email e password
    */
   async login(email: string, password: string): Promise<User> {
-    // TODO: Uncomment quando Firebase è configurato
-    // const credential = await signInWithEmailAndPassword(auth, email, password);
-    // return mapFirebaseUser(credential.user);
-
-    // Mock per sviluppo
-    console.log('Login attempt:', email);
-    throw { code: 'auth/not-configured', message: 'Firebase non configurato' };
+    const credential = await auth().signInWithEmailAndPassword(email, password);
+    if (!credential.user) {
+      throw { code: 'auth/user-not-found', message: 'Utente non trovato' };
+    }
+    return mapFirebaseUser(credential.user);
   },
 
   /**
    * Registrazione con email e password
    */
   async register(email: string, password: string, displayName: string): Promise<User> {
-    // TODO: Uncomment quando Firebase è configurato
-    // const credential = await createUserWithEmailAndPassword(auth, email, password);
-    // await updateProfile(credential.user, { displayName });
-    // return mapFirebaseUser(credential.user);
-
-    // Mock per sviluppo
-    console.log('Register attempt:', email, displayName);
-    throw { code: 'auth/not-configured', message: 'Firebase non configurato' };
+    const credential = await auth().createUserWithEmailAndPassword(email, password);
+    if (!credential.user) {
+      throw { code: 'auth/registration-failed', message: 'Registrazione fallita' };
+    }
+    await credential.user.updateProfile({ displayName });
+    // Ricarica l'utente per avere il displayName aggiornato
+    await credential.user.reload();
+    return mapFirebaseUser(auth().currentUser || credential.user);
   },
 
   /**
    * Logout
    */
   async logout(): Promise<void> {
-    // TODO: Uncomment quando Firebase è configurato
-    // await signOut(auth);
-
-    console.log('Logout attempt');
+    await auth().signOut();
   },
 
   /**
    * Listener per i cambiamenti di stato auth
    */
   onAuthStateChanged(callback: (user: User | null) => void): () => void {
-    // TODO: Uncomment quando Firebase è configurato
-    // return onAuthStateChanged(auth, (firebaseUser) => {
-    //   if (firebaseUser) {
-    //     callback(mapFirebaseUser(firebaseUser));
-    //   } else {
-    //     callback(null);
-    //   }
-    // });
-
-    // Mock per sviluppo - simula utente non loggato
-    setTimeout(() => callback(null), 500);
-    return () => {};
+    return auth().onAuthStateChanged((firebaseUser) => {
+      if (firebaseUser) {
+        callback(mapFirebaseUser(firebaseUser));
+      } else {
+        callback(null);
+      }
+    });
   },
 
   /**
    * Get current user
    */
   getCurrentUser(): User | null {
-    // TODO: Uncomment quando Firebase è configurato
-    // const firebaseUser = auth.currentUser;
-    // return firebaseUser ? mapFirebaseUser(firebaseUser) : null;
+    const firebaseUser = auth().currentUser;
+    return firebaseUser ? mapFirebaseUser(firebaseUser) : null;
+  },
 
-    return null;
+  /**
+   * Invia email per reset password
+   */
+  async sendPasswordResetEmail(email: string): Promise<void> {
+    await auth().sendPasswordResetEmail(email);
   },
 };
