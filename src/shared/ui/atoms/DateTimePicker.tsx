@@ -161,58 +161,66 @@ export function DateTimePicker({
     setShow(true);
   }, [disabled, value, mode]);
 
+  // If using controlled visibility (inline mode), don't render the trigger
+  const isControlledMode = visible !== undefined;
+
   return (
-    <Box gap="xs">
-      {label && (
-        <Text variant="labelMedium" color="textSecondary">
-          {label}
-        </Text>
-      )}
-
-      <AnimatedPressable
-        onPress={handleOpen}
-        disabled={disabled}
-        haptic="light"
-        style={[
-          styles.trigger,
-          {
-            backgroundColor: theme.colors.backgroundSecondary,
-            borderRadius: radius.input,
-            borderColor: error ? theme.colors.error : theme.colors.border,
-            opacity: disabled ? 0.5 : 1,
-          },
-        ]}
-      >
-        <Text
-          variant="bodyMedium"
-          color={formattedValue ? 'textPrimary' : 'textTertiary'}
-          style={styles.value}
-        >
-          {formattedValue || placeholder}
-        </Text>
-
-        <Box flexDirection="row" alignItems="center" gap="sm">
-          {clearable && value && !disabled && (
-            <AnimatedPressable
-              onPress={handleClear}
-              haptic="light"
-              style={styles.clearButton}
-            >
-              <Icon name="close" size="xs" color="textTertiary" />
-            </AnimatedPressable>
+    <>
+      {/* Only render trigger UI when NOT in controlled mode */}
+      {!isControlledMode && (
+        <Box gap="xs">
+          {label && (
+            <Text variant="labelMedium" color="textSecondary">
+              {label}
+            </Text>
           )}
-          <Icon
-            name={mode === 'time' ? 'clock' : 'calendar'}
-            size="sm"
-            color="textSecondary"
-          />
-        </Box>
-      </AnimatedPressable>
 
-      {error && (
-        <Text variant="caption" color="error">
-          {error}
-        </Text>
+          <AnimatedPressable
+            onPress={handleOpen}
+            disabled={disabled}
+            haptic="light"
+            style={[
+              styles.trigger,
+              {
+                backgroundColor: theme.colors.backgroundSecondary,
+                borderRadius: radius.input,
+                borderColor: error ? theme.colors.error : theme.colors.border,
+                opacity: disabled ? 0.5 : 1,
+              },
+            ]}
+          >
+            <Text
+              variant="bodyMedium"
+              color={formattedValue ? 'textPrimary' : 'textTertiary'}
+              style={styles.value}
+            >
+              {formattedValue || placeholder}
+            </Text>
+
+            <Box flexDirection="row" alignItems="center" gap="sm">
+              {clearable && value && !disabled && (
+                <AnimatedPressable
+                  onPress={handleClear}
+                  haptic="light"
+                  style={styles.clearButton}
+                >
+                  <Icon name="close" size="xs" color="textTertiary" />
+                </AnimatedPressable>
+              )}
+              <Icon
+                name={mode === 'time' ? 'clock' : 'calendar'}
+                size="sm"
+                color="textSecondary"
+              />
+            </Box>
+          </AnimatedPressable>
+
+          {error && (
+            <Text variant="caption" color="error">
+              {error}
+            </Text>
+          )}
+        </Box>
       )}
 
       {/* iOS Modal Picker */}
@@ -292,7 +300,7 @@ export function DateTimePicker({
           maximumDate={maximumDate}
         />
       )}
-    </Box>
+    </>
   );
 }
 

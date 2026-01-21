@@ -18,7 +18,7 @@ import {
   AnimatedPressable,
   DateTimePicker,
 } from '@shared/ui';
-import { BottomSheet } from '@shared/ui/molecules';
+import { Modal } from '@shared/ui/molecules';
 import { CalendarEvent, CreateEventPayload, EventValidationErrors } from '../domain/types';
 import { EventColor, eventColors } from '@shared/ui/tokens';
 
@@ -182,12 +182,12 @@ export function EventForm({
   }, [title, description, color, allDay, startDateTime, endDateTime, onSubmit, onClose]);
 
   return (
-    <BottomSheet
-      isOpen={visible}
+    <Modal
+      visible={visible}
       onClose={onClose}
       title={isEditing ? 'Modifica evento' : 'Nuovo evento'}
-      snapPoints={['85%']}
       scrollable
+      dismissOnBackdrop={false}
     >
       <VStack spacing="lg" paddingBottom="xl">
         {/* Title */}
@@ -452,6 +452,6 @@ export function EventForm({
           </Box>
         </HStack>
       </VStack>
-    </BottomSheet>
+    </Modal>
   );
 }

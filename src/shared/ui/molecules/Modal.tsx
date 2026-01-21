@@ -9,7 +9,11 @@ import {
   ModalProps as RNModalProps,
   TouchableWithoutFeedback,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Box, Heading, Pressable, Text, Icon } from '../atoms';
 import { useTheme } from '../theme';
 
@@ -29,6 +33,8 @@ export interface ModalProps extends Omit<RNModalProps, 'animationType' | 'transp
   animation?: 'slide' | 'fade' | 'none';
   /** Se true, chiude il modal toccando lo sfondo */
   dismissOnBackdrop?: boolean;
+  /** Abilita scroll interno */
+  scrollable?: boolean;
   /** Contenuto del modal */
   children: React.ReactNode;
 }
@@ -43,10 +49,12 @@ export function Modal({
   showCloseButton = true,
   animation = 'slide',
   dismissOnBackdrop = true,
+  scrollable = false,
   children,
   ...rest
 }: ModalProps): JSX.Element {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const handleBackdropPress = () => {
     Keyboard.dismiss();
@@ -54,6 +62,48 @@ export function Modal({
       onClose();
     }
   };
+
+  const content = (
+    <>
+      {/* Header */}
+      {(title || showCloseButton) && (
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          marginBottom="lg"
+        >
+          {title ? (
+            <Heading level={5}>{title}</Heading>
+          ) : (
+            <Box />
+          )}
+          {showCloseButton && (
+            <Pressable
+              onPress={onClose}
+              accessibilityLabel="Chiudi"
+              padding="xs"
+            >
+              <Icon name="close" size="md" color="textSecondary" />
+            </Pressable>
+          )}
+        </Box>
+      )}
+
+      {/* Content */}
+      {scrollable ? (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+        >
+          {children}
+        </ScrollView>
+      ) : (
+        children
+      )}
+    </>
+  );
 
   return (
     <RNModal
@@ -63,52 +113,31 @@ export function Modal({
       onRequestClose={onClose}
       {...rest}
     >
-      <TouchableWithoutFeedback onPress={handleBackdropPress}>
-        <Box
-          flex={1}
-          backgroundColor="background"
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-          justifyContent="flex-end"
-        >
-          <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-            <Box
-              backgroundColor="surface"
-              borderTopLeftRadius="xl"
-              borderTopRightRadius="xl"
-              padding="lg"
-              maxHeight="90%"
-            >
-              {/* Header */}
-              {(title || showCloseButton) && (
-                <Box
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  marginBottom="lg"
-                >
-                  {title ? (
-                    <Heading level={5}>{title}</Heading>
-                  ) : (
-                    <Box />
-                  )}
-                  {showCloseButton && (
-                    <Pressable
-                      onPress={onClose}
-                      accessibilityLabel="Chiudi"
-                      padding="xs"
-                    >
-                      <Icon name="close" size="md" color="textSecondary" />
-                    </Pressable>
-                  )}
-                </Box>
-              )}
-
-              {/* Content */}
-              {children}
-            </Box>
-          </TouchableWithoutFeedback>
-        </Box>
-      </TouchableWithoutFeedback>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <TouchableWithoutFeedback onPress={handleBackdropPress}>
+          <Box
+            flex={1}
+            backgroundColor="background"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            justifyContent="flex-end"
+          >
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <Box
+                backgroundColor="surface"
+                borderTopLeftRadius="xl"
+                borderTopRightRadius="xl"
+                padding="lg"
+                maxHeight="90%"
+              >
+                {content}
+              </Box>
+            </TouchableWithoutFeedback>
+          </Box>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </RNModal>
   );
 }

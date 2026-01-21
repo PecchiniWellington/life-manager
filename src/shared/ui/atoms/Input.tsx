@@ -55,7 +55,7 @@ const sizeConfig: Record<InputSize, { height: number; fontSize: number; padding:
 /**
  * Input Component
  */
-export const Input = forwardRef<TextInput, InputProps>(function Input(
+export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean }>(function Input(
   {
     label,
     error,
@@ -67,6 +67,8 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
     fullWidth = true,
     onFocus,
     onBlur,
+    _isMultiline,
+    multiline,
     ...rest
   },
   ref
@@ -74,6 +76,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const config = sizeConfig[size];
+  const isMultilineInput = _isMultiline || multiline;
 
   const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setIsFocused(true);
@@ -93,15 +96,17 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
 
   const containerStyle: ViewStyle = {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: isMultilineInput ? 'flex-start' : 'center',
     backgroundColor: disabled
       ? theme.colors.backgroundTertiary
       : theme.colors.surface,
     borderWidth: 1,
     borderColor: getBorderColor(),
     borderRadius: theme.radius.md,
-    height: config.height,
+    minHeight: config.height,
+    ...(isMultilineInput ? {} : { height: config.height }),
     paddingHorizontal: config.padding,
+    ...(isMultilineInput ? { paddingVertical: config.padding } : {}),
   };
 
   const inputStyle: TextStyle = {
@@ -127,6 +132,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
           onBlur={handleBlur}
           accessibilityLabel={label}
           accessibilityState={{ disabled }}
+          multiline={isMultilineInput}
           {...rest}
         />
         {rightIcon}
@@ -159,21 +165,14 @@ export const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(
   { numberOfLines = 4, size = 'md', ...rest },
   ref
 ) {
-  const config = sizeConfig[size];
-  // Note: TextArea uses fixed height based on numberOfLines
-  // The height calculation happens in the parent container
-  const calculatedHeight = config.height * numberOfLines * 0.6;
-
   return (
-    <Box style={{ minHeight: calculatedHeight }}>
-      <Input
-        ref={ref}
-        size={size}
-        multiline
-        numberOfLines={numberOfLines}
-        textAlignVertical="top"
-        {...rest}
-      />
-    </Box>
+    <Input
+      ref={ref}
+      size={size}
+      _isMultiline
+      numberOfLines={numberOfLines}
+      textAlignVertical="top"
+      {...rest}
+    />
   );
 });

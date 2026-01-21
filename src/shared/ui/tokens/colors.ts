@@ -314,12 +314,33 @@ export type SemanticColorKey = keyof typeof lightColors;
  * Event colors for calendar
  */
 export const eventColors = {
+  // Primary colors
   blue: palette.blue500,
   green: palette.green500,
   red: palette.red500,
   yellow: palette.yellow500,
   purple: palette.purple500,
   orange: palette.orange500,
+
+  // Extended colors
+  indigo: '#5856D6',
+  teal: '#00C7BE',
+  cyan: '#32ADE6',
+  pink: '#FF2D55',
+  coral: '#FF6B6B',
+  mint: '#00C9A7',
+  lavender: '#9B59B6',
+  amber: '#F0A500',
+  lime: '#84CC16',
+  rose: '#F43F5E',
+  sky: '#0EA5E9',
+  violet: '#8B5CF6',
+  emerald: '#10B981',
+  fuchsia: '#D946EF',
+  slate: '#64748B',
+  stone: '#78716C',
+  brown: '#A2845E',
+  magenta: '#FF00FF',
 } as const;
 
 export type EventColor = keyof typeof eventColors;

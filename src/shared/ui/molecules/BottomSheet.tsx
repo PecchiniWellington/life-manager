@@ -170,6 +170,9 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
         backdropComponent={renderBackdrop}
         handleComponent={renderHandle}
         enablePanDownToClose
+        keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
         backgroundStyle={{
           backgroundColor: theme.colors.surface,
           borderTopLeftRadius: radius.sheet,

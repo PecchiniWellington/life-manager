@@ -68,14 +68,65 @@ export interface InviteToSpacePayload {
  * Colori disponibili per gli spazi
  */
 export const SPACE_COLORS = [
-  '#007AFF', // Blue
-  '#34C759', // Green
-  '#FF9500', // Orange
-  '#FF3B30', // Red
-  '#AF52DE', // Purple
-  '#FF2D55', // Pink
+  // Blues
+  '#007AFF', // System Blue
   '#5856D6', // Indigo
+  '#0A84FF', // Blue Light
+  '#5AC8FA', // Sky Blue
+  '#32ADE6', // Cyan Blue
+  '#1E90FF', // Dodger Blue
+  '#4169E1', // Royal Blue
+  '#6495ED', // Cornflower Blue
+
+  // Greens
+  '#34C759', // System Green
+  '#30D158', // Green Light
   '#00C7BE', // Teal
+  '#2E8B57', // Sea Green
+  '#3CB371', // Medium Sea Green
+  '#66CDAA', // Medium Aquamarine
+  '#20B2AA', // Light Sea Green
+  '#00CED1', // Dark Turquoise
+
+  // Yellows & Oranges
+  '#FF9500', // System Orange
+  '#FF9F0A', // Orange Light
+  '#FFCC00', // Yellow
+  '#FFD60A', // Yellow Light
+  '#F0A500', // Amber
+  '#FF8C00', // Dark Orange
+  '#FFA07A', // Light Salmon
+  '#E67E22', // Carrot
+
+  // Reds & Pinks
+  '#FF3B30', // System Red
+  '#FF453A', // Red Light
+  '#FF2D55', // System Pink
+  '#FF375F', // Pink Light
+  '#FF6B6B', // Coral Red
+  '#E74C3C', // Alizarin
+  '#C0392B', // Pomegranate
+  '#FF69B4', // Hot Pink
+
+  // Purples & Violets
+  '#AF52DE', // System Purple
+  '#BF5AF2', // Purple Light
+  '#9B59B6', // Amethyst
+  '#8E44AD', // Wisteria
+  '#7B68EE', // Medium Slate Blue
+  '#9370DB', // Medium Purple
+  '#BA55D3', // Medium Orchid
+  '#DA70D6', // Orchid
+
+  // Browns & Neutrals
+  '#A2845E', // Brown
+  '#D4A574', // Tan
+  '#8B4513', // Saddle Brown
+  '#CD853F', // Peru
+  '#B8860B', // Dark Goldenrod
+  '#708090', // Slate Gray
+  '#778899', // Light Slate Gray
+  '#6B7280', // Gray
 ] as const;
 
 /**
