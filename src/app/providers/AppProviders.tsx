@@ -12,6 +12,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { store, persistor } from '../store';
 import { ThemeProvider } from '@shared/ui/theme';
+import { SpacesProvider } from '@features/spaces';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -56,7 +57,7 @@ export function AppProviders({ children }: AppProvidersProps): JSX.Element {
           <ThemeProvider>
             <NavigationContainer>
               <BottomSheetModalProvider>
-                {children}
+                <SpacesProvider>{children}</SpacesProvider>
               </BottomSheetModalProvider>
             </NavigationContainer>
           </ThemeProvider>

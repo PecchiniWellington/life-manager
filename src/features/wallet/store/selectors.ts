@@ -18,12 +18,26 @@ export const selectMonthlySummary = (state: RootState) => state.wallet.monthlySu
 export const selectWalletStatus = (state: RootState) => state.wallet.status;
 export const selectWalletError = (state: RootState) => state.wallet.error;
 
+// Import space selector
+const selectCurrentSpaceId = (state: RootState) => state.spaces.currentSpaceId;
+
 /**
- * Select all transactions as array
+ * Select all transactions as array (without space filtering)
  */
-export const selectAllTransactions = createSelector(
+const selectAllTransactionsRaw = createSelector(
   [selectAllTransactionIds, selectTransactionEntities],
   (ids, entities): Transaction[] => ids.map((id) => entities[id])
+);
+
+/**
+ * Select all transactions as array (filtered by current space)
+ */
+export const selectAllTransactions = createSelector(
+  [selectAllTransactionsRaw, selectCurrentSpaceId],
+  (transactions, currentSpaceId): Transaction[] => {
+    if (!currentSpaceId) return [];
+    return transactions.filter((t) => t.spaceId === currentSpaceId);
+  }
 );
 
 /**

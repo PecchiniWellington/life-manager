@@ -33,12 +33,26 @@ export const selectSelectedEventId = (state: RootState) => state.calendar.select
 export const selectCalendarStatus = (state: RootState) => state.calendar.status;
 export const selectCalendarError = (state: RootState) => state.calendar.error;
 
+// Import space selector
+const selectCurrentSpaceId = (state: RootState) => state.spaces.currentSpaceId;
+
 /**
- * Select all events as array
+ * Select all events as array (without space filtering)
  */
-export const selectAllEvents = createSelector(
+const selectAllEventsRaw = createSelector(
   [selectAllEventIds, selectEventEntities],
   (ids, entities): CalendarEvent[] => ids.map((id) => entities[id])
+);
+
+/**
+ * Select all events as array (filtered by current space)
+ */
+export const selectAllEvents = createSelector(
+  [selectAllEventsRaw, selectCurrentSpaceId],
+  (events, currentSpaceId): CalendarEvent[] => {
+    if (!currentSpaceId) return [];
+    return events.filter((event) => event.spaceId === currentSpaceId);
+  }
 );
 
 /**

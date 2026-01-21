@@ -79,15 +79,22 @@ export const loadMonthlySummary = createAsyncThunk(
 export const createTransaction = createAsyncThunk(
   'wallet/createTransaction',
   async (payload: CreateTransactionPayload, { dispatch, getState, rejectWithValue }) => {
+    // Get current space
+    const state = getState() as { wallet: WalletState; spaces: { currentSpaceId: string | null } };
+    const spaceId = state.spaces.currentSpaceId;
+
+    if (!spaceId) {
+      return rejectWithValue({ general: 'Nessuno spazio selezionato' });
+    }
+
     const errors = validateCreateTransaction(payload);
     if (errors) {
       return rejectWithValue(errors);
     }
 
     try {
-      const transaction = await repository.createTransaction(payload);
+      const transaction = await repository.createTransaction(payload, spaceId);
       // Reload monthly summary
-      const state = getState() as { wallet: WalletState };
       dispatch(loadMonthlySummary(state.wallet.selectedMonth));
       return transaction;
     } catch (error) {

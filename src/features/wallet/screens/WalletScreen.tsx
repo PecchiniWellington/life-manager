@@ -19,6 +19,8 @@ import {
   ExpenseCategory,
 } from '../domain/types';
 import { SemanticColorKey } from '@shared/ui';
+import { SpaceSelector, CreateSpaceModal, SpaceSettingsModal, PendingInvitesModal } from '@features/spaces';
+import { Space } from '@features/spaces/domain/types';
 
 // Mapping categorie a colori
 const categoryColors: Record<ExpenseCategory, SemanticColorKey> = {
@@ -45,6 +47,20 @@ export function WalletScreen(): JSX.Element {
 
   const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [showCreateSpace, setShowCreateSpace] = useState(false);
+  const [showSpaceSettings, setShowSpaceSettings] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
+  const [showInvites, setShowInvites] = useState(false);
+
+  const handleOpenSpaceSettings = useCallback((space: Space) => {
+    setSelectedSpace(space);
+    setShowSpaceSettings(true);
+  }, []);
+
+  const handleCloseSpaceSettings = useCallback(() => {
+    setShowSpaceSettings(false);
+    setSelectedSpace(null);
+  }, []);
 
   // Stats
   const transactionCount = transactions.length;
@@ -89,6 +105,13 @@ export function WalletScreen(): JSX.Element {
       {/* Header */}
       <ScreenTitle
         title="Wallet"
+        topContent={
+          <SpaceSelector
+            onCreateSpace={() => setShowCreateSpace(true)}
+            onOpenSettings={handleOpenSpaceSettings}
+            onOpenInvites={() => setShowInvites(true)}
+          />
+        }
         subtitle={monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}
         rightAction={
           <Button
@@ -224,6 +247,25 @@ export function WalletScreen(): JSX.Element {
         onClose={handleCloseForm}
         onSubmit={handleSubmit}
         initialData={editingTransaction}
+      />
+
+      {/* Create space modal */}
+      <CreateSpaceModal
+        visible={showCreateSpace}
+        onClose={() => setShowCreateSpace(false)}
+      />
+
+      {/* Space settings modal */}
+      <SpaceSettingsModal
+        visible={showSpaceSettings}
+        space={selectedSpace}
+        onClose={handleCloseSpaceSettings}
+      />
+
+      {/* Pending invites modal */}
+      <PendingInvitesModal
+        visible={showInvites}
+        onClose={() => setShowInvites(false)}
       />
     </Screen>
   );

@@ -55,7 +55,15 @@ export const loadEvents = createAsyncThunk(
 // Create event
 export const createEvent = createAsyncThunk(
   'calendar/createEvent',
-  async (payload: CreateEventPayload, { rejectWithValue }) => {
+  async (payload: CreateEventPayload, { getState, rejectWithValue }) => {
+    // Get current space
+    const state = getState() as { spaces: { currentSpaceId: string | null } };
+    const spaceId = state.spaces.currentSpaceId;
+
+    if (!spaceId) {
+      return rejectWithValue({ general: 'Nessuno spazio selezionato' });
+    }
+
     // Validate
     const errors = validateCreateEvent(payload);
     if (errors) {
@@ -63,7 +71,7 @@ export const createEvent = createAsyncThunk(
     }
 
     try {
-      const event = await repository.createEvent(payload);
+      const event = await repository.createEvent(payload, spaceId);
       return event;
     } catch (error) {
       return rejectWithValue({ general: 'Errore nella creazione dell\'evento' });

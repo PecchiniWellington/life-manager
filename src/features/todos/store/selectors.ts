@@ -18,12 +18,26 @@ export const selectAvailableTags = (state: RootState) => state.todos.availableTa
 export const selectTodosStatus = (state: RootState) => state.todos.status;
 export const selectTodosError = (state: RootState) => state.todos.error;
 
+// Import space selector
+const selectCurrentSpaceId = (state: RootState) => state.spaces.currentSpaceId;
+
 /**
- * Select all todos as array
+ * Select all todos as array (without space filtering)
  */
-export const selectAllTodos = createSelector(
+const selectAllTodosRaw = createSelector(
   [selectAllTodoIds, selectTodoEntities],
   (ids, entities): Todo[] => ids.map((id) => entities[id])
+);
+
+/**
+ * Select all todos as array (filtered by current space)
+ */
+export const selectAllTodos = createSelector(
+  [selectAllTodosRaw, selectCurrentSpaceId],
+  (todos, currentSpaceId): Todo[] => {
+    if (!currentSpaceId) return [];
+    return todos.filter((todo) => todo.spaceId === currentSpaceId);
+  }
 );
 
 /**

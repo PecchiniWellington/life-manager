@@ -21,6 +21,7 @@ import { authReducer } from '@features/auth/store';
 import { calendarReducer } from '@features/calendar/store';
 import { todosReducer } from '@features/todos/store';
 import { walletReducer } from '@features/wallet/store';
+import { spacesReducer } from '@features/spaces/store';
 
 // API slice (predisposto per RTK Query)
 import { api } from './api';
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   calendar: calendarReducer,
   todos: todosReducer,
   wallet: walletReducer,
+  spaces: spacesReducer,
   // RTK Query API reducer
   [api.reducerPath]: api.reducer,
 });

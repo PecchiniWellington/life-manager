@@ -17,6 +17,7 @@ export type TodoPriority = 'low' | 'medium' | 'high';
  */
 export interface Todo {
   id: string;
+  spaceId: string; // Space a cui appartiene il todo
   title: string;
   description: string;
   status: TodoStatus;

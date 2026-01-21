@@ -62,14 +62,22 @@ export const loadTodos = createAsyncThunk(
 // Create todo
 export const createTodo = createAsyncThunk(
   'todos/createTodo',
-  async (payload: CreateTodoPayload, { rejectWithValue }) => {
+  async (payload: CreateTodoPayload, { getState, rejectWithValue }) => {
+    // Get current space
+    const state = getState() as { spaces: { currentSpaceId: string | null } };
+    const spaceId = state.spaces.currentSpaceId;
+
+    if (!spaceId) {
+      return rejectWithValue({ general: 'Nessuno spazio selezionato' });
+    }
+
     const errors = validateCreateTodo(payload);
     if (errors) {
       return rejectWithValue(errors);
     }
 
     try {
-      const todo = await repository.createTodo(payload);
+      const todo = await repository.createTodo(payload, spaceId);
       return todo;
     } catch (error) {
       return rejectWithValue({ general: 'Errore nella creazione del todo' });

@@ -1,19 +1,18 @@
 /**
  * Theme Context
- * Fornisce il tema a tutta l'applicazione
+ * Fornisce il tema a tutta l'applicazione con supporto per colore accento dinamico
  */
 
 import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   useMemo,
   useCallback,
   ReactNode,
 } from 'react';
 import { useColorScheme } from 'react-native';
-import { Theme, ThemeMode, getTheme, lightTheme } from './theme';
+import { Theme, ThemeMode, getThemeWithAccent } from './theme';
 
 /**
  * Theme context value
@@ -21,7 +20,9 @@ import { Theme, ThemeMode, getTheme, lightTheme } from './theme';
 interface ThemeContextValue {
   theme: Theme;
   themeMode: ThemeMode;
+  accentColor: string | null;
   setThemeMode: (mode: ThemeMode) => void;
+  setAccentColor: (color: string | null) => void;
   toggleTheme: () => void;
 }
 
@@ -45,12 +46,13 @@ export function ThemeProvider({
 }: ThemeProviderProps): JSX.Element {
   const systemColorScheme = useColorScheme();
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialMode);
+  const [accentColor, setAccentColor] = useState<string | null>(null);
 
   const systemIsDark = systemColorScheme === 'dark';
 
   const theme = useMemo(
-    () => getTheme(themeMode, systemIsDark),
-    [themeMode, systemIsDark]
+    () => getThemeWithAccent(themeMode, systemIsDark, accentColor),
+    [themeMode, systemIsDark, accentColor]
   );
 
   const toggleTheme = useCallback(() => {
@@ -66,10 +68,12 @@ export function ThemeProvider({
     () => ({
       theme,
       themeMode,
+      accentColor,
       setThemeMode,
+      setAccentColor,
       toggleTheme,
     }),
-    [theme, themeMode, toggleTheme]
+    [theme, themeMode, accentColor, toggleTheme]
   );
 
   return (

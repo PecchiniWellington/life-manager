@@ -9,6 +9,7 @@ import { EventColor } from '@shared/ui/tokens';
  */
 export interface CalendarEvent {
   id: string;
+  spaceId: string; // Space a cui appartiene l'evento
   title: string;
   description: string;
   startAt: string; // ISO date string

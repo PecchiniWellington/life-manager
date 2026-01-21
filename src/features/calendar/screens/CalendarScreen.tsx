@@ -14,6 +14,8 @@ import {
 } from '../components';
 import { useCalendar } from '../hooks';
 import { CalendarEvent, CreateEventPayload } from '../domain/types';
+import { SpaceSelector, CreateSpaceModal, SpaceSettingsModal, PendingInvitesModal } from '@features/spaces';
+import { Space } from '@features/spaces/domain/types';
 
 export function CalendarScreen(): JSX.Element {
   const {
@@ -29,6 +31,20 @@ export function CalendarScreen(): JSX.Element {
 
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [showCreateSpace, setShowCreateSpace] = useState(false);
+  const [showSpaceSettings, setShowSpaceSettings] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
+  const [showInvites, setShowInvites] = useState(false);
+
+  const handleOpenSpaceSettings = useCallback((space: Space) => {
+    setSelectedSpace(space);
+    setShowSpaceSettings(true);
+  }, []);
+
+  const handleCloseSpaceSettings = useCallback(() => {
+    setShowSpaceSettings(false);
+    setSelectedSpace(null);
+  }, []);
 
   const handleDateSelect = useCallback(
     (date: string) => {
@@ -66,6 +82,13 @@ export function CalendarScreen(): JSX.Element {
       <Box paddingX="lg" paddingTop="lg">
         <ScreenTitle
           title="Calendario"
+          topContent={
+            <SpaceSelector
+              onCreateSpace={() => setShowCreateSpace(true)}
+              onOpenSettings={handleOpenSpaceSettings}
+              onOpenInvites={() => setShowInvites(true)}
+            />
+          }
           rightAction={
             <Button
               title="Nuovo"
@@ -114,6 +137,25 @@ export function CalendarScreen(): JSX.Element {
         onSubmit={handleSubmitEvent}
         initialData={editingEvent}
         selectedDate={selectedDate}
+      />
+
+      {/* Create space modal */}
+      <CreateSpaceModal
+        visible={showCreateSpace}
+        onClose={() => setShowCreateSpace(false)}
+      />
+
+      {/* Space settings modal */}
+      <SpaceSettingsModal
+        visible={showSpaceSettings}
+        space={selectedSpace}
+        onClose={handleCloseSpaceSettings}
+      />
+
+      {/* Pending invites modal */}
+      <PendingInvitesModal
+        visible={showInvites}
+        onClose={() => setShowInvites(false)}
       />
     </Screen>
   );

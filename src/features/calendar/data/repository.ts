@@ -26,12 +26,13 @@ export async function getEventById(id: string): Promise<CalendarEvent | null> {
 /**
  * Create a new event
  */
-export async function createEvent(payload: CreateEventPayload): Promise<CalendarEvent> {
+export async function createEvent(payload: CreateEventPayload, spaceId: string): Promise<CalendarEvent> {
   const events = await getAllEvents();
   const now = new Date().toISOString();
 
   const newEvent: CalendarEvent = {
     id: generateId(),
+    spaceId,
     title: payload.title,
     description: payload.description || '',
     startAt: payload.startAt,

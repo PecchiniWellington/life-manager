@@ -24,6 +24,7 @@ export type ExpenseCategory =
  */
 export interface Transaction {
   id: string;
+  spaceId: string; // Space a cui appartiene la transazione
   amount: number;
   category: ExpenseCategory;
   type: TransactionType;

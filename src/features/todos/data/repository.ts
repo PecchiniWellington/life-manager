@@ -25,12 +25,13 @@ export async function getTodoById(id: string): Promise<Todo | null> {
 /**
  * Create todo
  */
-export async function createTodo(payload: CreateTodoPayload): Promise<Todo> {
+export async function createTodo(payload: CreateTodoPayload, spaceId: string): Promise<Todo> {
   const todos = await getAllTodos();
   const now = new Date().toISOString();
 
   const newTodo: Todo = {
     id: generateId(),
+    spaceId,
     title: payload.title,
     description: payload.description || '',
     status: payload.status || 'todo',

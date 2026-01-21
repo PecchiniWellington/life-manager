@@ -19,6 +19,8 @@ import { ScreenTitle, EmptyState, ProgressStats, type ProgressItem } from '@shar
 import { TodoItem, TodoFilters, TodoForm } from '../components';
 import { useTodos } from '../hooks';
 import { Todo, CreateTodoPayload, UpdateTodoPayload } from '../domain/types';
+import { SpaceSelector, CreateSpaceModal, SpaceSettingsModal, PendingInvitesModal } from '@features/spaces';
+import { Space } from '@features/spaces/domain/types';
 
 export function TodosScreen(): JSX.Element {
   const {
@@ -40,6 +42,20 @@ export function TodosScreen(): JSX.Element {
   const [showForm, setShowForm] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [showCreateSpace, setShowCreateSpace] = useState(false);
+  const [showSpaceSettings, setShowSpaceSettings] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
+  const [showInvites, setShowInvites] = useState(false);
+
+  const handleOpenSpaceSettings = useCallback((space: Space) => {
+    setSelectedSpace(space);
+    setShowSpaceSettings(true);
+  }, []);
+
+  const handleCloseSpaceSettings = useCallback(() => {
+    setShowSpaceSettings(false);
+    setSelectedSpace(null);
+  }, []);
 
   // Calculate progress
   const totalTodos = countByStatus.todo + countByStatus.doing + countByStatus.done;
@@ -133,6 +149,13 @@ export function TodosScreen(): JSX.Element {
       {/* Header */}
       <ScreenTitle
         title="Todo"
+        topContent={
+          <SpaceSelector
+            onCreateSpace={() => setShowCreateSpace(true)}
+            onOpenSettings={handleOpenSpaceSettings}
+            onOpenInvites={() => setShowInvites(true)}
+          />
+        }
         subtitle={`${countByStatus.doing} in corso, ${countByStatus.todo} da fare`}
         rightAction={
           <Box flexDirection="row" gap="sm">
@@ -230,6 +253,25 @@ export function TodosScreen(): JSX.Element {
         onSubmit={handleSubmit}
         initialData={editingTodo}
         availableTags={availableTags}
+      />
+
+      {/* Create space modal */}
+      <CreateSpaceModal
+        visible={showCreateSpace}
+        onClose={() => setShowCreateSpace(false)}
+      />
+
+      {/* Space settings modal */}
+      <SpaceSettingsModal
+        visible={showSpaceSettings}
+        space={selectedSpace}
+        onClose={handleCloseSpaceSettings}
+      />
+
+      {/* Pending invites modal */}
+      <PendingInvitesModal
+        visible={showInvites}
+        onClose={() => setShowInvites(false)}
       />
     </Screen>
   );

@@ -33,13 +33,15 @@ export async function getTransactionById(id: string): Promise<Transaction | null
  * Create transaction
  */
 export async function createTransaction(
-  payload: CreateTransactionPayload
+  payload: CreateTransactionPayload,
+  spaceId: string
 ): Promise<Transaction> {
   const transactions = await getAllTransactions();
   const now = new Date().toISOString();
 
   const newTransaction: Transaction = {
     id: generateId(),
+    spaceId,
     amount: payload.amount,
     category: payload.category,
     type: payload.type || 'expense',
