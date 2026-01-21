@@ -5,6 +5,13 @@
 
 import 'react-native-gesture-handler';
 import React from 'react';
+import { LogBox } from 'react-native';
+
+// Silenzio warning di deprecazione Firebase (funziona ancora, sarà sistemato in v22)
+LogBox.ignoreLogs([
+  'This method is deprecated',
+  'Method called was `onAuthStateChanged`',
+]);
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';

@@ -16,7 +16,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MainTabParamList } from './types';
-import { CalendarStack, TodosStack, WalletStack } from './stacks';
+import { CalendarStack, TodosStack, WalletStack, ProfileStack } from './stacks';
 import { useTheme } from '@shared/ui/theme';
 import { Icon, IconName, AnimatedPressable, Badge, Box, Text } from '@shared/ui/atoms';
 import { springs } from '@shared/ui/tokens';
@@ -33,6 +33,7 @@ const tabConfig: Record<string, TabIconConfig> = {
   CalendarTab: { icon: 'calendar', iconFilled: 'calendarFilled', label: 'Calendario' },
   TodosTab: { icon: 'todo', iconFilled: 'todoFilled', label: 'Todo' },
   WalletTab: { icon: 'wallet', iconFilled: 'walletFilled', label: 'Wallet' },
+  ProfileTab: { icon: 'personOutline', iconFilled: 'person', label: 'Profilo' },
 };
 
 /**
@@ -172,6 +173,7 @@ export function MainTabNavigator(): JSX.Element {
       <Tab.Screen name="CalendarTab" component={CalendarStack} />
       <Tab.Screen name="TodosTab" component={TodosStack} />
       <Tab.Screen name="WalletTab" component={WalletStack} />
+      <Tab.Screen name="ProfileTab" component={ProfileStack} />
     </Tab.Navigator>
   );
 }

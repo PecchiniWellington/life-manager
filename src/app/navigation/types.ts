@@ -29,6 +29,7 @@ export type MainTabParamList = {
   CalendarTab: NavigatorScreenParams<CalendarStackParamList>;
   TodosTab: NavigatorScreenParams<TodosStackParamList>;
   WalletTab: NavigatorScreenParams<WalletStackParamList>;
+  ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
 };
 
 /**
@@ -53,6 +54,15 @@ export type TodosStackParamList = {
 export type WalletStackParamList = {
   WalletMain: undefined;
   TransactionDetail: { transactionId: string };
+};
+
+/**
+ * Profile Stack
+ */
+export type ProfileStackParamList = {
+  ProfileMain: undefined;
+  EditProfile: undefined;
+  ChangePassword: undefined;
 };
 
 /**

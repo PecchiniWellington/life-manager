@@ -145,6 +145,7 @@ export const iconMap = {
   personAddFilled: 'person-add',
   help: 'help-circle',
   helpOutline: 'help-circle-outline',
+  language: 'language-outline',
 
   // Media
   image: 'image-outline',
@@ -187,6 +188,7 @@ export const iconMap = {
   flash: 'flash-outline',
   flashFilled: 'flash',
   moon: 'moon-outline',
+  moonOutline: 'moon-outline',
   moonFilled: 'moon',
   sunny: 'sunny-outline',
   sunnyFilled: 'sunny',
