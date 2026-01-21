@@ -17,6 +17,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Feature reducers
+import { authReducer } from '@features/auth/store';
 import { calendarReducer } from '@features/calendar/store';
 import { todosReducer } from '@features/todos/store';
 import { walletReducer } from '@features/wallet/store';
@@ -28,6 +29,7 @@ import { api } from './api';
  * Root reducer combining all feature reducers
  */
 const rootReducer = combineReducers({
+  auth: authReducer,
   calendar: calendarReducer,
   todos: todosReducer,
   wallet: walletReducer,

@@ -7,11 +7,19 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 
 /**
+ * Auth Stack
+ */
+export type AuthStackParamList = {
+  Auth: undefined;
+  ForgotPassword: undefined;
+};
+
+/**
  * Root Stack (per modali e schermate globali)
  */
 export type RootStackParamList = {
+  Auth: NavigatorScreenParams<AuthStackParamList>;
   Main: NavigatorScreenParams<MainTabParamList>;
-  // Future modals here
 };
 
 /**
