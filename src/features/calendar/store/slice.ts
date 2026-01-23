@@ -1,5 +1,6 @@
 /**
  * Calendar Redux Slice
+ * Usa Firestore per la persistenza
  */
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
@@ -10,7 +11,7 @@ import {
   CalendarViewMode,
 } from '../domain/types';
 import { validateCreateEvent, validateUpdateEvent } from '../domain/validation';
-import * as repository from '../data/repository';
+import * as firestoreService from '../data/firestoreService';
 import { NormalizedState } from '@shared/types';
 
 /**
@@ -39,14 +40,15 @@ const initialState: CalendarState = {
  * Async Thunks
  */
 
-// Load all events
+// Load all events for current space
 export const loadEvents = createAsyncThunk(
   'calendar/loadEvents',
-  async (_, { rejectWithValue }) => {
+  async (spaceId: string, { rejectWithValue }) => {
     try {
-      const events = await repository.getAllEvents();
+      const events = await firestoreService.getEvents(spaceId);
       return events;
     } catch (error) {
+      console.error('Error loading events:', error);
       return rejectWithValue('Errore nel caricamento degli eventi');
     }
   }
@@ -71,9 +73,10 @@ export const createEvent = createAsyncThunk(
     }
 
     try {
-      const event = await repository.createEvent(payload, spaceId);
+      const event = await firestoreService.createEvent(spaceId, payload);
       return event;
     } catch (error) {
+      console.error('Error creating event:', error);
       return rejectWithValue({ general: 'Errore nella creazione dell\'evento' });
     }
   }
@@ -83,8 +86,16 @@ export const createEvent = createAsyncThunk(
 export const updateEvent = createAsyncThunk(
   'calendar/updateEvent',
   async (payload: UpdateEventPayload, { getState, rejectWithValue }) => {
-    const state = getState() as { calendar: CalendarState };
+    const state = getState() as {
+      calendar: CalendarState;
+      spaces: { currentSpaceId: string | null };
+    };
+    const spaceId = state.spaces.currentSpaceId;
     const existingEvent = state.calendar.entities[payload.id];
+
+    if (!spaceId) {
+      return rejectWithValue({ general: 'Nessuno spazio selezionato' });
+    }
 
     if (!existingEvent) {
       return rejectWithValue({ general: 'Evento non trovato' });
@@ -97,12 +108,13 @@ export const updateEvent = createAsyncThunk(
     }
 
     try {
-      const event = await repository.updateEvent(payload);
+      const event = await firestoreService.updateEvent(spaceId, payload);
       if (!event) {
         return rejectWithValue({ general: 'Evento non trovato' });
       }
       return event;
     } catch (error) {
+      console.error('Error updating event:', error);
       return rejectWithValue({ general: 'Errore nell\'aggiornamento dell\'evento' });
     }
   }
@@ -111,14 +123,22 @@ export const updateEvent = createAsyncThunk(
 // Delete event
 export const deleteEvent = createAsyncThunk(
   'calendar/deleteEvent',
-  async (id: string, { rejectWithValue }) => {
+  async (id: string, { getState, rejectWithValue }) => {
+    const state = getState() as { spaces: { currentSpaceId: string | null } };
+    const spaceId = state.spaces.currentSpaceId;
+
+    if (!spaceId) {
+      return rejectWithValue('Nessuno spazio selezionato');
+    }
+
     try {
-      const success = await repository.deleteEvent(id);
+      const success = await firestoreService.deleteEvent(spaceId, id);
       if (!success) {
         return rejectWithValue('Evento non trovato');
       }
       return id;
     } catch (error) {
+      console.error('Error deleting event:', error);
       return rejectWithValue('Errore nell\'eliminazione dell\'evento');
     }
   }
@@ -131,6 +151,18 @@ const calendarSlice = createSlice({
   name: 'calendar',
   initialState,
   reducers: {
+    // Sync events from Firestore listener
+    setEvents: (state, action: PayloadAction<CalendarEvent[]>) => {
+      state.ids = action.payload.map((e) => e.id);
+      state.entities = action.payload.reduce(
+        (acc, event) => {
+          acc[event.id] = event;
+          return acc;
+        },
+        {} as Record<string, CalendarEvent>
+      );
+      state.status = 'succeeded';
+    },
     setSelectedDate: (state, action: PayloadAction<string>) => {
       state.selectedDate = action.payload;
     },
@@ -142,6 +174,11 @@ const calendarSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+    },
+    clearEvents: (state) => {
+      state.ids = [];
+      state.entities = {};
+      state.status = 'idle';
     },
   },
   extraReducers: (builder) => {
@@ -166,28 +203,24 @@ const calendarSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload as string;
       })
-      // Create event
+      // Create event - non aggiungiamo allo state, il listener Firestore lo farà
       .addCase(createEvent.pending, (state) => {
-        state.status = 'loading';
         state.error = null;
       })
-      .addCase(createEvent.fulfilled, (state, action) => {
+      .addCase(createEvent.fulfilled, (state) => {
+        // L'evento verrà aggiunto dal real-time listener
         state.status = 'succeeded';
-        state.ids.push(action.payload.id);
-        state.entities[action.payload.id] = action.payload;
       })
       .addCase(createEvent.rejected, (state, action) => {
         state.status = 'failed';
         state.error = JSON.stringify(action.payload);
       })
-      // Update event
-      .addCase(updateEvent.fulfilled, (state, action) => {
-        state.entities[action.payload.id] = action.payload;
+      // Update event - non aggiorniamo lo state, il listener Firestore lo farà
+      .addCase(updateEvent.fulfilled, (state) => {
+        state.status = 'succeeded';
       })
-      // Delete event
+      // Delete event - non rimuoviamo dallo state, il listener Firestore lo farà
       .addCase(deleteEvent.fulfilled, (state, action) => {
-        state.ids = state.ids.filter((id) => id !== action.payload);
-        delete state.entities[action.payload];
         if (state.selectedEventId === action.payload) {
           state.selectedEventId = null;
         }
@@ -196,10 +229,12 @@ const calendarSlice = createSlice({
 });
 
 export const {
+  setEvents,
   setSelectedDate,
   setViewMode,
   setSelectedEvent,
   clearError,
+  clearEvents,
 } = calendarSlice.actions;
 
 export const calendarReducer = calendarSlice.reducer;

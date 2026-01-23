@@ -41,15 +41,17 @@ const rootReducer = combineReducers({
 
 /**
  * Persist configuration
+ * Note: calendar, todos, wallet sono ora sincronizzati con Firestore
+ * e non necessitano più di persistenza locale
  */
 const persistConfig = {
   key: 'root',
-  version: 1,
+  version: 2, // Incrementato per invalidare la cache precedente
   storage: AsyncStorage,
-  // Whitelist specific reducers to persist
-  whitelist: ['calendar', 'todos', 'wallet'],
-  // Blacklist API cache (will be rehydrated from server when backend is added)
-  blacklist: [api.reducerPath],
+  // Non persistiamo più i dati sincronizzati con Firestore
+  whitelist: [],
+  // Blacklist API cache
+  blacklist: [api.reducerPath, 'calendar', 'todos', 'wallet'],
 };
 
 /**

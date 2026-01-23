@@ -5,14 +5,12 @@
  * ATOM: usa tag nativi (Text) per rendering
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import Animated, {
   useSharedValue,
-  useAnimatedProps,
   withTiming,
   withSpring,
   Easing,
-  useDerivedValue,
   useAnimatedReaction,
   runOnJS,
 } from 'react-native-reanimated';
@@ -87,7 +85,7 @@ export function AnimatedNumber({
     }
   }, [value, spring, duration]);
 
-  const formatNumber = (num: number): string => {
+  const formatNumber = useCallback((num: number): string => {
     let formatted: string;
 
     switch (format) {
@@ -109,15 +107,20 @@ export function AnimatedNumber({
     }
 
     return `${prefix}${formatted}${suffix}`;
-  };
+  }, [format, decimals, prefix, suffix]);
+
+  // Update display value using stable callback
+  const updateDisplayValue = useCallback((num: number) => {
+    setDisplayValue(formatNumber(num));
+  }, [formatNumber]);
 
   // Update display value on animation frame
   useAnimatedReaction(
     () => animatedValue.value,
     (currentValue) => {
-      runOnJS(setDisplayValue)(formatNumber(currentValue));
+      runOnJS(updateDisplayValue)(currentValue);
     },
-    [format, decimals, prefix, suffix]
+    [updateDisplayValue]
   );
 
   const textStyle: TextStyle = {

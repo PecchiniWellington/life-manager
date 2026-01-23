@@ -180,8 +180,21 @@ export function SwipeableRow({
     transform: [{ translateX: translateX.value }],
   }));
 
+  // Left actions container visibility
+  const leftActionsStyle = useAnimatedStyle(() => ({
+    opacity: translateX.value > 0 ? 1 : 0,
+  }));
+
+  // Right actions container visibility
+  const rightActionsStyle = useAnimatedStyle(() => ({
+    opacity: translateX.value < 0 ? 1 : 0,
+  }));
+
   // Render action button
-  const renderAction = (action: SwipeAction, index: number, side: 'left' | 'right') => {
+  const renderAction = (action: SwipeAction, index: number, side: 'left' | 'right', totalActions: number) => {
+    const isFirst = index === 0;
+    const isLast = index === totalActions - 1;
+
     const actionStyle = useAnimatedStyle(() => {
       const progress = side === 'left'
         ? interpolate(translateX.value, [0, maxLeftSwipe], [0, 1], Extrapolate.CLAMP)
@@ -193,6 +206,14 @@ export function SwipeableRow({
       };
     });
 
+    // Border radius per gli angoli
+    const borderRadiusStyle = {
+      borderTopLeftRadius: side === 'left' && isFirst ? 12 : 0,
+      borderBottomLeftRadius: side === 'left' && isFirst ? 12 : 0,
+      borderTopRightRadius: side === 'right' && isLast ? 12 : 0,
+      borderBottomRightRadius: side === 'right' && isLast ? 12 : 0,
+    };
+
     return (
       <AnimatedPressable
         key={`${side}-${index}`}
@@ -201,6 +222,7 @@ export function SwipeableRow({
         style={[
           styles.action,
           { backgroundColor: getActionColor(action.color), width: ACTION_WIDTH },
+          borderRadiusStyle,
         ]}
       >
         <Animated.View style={[styles.actionContent, actionStyle]}>
@@ -219,16 +241,16 @@ export function SwipeableRow({
     <View style={styles.container}>
       {/* Left actions (revealed on right swipe) */}
       {leftActions.length > 0 && (
-        <View style={[styles.actionsContainer, styles.leftActions]}>
-          {leftActions.map((action, index) => renderAction(action, index, 'left'))}
-        </View>
+        <Animated.View style={[styles.actionsContainer, styles.leftActions, leftActionsStyle]}>
+          {leftActions.map((action, index) => renderAction(action, index, 'left', leftActions.length))}
+        </Animated.View>
       )}
 
       {/* Right actions (revealed on left swipe) */}
       {rightActions.length > 0 && (
-        <View style={[styles.actionsContainer, styles.rightActions]}>
-          {rightActions.map((action, index) => renderAction(action, index, 'right'))}
-        </View>
+        <Animated.View style={[styles.actionsContainer, styles.rightActions, rightActionsStyle]}>
+          {rightActions.map((action, index) => renderAction(action, index, 'right', rightActions.length))}
+        </Animated.View>
       )}
 
       {/* Main content */}

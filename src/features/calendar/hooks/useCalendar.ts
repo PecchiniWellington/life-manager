@@ -1,12 +1,12 @@
 /**
  * Calendar Hook
  * Custom hook per la gestione del calendario
+ * I dati vengono sincronizzati automaticamente via SpacesProvider
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
 import {
-  loadEvents,
   createEvent,
   updateEvent,
   deleteEvent,
@@ -42,10 +42,8 @@ export function useCalendar() {
   const error = useAppSelector(selectCalendarError);
   const eventCountsByDay = useAppSelector(selectEventCountsByDay);
 
-  // Load events on mount
-  useEffect(() => {
-    dispatch(loadEvents());
-  }, [dispatch]);
+  // Note: I dati vengono caricati automaticamente dal SpacesProvider
+  // tramite real-time listener quando cambia lo spazio corrente
 
   // Actions
   const handleCreateEvent = useCallback(

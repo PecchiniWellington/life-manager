@@ -172,6 +172,16 @@ export const iconMap = {
   folderOpen: 'folder-open-outline',
   undo: 'arrow-undo',
   redo: 'arrow-redo',
+  sync: 'sync-outline',
+  syncFilled: 'sync',
+  pin: 'pin-outline',
+  pinFilled: 'pin',
+  document: 'document-outline',
+  documentFilled: 'document',
+  checkbox: 'checkbox',
+  checkboxOutline: 'checkbox-outline',
+  trash: 'trash-outline',
+  trashFilled: 'trash',
 
   // Finance
   money: 'cash-outline',

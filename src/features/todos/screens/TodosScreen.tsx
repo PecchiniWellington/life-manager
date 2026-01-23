@@ -9,7 +9,6 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import {
   Screen,
   Box,
-  Button,
   Icon,
   AnimatedList,
   AnimatedPressable,
@@ -145,10 +144,11 @@ export function TodosScreen(): JSX.Element {
   const animationPreset: ListAnimationPreset = 'fadeUp';
 
   return (
-    <Screen paddingHorizontal="lg">
+    <Screen paddingHorizontal="lg" withTabBar={false}>
       {/* Header */}
       <ScreenTitle
         title="Todo"
+        subtitle={totalTodos > 0 ? `${totalTodos} ${totalTodos === 1 ? 'attività' : 'attività'}` : undefined}
         topContent={
           <SpaceSelector
             onCreateSpace={() => setShowCreateSpace(true)}
@@ -156,9 +156,8 @@ export function TodosScreen(): JSX.Element {
             onOpenInvites={() => setShowInvites(true)}
           />
         }
-        subtitle={`${countByStatus.doing} in corso, ${countByStatus.todo} da fare`}
         rightAction={
-          <Box flexDirection="row" gap="sm">
+          <Box flexDirection="row" gap="xs">
             <AnimatedPressable
               onPress={toggleFilters}
               haptic="light"
@@ -168,23 +167,31 @@ export function TodosScreen(): JSX.Element {
             >
               <Box
                 padding="sm"
-                backgroundColor={showFilters ? 'primaryLight' : 'transparent'}
+                backgroundColor={showFilters || hasActiveFilters ? 'primaryLight' : 'transparent'}
                 borderRadius="md"
               >
                 <Icon
                   name="filter"
-                  size="md"
+                  size="sm"
                   color={hasActiveFilters || showFilters ? 'primary' : 'textSecondary'}
                 />
               </Box>
             </AnimatedPressable>
-            <Button
-              title="Nuovo"
-              size="sm"
+            <AnimatedPressable
               onPress={handleAddTodo}
+              haptic="light"
+              pressScale={0.9}
               accessibilityLabel="Aggiungi nuovo todo"
-              leftIcon={<Icon name="add" size="sm" color="onPrimary" />}
-            />
+              accessibilityRole="button"
+            >
+              <Box
+                padding="sm"
+                backgroundColor="primary"
+                borderRadius="md"
+              >
+                <Icon name="add" size="sm" color="onPrimary" />
+              </Box>
+            </AnimatedPressable>
           </Box>
         }
       />
@@ -196,9 +203,11 @@ export function TodosScreen(): JSX.Element {
             <ProgressStats
               title="Il tuo progresso"
               mainProgress={completionProgress}
-              mainLabel={`${countByStatus.done} di ${totalTodos} completati`}
+              mainLabel="completati"
+              completed={countByStatus.done}
+              total={totalTodos}
               items={progressItems}
-              color="primary"
+              color="success"
             />
           </Box>
         </Animated.View>
@@ -242,7 +251,9 @@ export function TodosScreen(): JSX.Element {
           animation={animationPreset}
           staggerDelay="fast"
           maxStaggerItems={15}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 16, flexGrow: 1 }}
+          showsVerticalScrollIndicator={true}
         />
       )}
 

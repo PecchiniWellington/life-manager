@@ -1,6 +1,6 @@
 /**
  * Spaces Provider
- * Inizializza i listener per gli spazi e crea lo spazio personale se necessario
+ * Inizializza i listener per gli spazi e sincronizza tutti i dati con Firestore
  */
 
 import React, { ReactNode, useEffect, useRef } from 'react';
@@ -11,8 +11,15 @@ import {
   setCurrentSpaceId,
   setPendingInvites,
   selectCurrentSpace,
+  selectCurrentSpaceId,
 } from '../store';
 import * as spacesService from '../data/spacesService';
+import * as todosService from '@features/todos/data/firestoreService';
+import * as calendarService from '@features/calendar/data/firestoreService';
+import * as walletService from '@features/wallet/data/firestoreService';
+import { setTodos, clearTodos } from '@features/todos/store/slice';
+import { setEvents, clearEvents } from '@features/calendar/store/slice';
+import { setTransactions, clearTransactions } from '@features/wallet/store/slice';
 import { useAuth } from '@features/auth/hooks';
 import { useThemeContext } from '@shared/ui/theme';
 
@@ -43,6 +50,55 @@ function SpaceThemeSynchronizer(): null {
 }
 
 /**
+ * Componente che sincronizza i dati dello spazio corrente
+ */
+function SpaceDataSynchronizer(): null {
+  const dispatch = useAppDispatch();
+  const currentSpaceId = useAppSelector(selectCurrentSpaceId);
+  const previousSpaceIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    // Se non c'è spazio selezionato, pulisci tutto
+    if (!currentSpaceId) {
+      dispatch(clearTodos());
+      dispatch(clearEvents());
+      dispatch(clearTransactions());
+      previousSpaceIdRef.current = null;
+      return;
+    }
+
+    // Se lo spazio è cambiato, pulisci i dati vecchi prima di caricare i nuovi
+    if (previousSpaceIdRef.current && previousSpaceIdRef.current !== currentSpaceId) {
+      dispatch(clearTodos());
+      dispatch(clearEvents());
+      dispatch(clearTransactions());
+    }
+    previousSpaceIdRef.current = currentSpaceId;
+
+    // Setup real-time listeners per lo spazio corrente
+    const unsubscribeTodos = todosService.onTodosChanged(currentSpaceId, (todos) => {
+      dispatch(setTodos(todos));
+    });
+
+    const unsubscribeEvents = calendarService.onEventsChanged(currentSpaceId, (events) => {
+      dispatch(setEvents(events));
+    });
+
+    const unsubscribeTransactions = walletService.onTransactionsChanged(currentSpaceId, (transactions) => {
+      dispatch(setTransactions(transactions));
+    });
+
+    return () => {
+      unsubscribeTodos();
+      unsubscribeEvents();
+      unsubscribeTransactions();
+    };
+  }, [currentSpaceId, dispatch]);
+
+  return null;
+}
+
+/**
  * SpacesProvider - Inizializza i listener UNA SOLA VOLTA
  */
 export function SpacesProvider({ children }: SpacesProviderProps): JSX.Element {
@@ -55,6 +111,10 @@ export function SpacesProvider({ children }: SpacesProviderProps): JSX.Element {
       // Reset quando l'utente si disconnette
       hasAttemptedCreation.current = false;
       isCreatingPersonalSpace = false;
+      // Pulisci tutti i dati
+      dispatch(clearTodos());
+      dispatch(clearEvents());
+      dispatch(clearTransactions());
       return;
     }
 
@@ -107,6 +167,7 @@ export function SpacesProvider({ children }: SpacesProviderProps): JSX.Element {
   return (
     <>
       <SpaceThemeSynchronizer />
+      <SpaceDataSynchronizer />
       {children}
     </>
   );

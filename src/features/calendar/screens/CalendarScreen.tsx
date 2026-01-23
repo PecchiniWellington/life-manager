@@ -4,29 +4,29 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { Screen, Box, Divider, Button, Icon } from '@shared/ui';
+import { Screen, Box, Button, Icon } from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import {
   CalendarHeader,
-  CalendarGrid,
-  EventList,
+  CalendarMonthView,
   EventForm,
 } from '../components';
 import { useCalendar } from '../hooks';
-import { CalendarEvent, CreateEventPayload } from '../domain/types';
+import { CalendarEvent, CreateEventPayload, UpdateEventPayload } from '../domain/types';
 import { SpaceSelector, CreateSpaceModal, SpaceSettingsModal, PendingInvitesModal } from '@features/spaces';
 import { Space } from '@features/spaces/domain/types';
 
 export function CalendarScreen(): JSX.Element {
   const {
-    selectedDayEvents,
+    allEvents,
     selectedDate,
-    eventCountsByDay,
     selectDate,
     goToNextMonth,
     goToPrevMonth,
     goToToday,
     createEvent,
+    updateEvent,
+    deleteEvent,
   } = useCalendar();
 
   const [showEventForm, setShowEventForm] = useState(false);
@@ -68,7 +68,7 @@ export function CalendarScreen(): JSX.Element {
     setEditingEvent(null);
   }, []);
 
-  const handleSubmitEvent = useCallback(
+  const handleCreateEvent = useCallback(
     async (payload: CreateEventPayload) => {
       const success = await createEvent(payload);
       return success;
@@ -76,8 +76,24 @@ export function CalendarScreen(): JSX.Element {
     [createEvent]
   );
 
+  const handleUpdateEvent = useCallback(
+    async (payload: UpdateEventPayload) => {
+      const success = await updateEvent(payload);
+      return success;
+    },
+    [updateEvent]
+  );
+
+  const handleDeleteEvent = useCallback(
+    async (id: string) => {
+      const success = await deleteEvent(id);
+      return success;
+    },
+    [deleteEvent]
+  );
+
   return (
-    <Screen scroll paddingHorizontal="none" paddingVertical="none">
+    <Screen paddingHorizontal="none" paddingVertical="none">
       {/* Header with title and add button */}
       <Box paddingX="lg" paddingTop="lg">
         <ScreenTitle
@@ -111,30 +127,23 @@ export function CalendarScreen(): JSX.Element {
         />
       </Box>
 
-      {/* Calendar grid */}
-      <Box paddingX="lg">
-        <CalendarGrid
+      {/* Calendar month view with events - takes all remaining space */}
+      <Box flex={1} paddingX="md" paddingBottom="md">
+        <CalendarMonthView
           selectedDate={selectedDate}
+          events={allEvents}
           onSelectDate={handleDateSelect}
-          eventCountsByDay={eventCountsByDay}
+          onEventPress={handleEventPress}
         />
       </Box>
-
-      <Divider spacing="lg" />
-
-      {/* Events list */}
-      <EventList
-        events={selectedDayEvents}
-        selectedDate={selectedDate}
-        onEventPress={handleEventPress}
-        onAddEvent={handleAddEvent}
-      />
 
       {/* Event form modal */}
       <EventForm
         visible={showEventForm}
         onClose={handleCloseForm}
-        onSubmit={handleSubmitEvent}
+        onCreate={handleCreateEvent}
+        onUpdate={handleUpdateEvent}
+        onDelete={handleDeleteEvent}
         initialData={editingEvent}
         selectedDate={selectedDate}
       />

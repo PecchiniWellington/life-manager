@@ -1,11 +1,11 @@
 /**
  * useTodos Hook
+ * I dati vengono sincronizzati automaticamente via SpacesProvider
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
 import {
-  loadTodos,
   createTodo,
   updateTodo,
   deleteTodo,
@@ -41,10 +41,8 @@ export function useTodos() {
   const urgentTodos = useAppSelector(selectUrgentTodos);
   const hasActiveFilters = useAppSelector(selectHasActiveFilters);
 
-  // Load todos on mount
-  useEffect(() => {
-    dispatch(loadTodos());
-  }, [dispatch]);
+  // Note: I dati vengono caricati automaticamente dal SpacesProvider
+  // tramite real-time listener quando cambia lo spazio corrente
 
   // Actions
   const handleCreateTodo = useCallback(

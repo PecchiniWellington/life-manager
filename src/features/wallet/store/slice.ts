@@ -1,5 +1,6 @@
 /**
  * Wallet Redux Slice
+ * Usa Firestore per la persistenza
  */
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
@@ -12,7 +13,7 @@ import {
   MonthlySummary,
 } from '../domain/types';
 import { validateCreateTransaction, validateUpdateTransaction } from '../domain/validation';
-import * as repository from '../data/repository';
+import * as firestoreService from '../data/firestoreService';
 import { NormalizedState } from '@shared/types';
 
 /**
@@ -47,14 +48,15 @@ const initialState: WalletState = {
  * Async Thunks
  */
 
-// Load transactions
+// Load transactions for current space
 export const loadTransactions = createAsyncThunk(
   'wallet/loadTransactions',
-  async (_, { rejectWithValue }) => {
+  async (spaceId: string, { rejectWithValue }) => {
     try {
-      const transactions = await repository.getAllTransactions();
+      const transactions = await firestoreService.getTransactions(spaceId);
       return transactions;
     } catch (error) {
+      console.error('Error loading transactions:', error);
       return rejectWithValue('Errore nel caricamento delle transazioni');
     }
   }
@@ -63,13 +65,14 @@ export const loadTransactions = createAsyncThunk(
 // Load monthly summary
 export const loadMonthlySummary = createAsyncThunk(
   'wallet/loadMonthlySummary',
-  async (monthString: string, { rejectWithValue }) => {
+  async ({ spaceId, monthString }: { spaceId: string; monthString: string }, { rejectWithValue }) => {
     try {
       const [year, month] = monthString.split('-').map(Number);
       const date = new Date(year, month - 1, 1);
-      const summary = await repository.getMonthlySummary(date);
+      const summary = await firestoreService.getMonthlySummary(spaceId, date);
       return summary;
     } catch (error) {
+      console.error('Error loading monthly summary:', error);
       return rejectWithValue('Errore nel caricamento del riepilogo');
     }
   }
@@ -93,11 +96,12 @@ export const createTransaction = createAsyncThunk(
     }
 
     try {
-      const transaction = await repository.createTransaction(payload, spaceId);
+      const transaction = await firestoreService.createTransaction(spaceId, payload);
       // Reload monthly summary
-      dispatch(loadMonthlySummary(state.wallet.selectedMonth));
+      dispatch(loadMonthlySummary({ spaceId, monthString: state.wallet.selectedMonth }));
       return transaction;
     } catch (error) {
+      console.error('Error creating transaction:', error);
       return rejectWithValue({ general: 'Errore nella creazione della transazione' });
     }
   }
@@ -107,21 +111,28 @@ export const createTransaction = createAsyncThunk(
 export const updateTransaction = createAsyncThunk(
   'wallet/updateTransaction',
   async (payload: UpdateTransactionPayload, { dispatch, getState, rejectWithValue }) => {
+    const state = getState() as { wallet: WalletState; spaces: { currentSpaceId: string | null } };
+    const spaceId = state.spaces.currentSpaceId;
+
+    if (!spaceId) {
+      return rejectWithValue({ general: 'Nessuno spazio selezionato' });
+    }
+
     const errors = validateUpdateTransaction(payload);
     if (errors) {
       return rejectWithValue(errors);
     }
 
     try {
-      const transaction = await repository.updateTransaction(payload);
+      const transaction = await firestoreService.updateTransaction(spaceId, payload);
       if (!transaction) {
         return rejectWithValue({ general: 'Transazione non trovata' });
       }
       // Reload monthly summary
-      const state = getState() as { wallet: WalletState };
-      dispatch(loadMonthlySummary(state.wallet.selectedMonth));
+      dispatch(loadMonthlySummary({ spaceId, monthString: state.wallet.selectedMonth }));
       return transaction;
     } catch (error) {
+      console.error('Error updating transaction:', error);
       return rejectWithValue({ general: 'Errore nell\'aggiornamento della transazione' });
     }
   }
@@ -131,16 +142,23 @@ export const updateTransaction = createAsyncThunk(
 export const deleteTransaction = createAsyncThunk(
   'wallet/deleteTransaction',
   async (id: string, { dispatch, getState, rejectWithValue }) => {
+    const state = getState() as { wallet: WalletState; spaces: { currentSpaceId: string | null } };
+    const spaceId = state.spaces.currentSpaceId;
+
+    if (!spaceId) {
+      return rejectWithValue('Nessuno spazio selezionato');
+    }
+
     try {
-      const success = await repository.deleteTransaction(id);
+      const success = await firestoreService.deleteTransaction(spaceId, id);
       if (!success) {
         return rejectWithValue('Transazione non trovata');
       }
       // Reload monthly summary
-      const state = getState() as { wallet: WalletState };
-      dispatch(loadMonthlySummary(state.wallet.selectedMonth));
+      dispatch(loadMonthlySummary({ spaceId, monthString: state.wallet.selectedMonth }));
       return id;
     } catch (error) {
+      console.error('Error deleting transaction:', error);
       return rejectWithValue('Errore nell\'eliminazione della transazione');
     }
   }
@@ -153,6 +171,18 @@ const walletSlice = createSlice({
   name: 'wallet',
   initialState,
   reducers: {
+    // Sync transactions from Firestore listener
+    setTransactions: (state, action: PayloadAction<Transaction[]>) => {
+      state.ids = action.payload.map((t) => t.id);
+      state.entities = action.payload.reduce(
+        (acc, transaction) => {
+          acc[transaction.id] = transaction;
+          return acc;
+        },
+        {} as Record<string, Transaction>
+      );
+      state.status = 'succeeded';
+    },
     setSelectedMonth: (state, action: PayloadAction<string>) => {
       state.selectedMonth = action.payload;
     },
@@ -164,6 +194,12 @@ const walletSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+    },
+    clearTransactions: (state) => {
+      state.ids = [];
+      state.entities = {};
+      state.monthlySummary = null;
+      state.status = 'idle';
     },
   },
   extraReducers: (builder) => {
@@ -192,28 +228,49 @@ const walletSlice = createSlice({
       .addCase(loadMonthlySummary.fulfilled, (state, action) => {
         state.monthlySummary = action.payload;
       })
-      // Create transaction
-      .addCase(createTransaction.fulfilled, (state, action) => {
-        state.ids.push(action.payload.id);
-        state.entities[action.payload.id] = action.payload;
+      // Create transaction - non aggiorniamo lo state, il listener Firestore lo farà
+      .addCase(createTransaction.pending, (state) => {
+        state.error = null;
       })
-      // Update transaction
-      .addCase(updateTransaction.fulfilled, (state, action) => {
-        state.entities[action.payload.id] = action.payload;
+      .addCase(createTransaction.fulfilled, (state) => {
+        // La transazione verrà aggiunta dal real-time listener
+        state.status = 'succeeded';
       })
-      // Delete transaction
-      .addCase(deleteTransaction.fulfilled, (state, action) => {
-        state.ids = state.ids.filter((id) => id !== action.payload);
-        delete state.entities[action.payload];
+      .addCase(createTransaction.rejected, (state, action) => {
+        state.error = (action.payload as { general?: string })?.general || 'Errore';
+      })
+      // Update transaction - non aggiorniamo lo state, il listener Firestore lo farà
+      .addCase(updateTransaction.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateTransaction.fulfilled, (state) => {
+        // L'aggiornamento verrà applicato dal real-time listener
+        state.status = 'succeeded';
+      })
+      .addCase(updateTransaction.rejected, (state, action) => {
+        state.error = (action.payload as { general?: string })?.general || 'Errore';
+      })
+      // Delete transaction - non aggiorniamo lo state, il listener Firestore lo farà
+      .addCase(deleteTransaction.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(deleteTransaction.fulfilled, (state) => {
+        // La rimozione verrà applicata dal real-time listener
+        state.status = 'succeeded';
+      })
+      .addCase(deleteTransaction.rejected, (state, action) => {
+        state.error = action.payload as string;
       });
   },
 });
 
 export const {
+  setTransactions,
   setSelectedMonth,
   setCategoryFilter,
   clearFilters,
   clearError,
+  clearTransactions,
 } = walletSlice.actions;
 
 export const walletReducer = walletSlice.reducer;

@@ -1,32 +1,41 @@
 /**
- * TodoItem Component - NO TAG NATIVI
- * MOLECULE: Usa solo atoms del design system
- * Features: SwipeableRow per azioni, AnimatedPressable per feedback
+ * TodoItem Component
+ * Design pulito e moderno con stato visibile
  */
 
 import React, { useCallback } from 'react';
 import {
   Box,
   Text,
-  Chip,
   Icon,
+  Chip,
   SwipeableRow,
   AnimatedPressable,
   type SwipeAction,
 } from '@shared/ui';
-import { Todo, statusLabels, priorityLabels } from '../domain/types';
+import { Todo, priorityLabels, statusLabels } from '../domain/types';
 import { formatRelativeDate } from '@shared/lib/date';
 
 interface TodoItemProps {
-  /** Todo da visualizzare */
   todo: Todo;
-  /** Callback pressione item */
   onPress: (todo: Todo) => void;
-  /** Callback toggle status */
   onToggleStatus: (id: string) => void;
-  /** Callback eliminazione */
   onDelete?: (id: string) => void;
 }
+
+// Intent per priorità
+const priorityIntent = {
+  high: 'error',
+  medium: 'warning',
+  low: 'info',
+} as const;
+
+// Intent per stato
+const statusIntent = {
+  todo: 'primary',
+  doing: 'warning',
+  done: 'success',
+} as const;
 
 export function TodoItem({
   todo,
@@ -35,30 +44,7 @@ export function TodoItem({
   onDelete,
 }: TodoItemProps): JSX.Element {
   const isDone = todo.status === 'done';
-  const isOverdue =
-    todo.dueDate && new Date(todo.dueDate) < new Date() && !isDone;
-
-  const getPriorityIcon = useCallback(() => {
-    switch (todo.priority) {
-      case 'high':
-        return 'priorityHigh' as const;
-      case 'medium':
-        return 'priorityMedium' as const;
-      case 'low':
-        return 'priorityLow' as const;
-    }
-  }, [todo.priority]);
-
-  const getStatusIntent = useCallback(() => {
-    switch (todo.status) {
-      case 'todo':
-        return 'default' as const;
-      case 'doing':
-        return 'warning' as const;
-      case 'done':
-        return 'success' as const;
-    }
-  }, [todo.status]);
+  const isOverdue = todo.dueDate && new Date(todo.dueDate) < new Date() && !isDone;
 
   // Swipe actions
   const leftActions: SwipeAction[] = [
@@ -90,91 +76,90 @@ export function TodoItem({
   }, [onToggleStatus, todo.id]);
 
   return (
-    <SwipeableRow
-      leftActions={leftActions}
-      rightActions={rightActions}
-    >
+    <SwipeableRow leftActions={leftActions} rightActions={rightActions}>
       <AnimatedPressable
         onPress={handlePress}
         haptic="light"
         pressScale={0.98}
         accessibilityLabel={todo.title}
-        accessibilityHint={`${statusLabels[todo.status]}, priorità ${priorityLabels[todo.priority]}`}
         accessibilityRole="button"
       >
         <Box
           flexDirection="row"
-          alignItems="flex-start"
-          padding="md"
           backgroundColor="surface"
-          borderRadius="card"
+          borderRadius="lg"
+          padding="md"
           gap="md"
-          opacity={isDone ? 0.7 : 1}
+          alignItems="center"
+          opacity={isDone ? 0.6 : 1}
         >
-          {/* Checkbox / Status toggle */}
+          {/* Checkbox */}
           <AnimatedPressable
             onPress={handleToggle}
             haptic="selection"
-            pressScale={0.9}
+            pressScale={0.85}
             accessibilityLabel={isDone ? 'Segna come non completato' : 'Segna come completato'}
             accessibilityRole="checkbox"
           >
             <Box
-              width={26}
-              height={26}
-              borderRadius="sm"
+              width={22}
+              height={22}
+              borderRadius="full"
               borderWidth={2}
               borderColor={isDone ? 'success' : 'border'}
               backgroundColor={isDone ? 'success' : 'transparent'}
               alignItems="center"
               justifyContent="center"
             >
-              {isDone && (
-                <Icon name="check" size="xs" color="onSuccess" />
-              )}
+              {isDone && <Icon name="check" size="xs" color="onSuccess" />}
             </Box>
           </AnimatedPressable>
 
           {/* Content */}
           <Box flex={1} gap="xs">
-            {/* Title */}
             <Text
               variant="bodyMedium"
               weight="medium"
               numberOfLines={2}
               decoration={isDone ? 'line-through' : undefined}
-              color={isDone ? 'textSecondary' : 'textPrimary'}
+              color={isDone ? 'textTertiary' : 'textPrimary'}
             >
               {todo.title}
             </Text>
 
-            {/* Description */}
             {todo.description && (
               <Text
                 variant="bodySmall"
-                color="textSecondary"
+                color="textTertiary"
                 numberOfLines={1}
               >
                 {todo.description}
               </Text>
             )}
 
-            {/* Meta info */}
+            {/* Meta row: stato, priorità, data, tags */}
             <Box flexDirection="row" alignItems="center" gap="sm" flexWrap="wrap">
-              {/* Priority */}
-              <Icon name={getPriorityIcon()} size="sm" />
-
-              {/* Status chip */}
+              {/* Status chip - sempre visibile */}
               <Chip
                 label={statusLabels[todo.status]}
                 size="sm"
                 variant="soft"
-                intent={getStatusIntent()}
+                intent={statusIntent[todo.status]}
               />
+
+              {/* Priority chip - solo se non completato */}
+              {!isDone && (
+                <Chip
+                  label={priorityLabels[todo.priority]}
+                  size="sm"
+                  variant="outlined"
+                  intent={priorityIntent[todo.priority]}
+                />
+              )}
 
               {/* Due date */}
               {todo.dueDate && (
-                <Box flexDirection="row" alignItems="center" gap="xs">
+                <Box flexDirection="row" alignItems="center" gap="xxs">
                   <Icon
                     name="calendar"
                     size="xs"
@@ -188,27 +173,22 @@ export function TodoItem({
                   </Text>
                 </Box>
               )}
-            </Box>
 
-            {/* Tags */}
-            {todo.tags.length > 0 && (
-              <Box flexDirection="row" gap="xs" flexWrap="wrap" marginTop="xs">
-                {todo.tags.map((tag) => (
-                  <Chip
-                    key={tag}
-                    label={tag}
-                    size="sm"
-                    variant="outlined"
-                  />
-                ))}
-              </Box>
-            )}
+              {/* Tags */}
+              {todo.tags.length > 0 && (
+                <Box flexDirection="row" alignItems="center" gap="xxs">
+                  <Icon name="tag" size="xs" color="textTertiary" />
+                  <Text variant="caption" color="textTertiary">
+                    {todo.tags.slice(0, 2).join(', ')}
+                    {todo.tags.length > 2 && ` +${todo.tags.length - 2}`}
+                  </Text>
+                </Box>
+              )}
+            </Box>
           </Box>
 
           {/* Chevron */}
-          <Box alignSelf="center">
-            <Icon name="chevronRight" size="sm" color="textTertiary" />
-          </Box>
+          <Icon name="chevronRight" size="sm" color="textTertiary" />
         </Box>
       </AnimatedPressable>
     </SwipeableRow>

@@ -1,11 +1,11 @@
 /**
  * useWallet Hook
+ * I dati vengono sincronizzati automaticamente via SpacesProvider
  */
 
 import { useCallback, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
 import {
-  loadTransactions,
   loadMonthlySummary,
   createTransaction,
   updateTransaction,
@@ -23,6 +23,7 @@ import {
   selectTopCategories,
   selectMonthlyTotalExpenses,
 } from '../store';
+import { selectCurrentSpaceId } from '@features/spaces/store';
 import { CreateTransactionPayload, UpdateTransactionPayload, ExpenseCategory } from '../domain/types';
 import { addMonths, subMonths, format } from 'date-fns';
 
@@ -38,16 +39,17 @@ export function useWallet() {
   const error = useAppSelector(selectWalletError);
   const topCategories = useAppSelector(selectTopCategories);
   const totalExpenses = useAppSelector(selectMonthlyTotalExpenses);
+  const currentSpaceId = useAppSelector(selectCurrentSpaceId);
 
-  // Load data on mount
-  useEffect(() => {
-    dispatch(loadTransactions());
-  }, [dispatch]);
+  // Note: I dati vengono caricati automaticamente dal SpacesProvider
+  // tramite real-time listener quando cambia lo spazio corrente
 
-  // Load monthly summary when month changes
+  // Load monthly summary when month or space changes
   useEffect(() => {
-    dispatch(loadMonthlySummary(selectedMonth));
-  }, [dispatch, selectedMonth]);
+    if (currentSpaceId) {
+      dispatch(loadMonthlySummary({ spaceId: currentSpaceId, monthString: selectedMonth }));
+    }
+  }, [dispatch, selectedMonth, currentSpaceId]);
 
   // Actions
   const handleCreateTransaction = useCallback(

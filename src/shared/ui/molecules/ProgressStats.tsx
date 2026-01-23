@@ -26,12 +26,14 @@ export interface ProgressStatsProps {
   mainProgress: number;
   /** Label progresso principale */
   mainLabel?: string;
+  /** Numero completati (per mostrare X/Y nel ring) */
+  completed?: number;
+  /** Totale (per mostrare X/Y nel ring) */
+  total?: number;
   /** Items di progresso secondari */
   items?: ProgressItem[];
   /** Colore principale */
   color?: SemanticColorKey;
-  /** Mostra percentuale nel ring */
-  showPercentage?: boolean;
   /** Test ID */
   testID?: string;
 }
@@ -40,9 +42,10 @@ export function ProgressStats({
   title,
   mainProgress,
   mainLabel = 'Completato',
+  completed,
+  total,
   items = [],
-  color = 'primary',
-  showPercentage = true,
+  color = 'success',
   testID,
 }: ProgressStatsProps): JSX.Element {
   return (
@@ -62,15 +65,19 @@ export function ProgressStats({
             color={color}
           >
             <Box alignItems="center">
-              {showPercentage && (
-                <AnimatedNumber
-                  value={mainProgress}
-                  format="integer"
-                  suffix="%"
-                  variant="headingSmall"
-                  weight="bold"
-                  color="textPrimary"
-                />
+              {completed !== undefined && total !== undefined ? (
+                <Box alignItems="center">
+                  <Text variant="headingMedium" weight="bold" color={color}>
+                    {completed}
+                  </Text>
+                  <Text variant="caption" color="textTertiary">
+                    di {total}
+                  </Text>
+                </Box>
+              ) : (
+                <Text variant="headingSmall" weight="bold" color="textPrimary">
+                  {Math.round(mainProgress)}%
+                </Text>
               )}
             </Box>
           </AnimatedProgressRing>
@@ -92,7 +99,7 @@ export function ProgressStats({
                   </Text>
                 </Box>
                 <AnimatedBar
-                  value={(item.value / item.total) * 100}
+                  value={item.total > 0 ? (item.value / item.total) * 100 : 0}
                   color={item.color}
                   size="xs"
                   delay={index * 100}

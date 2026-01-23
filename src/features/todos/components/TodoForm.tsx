@@ -1,7 +1,7 @@
 /**
  * TodoForm Component - NO TAG NATIVI
  * MOLECULE: Usa solo atoms del design system
- * Features: BottomSheet, DateTimePicker, SegmentedControl, AnimatedPressable
+ * Features: Modal, DateTimePicker, SegmentedControl, AnimatedPressable
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -20,7 +20,7 @@ import {
   AnimatedPressable,
   type SegmentedControlOption,
 } from '@shared/ui';
-import { BottomSheet } from '@shared/ui/molecules';
+import { Modal } from '@shared/ui/molecules';
 import {
   Todo,
   CreateTodoPayload,
@@ -167,12 +167,12 @@ export function TodoForm({
   };
 
   return (
-    <BottomSheet
-      isOpen={visible}
+    <Modal
+      visible={visible}
       onClose={onClose}
       title={isEditing ? 'Modifica todo' : 'Nuovo todo'}
-      snapPoints={['90%']}
       scrollable
+      dismissOnBackdrop={false}
     >
       <VStack spacing="lg" paddingBottom="xl">
         {/* Title */}
@@ -410,6 +410,6 @@ export function TodoForm({
           </Box>
         </HStack>
       </VStack>
-    </BottomSheet>
+    </Modal>
   );
 }

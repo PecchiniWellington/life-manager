@@ -22,6 +22,11 @@ import { useTheme } from '../theme';
 export type InputSize = 'sm' | 'md' | 'lg';
 
 /**
+ * Input variants
+ */
+export type InputVariant = 'default' | 'ghost';
+
+/**
  * Input Props
  */
 export interface InputProps extends Omit<TextInputProps, 'style'> {
@@ -33,6 +38,8 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   helperText?: string;
   /** Dimensione dell'input */
   size?: InputSize;
+  /** Variante dell'input */
+  variant?: InputVariant;
   /** Se true, l'input è disabilitato */
   disabled?: boolean;
   /** Icona a sinistra */
@@ -41,6 +48,8 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   rightIcon?: React.ReactNode;
   /** Se true, l'input occupa tutta la larghezza */
   fullWidth?: boolean;
+  /** Stile personalizzato per il TextInput */
+  style?: TextStyle;
 }
 
 /**
@@ -61,6 +70,7 @@ export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean
     error,
     helperText,
     size = 'md',
+    variant = 'default',
     disabled = false,
     leftIcon,
     rightIcon,
@@ -69,6 +79,7 @@ export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean
     onBlur,
     _isMultiline,
     multiline,
+    style,
     ...rest
   },
   ref
@@ -77,6 +88,7 @@ export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean
   const [isFocused, setIsFocused] = useState(false);
   const config = sizeConfig[size];
   const isMultilineInput = _isMultiline || multiline;
+  const isGhost = variant === 'ghost';
 
   const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setIsFocused(true);
@@ -89,6 +101,7 @@ export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean
   };
 
   const getBorderColor = () => {
+    if (isGhost) return 'transparent';
     if (error) return theme.colors.error;
     if (isFocused) return theme.colors.borderFocus;
     return theme.colors.border;
@@ -97,15 +110,17 @@ export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean
   const containerStyle: ViewStyle = {
     flexDirection: 'row',
     alignItems: isMultilineInput ? 'flex-start' : 'center',
-    backgroundColor: disabled
-      ? theme.colors.backgroundTertiary
-      : theme.colors.surface,
-    borderWidth: 1,
+    backgroundColor: isGhost
+      ? 'transparent'
+      : disabled
+        ? theme.colors.backgroundTertiary
+        : theme.colors.surface,
+    borderWidth: isGhost ? 0 : 1,
     borderColor: getBorderColor(),
     borderRadius: theme.radius.md,
-    minHeight: config.height,
-    ...(isMultilineInput ? {} : { height: config.height }),
-    paddingHorizontal: config.padding,
+    minHeight: isGhost ? undefined : config.height,
+    ...(isMultilineInput || isGhost ? {} : { height: config.height }),
+    paddingHorizontal: isGhost ? 0 : config.padding,
     ...(isMultilineInput ? { paddingVertical: config.padding } : {}),
   };
 
@@ -115,6 +130,7 @@ export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean
     color: disabled ? theme.colors.textDisabled : theme.colors.textPrimary,
     paddingVertical: 0,
     paddingHorizontal: leftIcon || rightIcon ? 8 : 0,
+    ...(typeof style === 'object' ? style : {}),
   };
 
   return (
