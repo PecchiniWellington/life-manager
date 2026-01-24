@@ -1,10 +1,11 @@
 /**
  * Profile Screen
  * Schermata profilo utente con settings e logout
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React from 'react';
-import { Alert, ScrollView, Switch } from 'react-native';
+import { Alert } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import {
   Box,
@@ -12,6 +13,8 @@ import {
   Icon,
   GlassCard,
   AnimatedPressable,
+  ScrollContainer,
+  Toggle,
 } from '@shared/ui';
 import { useThemeContext } from '@shared/ui/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -63,7 +66,7 @@ export function ProfileScreen(): JSX.Element {
         </Text>
       </Box>
 
-      <ScrollView
+      <ScrollContainer
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
       >
@@ -135,14 +138,9 @@ export function ProfileScreen(): JSX.Element {
                 label="Tema scuro"
                 onPress={toggleTheme}
                 rightElement={
-                  <Switch
+                  <Toggle
                     value={theme.isDark}
                     onValueChange={toggleTheme}
-                    trackColor={{
-                      false: theme.colors.surfaceSecondary,
-                      true: theme.colors.primary
-                    }}
-                    thumbColor="#FFFFFF"
                   />
                 }
               />
@@ -208,7 +206,7 @@ export function ProfileScreen(): JSX.Element {
             </AnimatedPressable>
           </Box>
         </Animated.View>
-      </ScrollView>
+      </ScrollContainer>
     </Box>
   );
 }

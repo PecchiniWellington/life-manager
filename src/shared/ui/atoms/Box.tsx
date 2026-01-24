@@ -1,22 +1,8 @@
-/**
- * Box Atom
- * Componente base per layout, unico punto di accesso a View
- */
-
 import React, { forwardRef } from 'react';
-import {
-  View,
-  ViewStyle,
-  StyleSheet,
-  ViewProps,
-  FlexStyle,
-} from 'react-native';
+import { View, ViewStyle, ViewProps, FlexStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { SpacingKey, RadiusKey, ShadowKey, SemanticColorKey } from '../tokens';
 
-/**
- * Box Props
- */
 export interface BoxProps extends Omit<ViewProps, 'style'> {
   // Spacing
   padding?: SpacingKey;
@@ -83,10 +69,6 @@ export interface BoxProps extends Omit<ViewProps, 'style'> {
   children?: React.ReactNode;
 }
 
-/**
- * Box Component
- * Atom base per tutti i layout containers
- */
 export const Box = forwardRef<View, BoxProps>(function Box(
   {
     // Spacing

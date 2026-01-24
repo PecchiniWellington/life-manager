@@ -1,10 +1,5 @@
-/**
- * Button Atom
- * Componente per azioni primarie e secondarie
- */
-
 import React from 'react';
-import { ActivityIndicator, ViewStyle } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { Pressable, PressableProps } from './Pressable';
 import { Text } from './Text';
 import { Box } from './Box';
@@ -44,7 +39,10 @@ export interface ButtonProps extends Omit<PressableProps, 'padding' | 'paddingX'
 /**
  * Size configurations
  */
-const sizeConfig: Record<ButtonSize, { paddingX: SpacingKey; paddingY: SpacingKey; minHeight: number }> = {
+const sizeConfig: Record<
+  ButtonSize,
+  { paddingX: SpacingKey; paddingY: SpacingKey; minHeight: number }
+> = {
   sm: { paddingX: 'md', paddingY: 'xs', minHeight: 32 },
   md: { paddingX: 'lg', paddingY: 'sm', minHeight: 44 },
   lg: { paddingX: 'xl', paddingY: 'md', minHeight: 52 },
@@ -137,10 +135,7 @@ export function Button({
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={theme.colors[colors.textColor]}
-        />
+        <ActivityIndicator size="small" color={theme.colors[colors.textColor]} />
       ) : (
         <Box flexDirection="row" alignItems="center" gap="xs">
           {leftIcon}

@@ -1,11 +1,12 @@
 /**
  * CalendarMonthView Component - Modern Design
  * Vista mensile stile TimeTree con eventi inline - fullscreen
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React, { useMemo } from 'react';
-import { View, StyleSheet, Dimensions, Text as RNText } from 'react-native';
-import { Box, Text, Pressable } from '@shared/ui';
+import { Dimensions } from 'react-native';
+import { Box, Text, AnimatedPressable } from '@shared/ui';
 import { useTheme } from '@shared/ui/theme';
 import { eventColors, EventColor } from '@shared/ui/tokens';
 import { CalendarEvent } from '../domain/types';
@@ -57,7 +58,7 @@ export function CalendarMonthView({
   onSelectDate,
   onEventPress,
 }: CalendarMonthViewProps): JSX.Element {
-  const theme = useTheme();
+  const { colors } = useTheme();
   const currentDate = parseISO(selectedDate);
 
   // Generate weeks for the month
@@ -169,175 +170,146 @@ export function CalendarMonthView({
   const weekDayNames = ['LUN', 'MAR', 'MER', 'GIO', 'VEN', 'SAB', 'DOM'];
 
   return (
-    <View style={styles.container}>
+    <Box
+      flex={1}
+      style={{
+        backgroundColor: '#f8fafc',
+        overflow: 'hidden',
+        marginTop: 12,
+      }}
+    >
       {/* Week day headers */}
-      <View style={styles.headerRow}>
+      <Box
+        flexDirection="row"
+        style={{
+          paddingBottom: 8,
+          paddingTop: 12,
+          backgroundColor: '#f8fafc',
+        }}
+      >
         {weekDayNames.map((day, index) => (
-          <View key={day} style={styles.dayHeader}>
+          <Box
+            key={day}
+            alignItems="center"
+            justifyContent="center"
+            style={{ width: DAY_WIDTH }}
+          >
             <Text
               variant="labelSmall"
               color={index >= 5 ? 'error' : 'textSecondary'}
-              style={styles.dayHeaderText}
+              style={{ fontSize: 10, fontWeight: '600' }}
             >
               {day}
             </Text>
-          </View>
+          </Box>
         ))}
-      </View>
+      </Box>
 
       {/* Weeks - flex to fill available space */}
-      <View style={styles.weeksContainer}>
+      <Box flex={1}>
         {weeks.map((week, weekIndex) => {
           const eventBars = getEventBarsForWeek(week.days);
 
           return (
-            <View
+            <Box
               key={weekIndex}
-              style={[
-                styles.weekRow,
-                { borderBottomColor: theme.colors.separator },
-              ]}
+              flex={1}
+              style={{
+                borderBottomWidth: 0.5,
+                borderBottomColor: colors.separator,
+              }}
             >
-                {/* Day numbers row */}
-                <View style={styles.dayNumbersRow}>
-                  {week.days.map((day, dayIndex) => {
-                    const isInMonth = isSameMonth(day, currentDate);
-                    const isSelected = isSameDay(day, currentDate);
-                    const isTodayDate = isToday(day);
-                    const isWeekend = dayIndex >= 5;
+              {/* Day numbers row */}
+              <Box flexDirection="row" style={{ height: DAY_NUMBER_HEIGHT }}>
+                {week.days.map((day, dayIndex) => {
+                  const isInMonth = isSameMonth(day, currentDate);
+                  const isSelected = isSameDay(day, currentDate);
+                  const isTodayDate = isToday(day);
+                  const isWeekend = dayIndex >= 5;
 
-                    return (
-                      <Pressable
-                        key={dayIndex}
-                        onPress={() => onSelectDate(day.toISOString())}
-                        style={styles.dayCell}
-                      >
-                        <View
-                          style={[
-                            styles.dayNumber,
-                            isSelected && { backgroundColor: theme.colors.primary },
-                            isTodayDate && !isSelected && { backgroundColor: theme.colors.warning },
-                          ]}
-                        >
-                          <Text
-                            weight={isTodayDate || isSelected ? 'semibold' : 'regular'}
-                            color={
-                              isSelected
-                                ? 'onPrimary'
-                                : isTodayDate
-                                ? 'onPrimary'
-                                : !isInMonth
-                                ? 'textTertiary'
-                                : isWeekend
-                                ? 'error'
-                                : 'textPrimary'
-                            }
-                            style={styles.dayNumberText}
-                          >
-                            {format(day, 'd')}
-                          </Text>
-                        </View>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-
-                {/* Events area */}
-                <View style={styles.eventsArea}>
-                  {eventBars.map((bar, barIndex) => (
-                    <Pressable
-                      key={`${bar.event.id}-${barIndex}`}
-                      onPress={() => onEventPress?.(bar.event)}
-                      style={[
-                        styles.eventBar,
-                        {
-                          left: bar.startCol * DAY_WIDTH,
-                          top: bar.row * (EVENT_HEIGHT + EVENT_GAP),
-                          width: bar.span * DAY_WIDTH - 2,
-                          height: EVENT_HEIGHT,
-                          backgroundColor: eventColors[bar.event.color as EventColor] || eventColors.blue,
-                        },
-                      ]}
+                  return (
+                    <AnimatedPressable
+                      key={dayIndex}
+                      onPress={() => onSelectDate(day.toISOString())}
+                      haptic="light"
+                      pressScale={0.95}
+                      style={{ width: DAY_WIDTH, alignItems: 'center' }}
                     >
-                      <RNText
-                        numberOfLines={1}
-                        style={styles.eventText}
-                        ellipsizeMode="clip"
+                      <Box
+                        alignItems="center"
+                        justifyContent="center"
+                        style={{
+                          width: 26,
+                          height: 26,
+                          borderRadius: 13,
+                          backgroundColor: isSelected
+                            ? colors.primary
+                            : isTodayDate
+                            ? colors.warning
+                            : 'transparent',
+                        }}
                       >
-                        {bar.event.title}
-                      </RNText>
-                    </Pressable>
-                  ))}
-                </View>
-            </View>
+                        <Text
+                          weight={isTodayDate || isSelected ? 'semibold' : 'regular'}
+                          color={
+                            isSelected
+                              ? 'onPrimary'
+                              : isTodayDate
+                              ? 'onPrimary'
+                              : !isInMonth
+                              ? 'textTertiary'
+                              : isWeekend
+                              ? 'error'
+                              : 'textPrimary'
+                          }
+                          style={{ fontSize: 13 }}
+                        >
+                          {format(day, 'd')}
+                        </Text>
+                      </Box>
+                    </AnimatedPressable>
+                  );
+                })}
+              </Box>
+
+              {/* Events area */}
+              <Box flex={1} style={{ position: 'relative' }}>
+                {eventBars.map((bar, barIndex) => (
+                  <AnimatedPressable
+                    key={`${bar.event.id}-${barIndex}`}
+                    onPress={() => onEventPress?.(bar.event)}
+                    haptic="light"
+                    pressScale={0.98}
+                    style={{
+                      position: 'absolute',
+                      left: bar.startCol * DAY_WIDTH,
+                      top: bar.row * (EVENT_HEIGHT + EVENT_GAP),
+                      width: bar.span * DAY_WIDTH - 2,
+                      height: EVENT_HEIGHT,
+                      backgroundColor: eventColors[bar.event.color as EventColor] || eventColors.blue,
+                      borderRadius: 4,
+                      paddingHorizontal: 4,
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Text
+                      numberOfLines={1}
+                      style={{
+                        fontSize: 10,
+                        fontWeight: '600',
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {bar.event.title}
+                    </Text>
+                  </AnimatedPressable>
+                ))}
+              </Box>
+            </Box>
           );
         })}
-      </View>
-    </View>
+      </Box>
+    </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-    overflow: 'hidden',
-    marginTop: 12,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    paddingBottom: 8,
-    paddingTop: 12,
-    backgroundColor: '#f8fafc',
-  },
-  dayHeader: {
-    width: DAY_WIDTH,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayHeaderText: {
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  weeksContainer: {
-    flex: 1,
-  },
-  weekRow: {
-    flex: 1,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  dayNumbersRow: {
-    flexDirection: 'row',
-    height: DAY_NUMBER_HEIGHT,
-  },
-  dayCell: {
-    width: DAY_WIDTH,
-    alignItems: 'center',
-  },
-  dayNumber: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayNumberText: {
-    fontSize: 13,
-  },
-  eventsArea: {
-    flex: 1,
-    position: 'relative',
-  },
-  eventBar: {
-    position: 'absolute',
-    borderRadius: 4,
-    paddingHorizontal: 4,
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  eventText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-});

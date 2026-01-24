@@ -30,6 +30,7 @@ export { Icon, iconMap, getIconSize, type IconProps, type IconName, type IconSiz
 export { SegmentedControl, type SegmentedControlProps, type SegmentedControlOption, type SegmentedControlSize } from './SegmentedControl';
 export { SwipeableRow, type SwipeableRowProps, type SwipeAction, type SwipeActionColor } from './SwipeableRow';
 export { DateTimePicker, type DateTimePickerProps, type DateTimePickerMode } from './DateTimePicker';
+export { Toggle, type ToggleProps } from './Toggle';
 
 // List
 export { List, ListItem, ListSection, type ListProps, type ListItemProps, type ListSectionProps } from './List';
