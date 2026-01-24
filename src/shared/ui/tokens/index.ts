@@ -10,3 +10,4 @@ export * from './radius';
 export * from './shadows';
 export * from './animation';
 export * from './sizes';
+export * from './overlay';

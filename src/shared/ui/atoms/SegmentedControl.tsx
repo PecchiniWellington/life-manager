@@ -14,7 +14,7 @@ import * as Haptics from 'expo-haptics';
 import { AnimatedPressable } from './AnimatedPressable';
 import { Text } from './Text';
 import { useTheme } from '../theme';
-import { springs, radius as radiusTokens, shadows } from '../tokens';
+import { springs, radius as radiusTokens, shadows, sizes, spacing } from '../tokens';
 
 export interface SegmentedControlOption<T = string> {
   value: T;
@@ -40,9 +40,9 @@ export interface SegmentedControlProps<T = string> {
 }
 
 const heights: Record<SegmentedControlSize, number> = {
-  sm: 28,
-  md: 32,
-  lg: 40,
+  sm: sizes.segmentedControl.sm,
+  md: sizes.segmentedControl.md,
+  lg: sizes.segmentedControl.lg,
 };
 
 /**
@@ -184,7 +184,7 @@ export function SegmentedControl<T = string>({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 2,
+    padding: spacing.xxs,
     position: 'relative',
   },
   fullWidth: {
@@ -192,13 +192,13 @@ const styles = StyleSheet.create({
   },
   indicator: {
     position: 'absolute',
-    top: 2,
-    bottom: 2,
+    top: spacing.xxs,
+    bottom: spacing.xxs,
   },
   segment: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
   },
   segmentFullWidth: {
     flex: 1,

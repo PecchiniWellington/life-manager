@@ -25,6 +25,7 @@ import {
   categoryLabels,
   categoryIcons,
 } from '../domain/types';
+import { sizes } from '@shared/ui/tokens';
 
 interface TransactionFormProps {
   /** Se il form è visibile */
@@ -192,8 +193,8 @@ export function TransactionForm({
                     borderColor="primary"
                   >
                     <Box
-                      width={40}
-                      height={40}
+                      width={sizes.iconContainer.md}
+                      height={sizes.iconContainer.md}
                       borderRadius="full"
                       backgroundColor={isSelected ? 'primary' : 'surface'}
                       alignItems="center"

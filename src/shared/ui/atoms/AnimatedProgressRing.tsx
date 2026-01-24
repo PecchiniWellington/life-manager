@@ -12,10 +12,9 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withSpring,
-  Easing,
 } from 'react-native-reanimated';
 import { useTheme } from '../theme';
-import { SemanticColorKey } from '../tokens';
+import { SemanticColorKey, easings, overlay } from '../tokens';
 
 export type ProgressRingSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -79,7 +78,7 @@ export function AnimatedProgressRing({
     } else {
       animatedProgress.value = withTiming(clampedProgress, {
         duration,
-        easing: Easing.bezier(0.4, 0, 0.2, 1),
+        easing: easings.standard,
       });
     }
   }, [progress, spring, duration]);
@@ -196,7 +195,7 @@ function ProgressArc({ diameter, stroke, color, animatedValue }: ProgressArcProp
       width: diameter - stroke * 2,
       height: stroke,
       borderRadius: stroke / 2,
-      backgroundColor: `${color}30`,
+      backgroundColor: overlay.medium,
     }]}>
       <Animated.View
         style={[

@@ -6,7 +6,7 @@
 import React from 'react';
 import { Box } from './Box';
 import { Text } from './Text';
-import { SemanticColorKey } from '../tokens';
+import { SemanticColorKey, sizes } from '../tokens';
 
 /**
  * Badge variants
@@ -53,9 +53,9 @@ const variantTextColors: Record<BadgeVariant, SemanticColorKey> = {
 };
 
 const sizeConfig: Record<BadgeSize, { minWidth: number; height: number; paddingX: number; dotSize: number }> = {
-  sm: { minWidth: 16, height: 16, paddingX: 4, dotSize: 6 },
-  md: { minWidth: 20, height: 20, paddingX: 6, dotSize: 8 },
-  lg: { minWidth: 24, height: 24, paddingX: 8, dotSize: 10 },
+  sm: { minWidth: sizes.badge.sm, height: sizes.badge.sm, paddingX: sizes.badgePaddingX.sm, dotSize: sizes.badgeDot.sm },
+  md: { minWidth: sizes.badge.md, height: sizes.badge.md, paddingX: sizes.badgePaddingX.md, dotSize: sizes.badgeDot.md },
+  lg: { minWidth: sizes.badge.lg, height: sizes.badge.lg, paddingX: sizes.badgePaddingX.lg, dotSize: sizes.badgeDot.lg },
 };
 
 /**

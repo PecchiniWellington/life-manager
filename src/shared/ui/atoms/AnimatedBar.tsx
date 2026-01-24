@@ -13,10 +13,9 @@ import Animated, {
   withTiming,
   withSpring,
   withDelay,
-  Easing,
 } from 'react-native-reanimated';
 import { useTheme } from '../theme';
-import { SemanticColorKey, RadiusKey } from '../tokens';
+import { SemanticColorKey, RadiusKey, easings } from '../tokens';
 
 export type BarDirection = 'horizontal' | 'vertical';
 export type BarSize = 'xs' | 'sm' | 'md' | 'lg';
@@ -77,7 +76,7 @@ export function AnimatedBar({
       ? withSpring(clampedValue, { damping: 15, stiffness: 90 })
       : withTiming(clampedValue, {
           duration,
-          easing: Easing.bezier(0.4, 0, 0.2, 1),
+          easing: easings.standard,
         });
 
     animatedValue.value = delay > 0 ? withDelay(delay, animation) : animation;

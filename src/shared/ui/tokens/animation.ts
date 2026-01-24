@@ -129,3 +129,21 @@ export const animationPresets = {
 } as const;
 
 export type AnimationPreset = keyof typeof animationPresets;
+
+/**
+ * Easing curves for timing animations
+ */
+export const easings = {
+  /** Standard easing - for most transitions */
+  standard: Easing.bezier(0.4, 0, 0.2, 1),
+  /** Decelerate - for entering elements */
+  decelerate: Easing.bezier(0, 0, 0.2, 1),
+  /** Accelerate - for exiting elements */
+  accelerate: Easing.bezier(0.4, 0, 1, 1),
+  /** Sharp - for quick transitions */
+  sharp: Easing.bezier(0.4, 0, 0.6, 1),
+  /** Linear */
+  linear: Easing.linear,
+} as const;
+
+export type EasingType = keyof typeof easings;

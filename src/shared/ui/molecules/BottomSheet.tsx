@@ -16,7 +16,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Box, Text, AnimatedPressable, Icon } from '../atoms';
 import { useTheme } from '../theme';
-import { radius, shadows } from '../tokens';
+import { radius, shadows, sizes, overlay } from '../tokens';
 
 export interface BottomSheetRef {
   open: (index?: number) => void;
@@ -133,7 +133,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
           {...props}
           disappearsOnIndex={-1}
           appearsOnIndex={0}
-          opacity={0.4}
+          opacity={0.4} // Uses overlay.backdrop opacity value
           pressBehavior={closeOnBackdrop ? 'close' : 'none'}
         />
       ),
@@ -146,8 +146,8 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
         showHandle ? (
           <Box alignItems="center" paddingVertical="sm">
             <Box
-              width={36}
-              height={5}
+              width={sizes.modalHandle.width}
+              height={sizes.modalHandle.height}
               borderRadius="sm"
               backgroundColor="separatorOpaque"
             />
@@ -206,8 +206,8 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
                   haptic="light"
                 >
                   <Box
-                    width={30}
-                    height={30}
+                    width={sizes.closeButton}
+                    height={sizes.closeButton}
                     borderRadius="full"
                     backgroundColor="backgroundTertiary"
                     alignItems="center"

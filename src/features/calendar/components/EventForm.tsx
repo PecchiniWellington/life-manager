@@ -25,7 +25,7 @@ import {
   RecurrenceRule,
   ChecklistItem,
 } from '../domain/types';
-import { EventColor, eventColors } from '@shared/ui/tokens';
+import { EventColor, eventColors, sizes, spacing, typography } from '@shared/ui/tokens';
 import { ReminderPicker } from './ReminderPicker';
 import { RecurrencePicker } from './RecurrencePicker';
 import { ChecklistEditor } from './ChecklistEditor';
@@ -349,7 +349,7 @@ export function EventForm({
           error={errors.title}
           size="lg"
           variant="ghost"
-          style={{ fontSize: 24, fontWeight: '600' }}
+          style={{ fontSize: typography.headingMedium.fontSize, fontWeight: '600' }}
         />
 
         {/* All Day Toggle */}
@@ -367,16 +367,16 @@ export function EventForm({
               <Text variant="bodyMedium">Tutto il giorno</Text>
             </Box>
             <Box
-              width={44}
-              height={26}
+              width={sizes.toggle.width}
+              height={sizes.toggle.height}
               borderRadius="full"
               backgroundColor={allDay ? 'primary' : 'surfaceSecondary'}
               justifyContent="center"
               paddingX="xs"
             >
               <Box
-                width={22}
-                height={22}
+                width={sizes.toggle.thumb}
+                height={sizes.toggle.thumb}
                 borderRadius="full"
                 backgroundColor="surface"
                 style={{ alignSelf: allDay ? 'flex-end' : 'flex-start' }}
@@ -478,16 +478,16 @@ export function EventForm({
               <Text variant="bodyMedium">Conserva senza data</Text>
             </Box>
             <Box
-              width={44}
-              height={26}
+              width={sizes.toggle.width}
+              height={sizes.toggle.height}
               borderRadius="full"
               backgroundColor={isFloating ? 'primary' : 'surfaceSecondary'}
               justifyContent="center"
               paddingX="xs"
             >
               <Box
-                width={22}
-                height={22}
+                width={sizes.toggle.thumb}
+                height={sizes.toggle.thumb}
                 borderRadius="full"
                 backgroundColor="surface"
                 style={{ alignSelf: isFloating ? 'flex-end' : 'flex-start' }}
@@ -512,8 +512,8 @@ export function EventForm({
                 pressScale={0.9}
               >
                 <Box
-                  width={36}
-                  height={36}
+                  width={sizes.colorPicker}
+                  height={sizes.colorPicker}
                   borderRadius="full"
                   alignItems="center"
                   justifyContent="center"
@@ -678,7 +678,7 @@ export function EventForm({
             accessibilityLabel="Elimina evento"
             fullWidth
             leftIcon={<Icon name="trash" size="sm" color="error" />}
-            style={{ marginTop: 8 }}
+            style={{ marginTop: spacing.sm }}
           />
         )}
 

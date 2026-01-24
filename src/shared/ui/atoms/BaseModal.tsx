@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { spacing, radius } from '../tokens';
+import { spacing, radius, sizes, overlay } from '../tokens';
 import { useTheme } from '../theme';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -47,7 +47,7 @@ export function BaseModal({
   presentationStyle = 'overFullScreen',
   dismissOnBackdrop = true,
   animationType = 'fade',
-  overlayColor = 'rgba(0, 0, 0, 0.5)',
+  overlayColor = overlay.heavy,
 }: BaseModalProps): JSX.Element {
   return (
     <RNModal
@@ -317,9 +317,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   handle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
+    width: sizes.modalHandle.width,
+    height: sizes.modalHandle.height,
+    borderRadius: sizes.modalHandle.height / 2,
   },
   // Center Modal
   centerWrapper: {
@@ -340,12 +340,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   alertTitle: {
-    fontSize: 17,
+    fontSize: sizes.alertFontSize.title,
     fontWeight: '600',
     textAlign: 'center',
   },
   alertMessage: {
-    fontSize: 13,
+    fontSize: sizes.alertFontSize.message,
     textAlign: 'center',
     marginTop: spacing.xs,
   },
@@ -362,6 +362,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   alertButtonText: {
-    fontSize: 17,
+    fontSize: sizes.alertFontSize.button,
   },
 });

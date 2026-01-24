@@ -10,13 +10,12 @@ import Animated, {
   useSharedValue,
   withTiming,
   withSpring,
-  Easing,
   useAnimatedReaction,
   runOnJS,
 } from 'react-native-reanimated';
 import { TextInput, StyleSheet, TextStyle } from 'react-native';
 import { useTheme } from '../theme';
-import { SemanticColorKey, TypographyVariant, typography } from '../tokens';
+import { SemanticColorKey, TypographyVariant, typography, easings } from '../tokens';
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
@@ -80,7 +79,7 @@ export function AnimatedNumber({
     } else {
       animatedValue.value = withTiming(value, {
         duration,
-        easing: Easing.bezier(0.4, 0, 0.2, 1),
+        easing: easings.standard,
       });
     }
   }, [value, spring, duration]);

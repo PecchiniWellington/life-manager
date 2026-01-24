@@ -15,6 +15,7 @@ import {
 import { Box } from './Box';
 import { Text, Label } from './Text';
 import { useTheme } from '../theme';
+import { sizes } from '../tokens';
 
 /**
  * Input sizes
@@ -56,9 +57,9 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
  * Size configurations
  */
 const sizeConfig: Record<InputSize, { height: number; fontSize: number; padding: number }> = {
-  sm: { height: 36, fontSize: 14, padding: 8 },
-  md: { height: 44, fontSize: 16, padding: 12 },
-  lg: { height: 52, fontSize: 18, padding: 16 },
+  sm: { height: sizes.input.sm, fontSize: sizes.inputFontSize.sm, padding: sizes.inputPadding.sm },
+  md: { height: sizes.input.md, fontSize: sizes.inputFontSize.md, padding: sizes.inputPadding.md },
+  lg: { height: sizes.input.lg, fontSize: sizes.inputFontSize.lg, padding: sizes.inputPadding.lg },
 };
 
 /**
@@ -129,7 +130,7 @@ export const Input = forwardRef<TextInput, InputProps & { _isMultiline?: boolean
     fontSize: config.fontSize,
     color: disabled ? theme.colors.textDisabled : theme.colors.textPrimary,
     paddingVertical: 0,
-    paddingHorizontal: leftIcon || rightIcon ? 8 : 0,
+    paddingHorizontal: leftIcon || rightIcon ? sizes.inputPadding.sm : 0,
     ...(typeof style === 'object' ? style : {}),
   };
 

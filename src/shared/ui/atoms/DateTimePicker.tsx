@@ -15,7 +15,7 @@ import { Text } from './Text';
 import { AnimatedPressable } from './AnimatedPressable';
 import { Icon } from './Icon';
 import { useTheme } from '../theme';
-import { radius, spacing } from '../tokens';
+import { radius, spacing, sizes, overlay } from '../tokens';
 
 export type DateTimePickerMode = 'date' | 'time' | 'datetime';
 
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 44,
+    height: sizes.picker.trigger,
     paddingHorizontal: spacing.md,
     borderWidth: 1,
   },
@@ -325,15 +325,15 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: overlay.backdrop,
   },
   pickerContainer: {
     borderTopLeftRadius: radius.sheet,
     borderTopRightRadius: radius.sheet,
-    paddingBottom: spacing['4xl'], // Safe area approximation
+    paddingBottom: spacing['4xl'],
   },
   picker: {
-    height: 216,
+    height: sizes.picker.content,
   },
 });
 
