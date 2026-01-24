@@ -1,18 +1,16 @@
 /**
- * EventItem Component
- * Singolo evento nella lista - NO TAG NATIVI
- * MOLECULE: Usa solo atoms del design system
- * Features: AnimatedPressable, SwipeableRow, GlassCard
+ * EventItem Component - Modern Design
+ * Singolo evento nella lista - Stile coerente con TransactionItem
  */
 
 import React, { useCallback } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   Box,
   Text,
   Icon,
   AnimatedPressable,
   SwipeableRow,
-  GlassCard,
   type SwipeAction,
 } from '@shared/ui';
 import { eventColors } from '@shared/ui/tokens';
@@ -33,7 +31,7 @@ export function EventItem({
   onPress,
   onDelete,
 }: EventItemProps): JSX.Element {
-  const eventColor = eventColors[event.color];
+  const eventColor = eventColors[event.color] || '#3b82f6';
 
   const handlePress = useCallback(() => {
     onPress(event);
@@ -61,55 +59,88 @@ export function EventItem({
         accessibilityHint={`Evento dalle ${formatTime(event.startAt)} alle ${formatTime(event.endAt)}`}
         accessibilityRole="button"
       >
-        <GlassCard variant="solid" padding="md">
-          <Box flexDirection="row" alignItems="center" gap="md">
-            {/* Color indicator */}
-            <Box
-              width={4}
-              height={44}
-              borderRadius="full"
-              style={{ backgroundColor: eventColor }}
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          gap="md"
+          padding="md"
+          borderRadius="lg"
+          backgroundColor="surface"
+          style={styles.itemContainer}
+        >
+          {/* Color indicator with icon */}
+          <Box
+            width={44}
+            height={44}
+            borderRadius="lg"
+            alignItems="center"
+            justifyContent="center"
+            style={{ backgroundColor: `${eventColor}15` }}
+          >
+            <Icon
+              name={event.allDay ? 'calendar' : 'time'}
+              size="md"
+              color="textPrimary"
             />
+          </Box>
 
-            {/* Event info */}
-            <Box flex={1} gap="xs">
-              <Text variant="bodyMedium" weight="semibold" numberOfLines={1}>
+          {/* Event info */}
+          <Box flex={1}>
+            <Box flexDirection="row" alignItems="center" justifyContent="space-between">
+              <Text variant="bodyMedium" weight="semibold" numberOfLines={1} style={{ flex: 1 }}>
                 {event.title}
               </Text>
-
-              <Box flexDirection="row" alignItems="center" gap="xs">
-                <Icon
-                  name={event.allDay ? 'calendar' : 'time'}
-                  size="xs"
-                  color="textSecondary"
-                />
-                {event.allDay ? (
-                  <Text variant="bodySmall" color="textSecondary">
+              {event.allDay && (
+                <Box
+                  borderRadius="sm"
+                  style={{
+                    backgroundColor: `${eventColor}15`,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                  }}
+                >
+                  <Text variant="caption" style={{ color: eventColor, fontSize: 10 }}>
                     Tutto il giorno
                   </Text>
-                ) : (
-                  <Text variant="bodySmall" color="textSecondary">
+                </Box>
+              )}
+            </Box>
+
+            <Box flexDirection="row" alignItems="center" justifyContent="space-between" marginTop="xxs">
+              <Box flexDirection="row" alignItems="center" gap="xs">
+                <Box
+                  width={6}
+                  height={6}
+                  borderRadius="full"
+                  style={{ backgroundColor: eventColor }}
+                />
+                {!event.allDay && (
+                  <Text variant="caption" color="textSecondary">
                     {formatTime(event.startAt)} - {formatTime(event.endAt)}
                   </Text>
                 )}
+                {event.allDay && (
+                  <Text variant="caption" color="textSecondary">
+                    Evento
+                  </Text>
+                )}
               </Box>
-
               {event.description && (
-                <Text
-                  variant="caption"
-                  color="textTertiary"
-                  numberOfLines={1}
-                >
+                <Text variant="caption" color="textTertiary" numberOfLines={1} style={{ maxWidth: 100 }}>
                   {event.description}
                 </Text>
               )}
             </Box>
-
-            {/* Chevron */}
-            <Icon name="chevronRight" size="sm" color="textTertiary" />
           </Box>
-        </GlassCard>
+        </Box>
       </AnimatedPressable>
     </SwipeableRow>
   );
 }
+
+const styles = StyleSheet.create({
+  itemContainer: {
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.04)',
+  },
+});

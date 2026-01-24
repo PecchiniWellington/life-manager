@@ -1,5 +1,5 @@
 /**
- * CalendarMonthView Component
+ * CalendarMonthView Component - Modern Design
  * Vista mensile stile TimeTree con eventi inline - fullscreen
  */
 
@@ -44,10 +44,8 @@ interface EventBar {
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const SIDE_PADDING = 12;
-const WEEK_NUMBER_WIDTH = 18;
-const GRID_WIDTH = SCREEN_WIDTH - (SIDE_PADDING * 2);
-const DAY_WIDTH = (GRID_WIDTH - WEEK_NUMBER_WIDTH) / 7;
+const GRID_WIDTH = SCREEN_WIDTH;
+const DAY_WIDTH = GRID_WIDTH / 7;
 const EVENT_HEIGHT = 16;
 const EVENT_GAP = 1;
 const MAX_VISIBLE_EVENTS = 2;
@@ -174,7 +172,6 @@ export function CalendarMonthView({
     <View style={styles.container}>
       {/* Week day headers */}
       <View style={styles.headerRow}>
-        <View style={styles.weekNumberHeader} />
         {weekDayNames.map((day, index) => (
           <View key={day} style={styles.dayHeader}>
             <Text
@@ -201,19 +198,6 @@ export function CalendarMonthView({
                 { borderBottomColor: theme.colors.separator },
               ]}
             >
-              {/* Week number */}
-              <View style={styles.weekNumber}>
-                <Text
-                  variant="caption"
-                  color="textTertiary"
-                  style={styles.weekNumberText}
-                >
-                  {week.weekNumber}
-                </Text>
-              </View>
-
-              {/* Days and events */}
-              <View style={styles.daysContainer}>
                 {/* Day numbers row */}
                 <View style={styles.dayNumbersRow}>
                   {week.days.map((day, dayIndex) => {
@@ -285,7 +269,6 @@ export function CalendarMonthView({
                     </Pressable>
                   ))}
                 </View>
-              </View>
             </View>
           );
         })}
@@ -297,20 +280,15 @@ export function CalendarMonthView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f8fafc',
+    overflow: 'hidden',
+    marginTop: 12,
   },
   headerRow: {
     flexDirection: 'row',
-    paddingBottom: 4,
-  },
-  weekNumberHeader: {
-    width: WEEK_NUMBER_WIDTH,
-  },
-  weekNumber: {
-    width: WEEK_NUMBER_WIDTH,
-    paddingTop: 2,
-  },
-  weekNumberText: {
-    fontSize: 10,
+    paddingBottom: 8,
+    paddingTop: 12,
+    backgroundColor: '#f8fafc',
   },
   dayHeader: {
     width: DAY_WIDTH,
@@ -326,11 +304,7 @@ const styles = StyleSheet.create({
   },
   weekRow: {
     flex: 1,
-    flexDirection: 'row',
     borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  daysContainer: {
-    flex: 1,
   },
   dayNumbersRow: {
     flexDirection: 'row',
@@ -341,9 +315,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dayNumber: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -356,8 +330,8 @@ const styles = StyleSheet.create({
   },
   eventBar: {
     position: 'absolute',
-    borderRadius: 3,
-    paddingHorizontal: 3,
+    borderRadius: 4,
+    paddingHorizontal: 4,
     justifyContent: 'center',
     overflow: 'hidden',
   },

@@ -1,20 +1,20 @@
 /**
- * TodosScreen - NO TAG NATIVI
- * FEATURE COMPONENT: Usa solo atoms e molecules del design system
- * Features: AnimatedList, SwipeableRow, BottomSheet, SegmentedControl, ProgressStats
+ * TodosScreen - Modern Design
+ * Stile coerente con WalletScreen
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, Pressable } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import {
   Screen,
   Box,
   Icon,
-  AnimatedList,
-  AnimatedPressable,
-  type ListAnimationPreset,
+  Text,
+  VStack,
+  GlassCard,
 } from '@shared/ui';
-import { ScreenTitle, EmptyState, ProgressStats, type ProgressItem } from '@shared/ui/molecules';
+import { EmptyState } from '@shared/ui/molecules';
 import { TodoItem, TodoFilters, TodoForm } from '../components';
 import { useTodos } from '../hooks';
 import { Todo, CreateTodoPayload, UpdateTodoPayload } from '../domain/types';
@@ -58,32 +58,7 @@ export function TodosScreen(): JSX.Element {
 
   // Calculate progress
   const totalTodos = countByStatus.todo + countByStatus.doing + countByStatus.done;
-  const completionProgress = totalTodos > 0 ? (countByStatus.done / totalTodos) * 100 : 0;
-
-  // Progress items for the chart
-  const progressItems: ProgressItem[] = useMemo(
-    () => [
-      {
-        label: 'Completati',
-        value: countByStatus.done,
-        total: totalTodos,
-        color: 'success',
-      },
-      {
-        label: 'In corso',
-        value: countByStatus.doing,
-        total: totalTodos,
-        color: 'warning',
-      },
-      {
-        label: 'Da fare',
-        value: countByStatus.todo,
-        total: totalTodos,
-        color: 'primary',
-      },
-    ],
-    [countByStatus, totalTodos]
-  );
+  const completionProgress = totalTodos > 0 ? Math.round((countByStatus.done / totalTodos) * 100) : 0;
 
   const handleTodoPress = useCallback((todo: Todo) => {
     setEditingTodo(todo);
@@ -121,102 +96,123 @@ export function TodosScreen(): JSX.Element {
     setShowFilters((prev) => !prev);
   }, []);
 
-  // Render item per AnimatedList
-  const renderTodoItem = useCallback(
-    ({ item }: { item: Todo }) => (
-      <TodoItem
-        todo={item}
-        onPress={handleTodoPress}
-        onToggleStatus={toggleStatus}
-        onDelete={handleDeleteTodo}
-      />
-    ),
-    [handleTodoPress, toggleStatus, handleDeleteTodo]
-  );
-
-  // Key extractor
-  const keyExtractor = useCallback((item: Todo) => item.id, []);
-
-  // Item separator
-  const ItemSeparator = useCallback(() => <Box height={8} />, []);
-
-  // Animation preset
-  const animationPreset: ListAnimationPreset = 'fadeUp';
 
   return (
-    <Screen paddingHorizontal="lg" withTabBar={false}>
-      {/* Header */}
-      <ScreenTitle
-        title="Todo"
-        subtitle={totalTodos > 0 ? `${totalTodos} ${totalTodos === 1 ? 'attività' : 'attività'}` : undefined}
-        topContent={
-          <SpaceSelector
-            onCreateSpace={() => setShowCreateSpace(true)}
-            onOpenSettings={handleOpenSpaceSettings}
-            onOpenInvites={() => setShowInvites(true)}
-          />
-        }
-        rightAction={
-          <Box flexDirection="row" gap="xs">
-            <AnimatedPressable
-              onPress={toggleFilters}
-              haptic="light"
-              pressScale={0.9}
-              accessibilityLabel="Mostra filtri"
-              accessibilityRole="button"
-            >
-              <Box
-                padding="sm"
-                backgroundColor={showFilters || hasActiveFilters ? 'primaryLight' : 'transparent'}
-                borderRadius="md"
-              >
-                <Icon
-                  name="filter"
-                  size="sm"
-                  color={hasActiveFilters || showFilters ? 'primary' : 'textSecondary'}
-                />
-              </Box>
-            </AnimatedPressable>
-            <AnimatedPressable
-              onPress={handleAddTodo}
-              haptic="light"
-              pressScale={0.9}
-              accessibilityLabel="Aggiungi nuovo todo"
-              accessibilityRole="button"
-            >
-              <Box
-                padding="sm"
-                backgroundColor="primary"
-                borderRadius="md"
-              >
-                <Icon name="add" size="sm" color="onPrimary" />
-              </Box>
-            </AnimatedPressable>
-          </Box>
-        }
+    <Screen scroll paddingHorizontal="lg">
+      {/* Space Selector */}
+      <SpaceSelector
+        onCreateSpace={() => setShowCreateSpace(true)}
+        onOpenSettings={handleOpenSpaceSettings}
+        onOpenInvites={() => setShowInvites(true)}
       />
 
-      {/* Progress Stats - only show when there are todos */}
-      {totalTodos > 0 && !showFilters && (
-        <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(200)}>
-          <Box marginBottom="lg">
-            <ProgressStats
-              title="Il tuo progresso"
-              mainProgress={completionProgress}
-              mainLabel="completati"
-              completed={countByStatus.done}
-              total={totalTodos}
-              items={progressItems}
-              color="success"
-            />
-          </Box>
-        </Animated.View>
-      )}
+      <VStack spacing="lg">
+        {/* Stats Card with Add Button */}
+        <Box
+          borderRadius="xl"
+          padding="md"
+          style={styles.statsCard}
+        >
+          <Box gap="md">
+            {/* Header row with stats and add button */}
+            <Box flexDirection="row" alignItems="flex-start" justifyContent="space-between">
+              <Box>
+                <Text variant="caption" color="textSecondary">
+                  Attività totali
+                </Text>
+                <Text variant="headingLarge" weight="bold" color="textPrimary" style={styles.statsText}>
+                  {totalTodos}
+                </Text>
+                <Text variant="caption" color="textTertiary">
+                  {completionProgress}% completato
+                </Text>
+              </Box>
+              <Pressable
+                onPress={handleAddTodo}
+                style={styles.addButton}
+                accessibilityLabel="Aggiungi nuovo todo"
+              >
+                <Icon name="add" size="md" color="onPrimary" />
+              </Pressable>
+            </Box>
 
-      {/* Filters con animazione */}
-      {showFilters && (
-        <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(150)}>
-          <Box marginBottom="lg">
+            {/* Progress bar */}
+            <Box>
+              <Box height={8} borderRadius="full" backgroundColor="border" overflow="hidden">
+                <Box
+                  height={8}
+                  borderRadius="full"
+                  style={{
+                    width: `${completionProgress}%`,
+                    backgroundColor: '#22c55e',
+                  }}
+                />
+              </Box>
+            </Box>
+
+            {/* Status breakdown */}
+            <Box flexDirection="row" gap="sm">
+              <Box flex={1} padding="sm" borderRadius="lg" style={styles.statusBox}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#3b82f6' }} />
+                  <Text variant="caption" color="textSecondary">Da fare</Text>
+                </Box>
+                <Text variant="bodyMedium" weight="bold" color="textPrimary">
+                  {countByStatus.todo}
+                </Text>
+              </Box>
+              <Box flex={1} padding="sm" borderRadius="lg" style={styles.statusBox}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#f59e0b' }} />
+                  <Text variant="caption" color="textSecondary">In corso</Text>
+                </Box>
+                <Text variant="bodyMedium" weight="bold" color="textPrimary">
+                  {countByStatus.doing}
+                </Text>
+              </Box>
+              <Box flex={1} padding="sm" borderRadius="lg" style={styles.statusBox}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#22c55e' }} />
+                  <Text variant="caption" color="textSecondary">Completati</Text>
+                </Box>
+                <Text variant="bodyMedium" weight="bold" color="textPrimary">
+                  {countByStatus.done}
+                </Text>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Filter toggle */}
+        <Pressable onPress={toggleFilters}>
+          <GlassCard variant="solid" padding="sm">
+            <Box flexDirection="row" alignItems="center" gap="md">
+              <Box
+                width={40}
+                height={40}
+                borderRadius="lg"
+                alignItems="center"
+                justifyContent="center"
+                style={{ backgroundColor: hasActiveFilters ? 'rgba(59, 130, 246, 0.15)' : 'rgba(0,0,0,0.04)' }}
+              >
+                <Icon name="filter" size="sm" color={hasActiveFilters ? 'primary' : 'textSecondary'} />
+              </Box>
+              <Box flex={1}>
+                <Text variant="bodySmall" weight="semibold" color="textPrimary">
+                  Filtri
+                </Text>
+                <Text variant="caption" color="textSecondary">
+                  {hasActiveFilters ? 'Filtri attivi' : 'Nessun filtro attivo'}
+                </Text>
+              </Box>
+              <Icon name={showFilters ? 'chevronUp' : 'chevronDown'} size="sm" color="textTertiary" />
+            </Box>
+          </GlassCard>
+        </Pressable>
+
+        {/* Filters */}
+        {showFilters && (
+          <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(150)}>
             <TodoFilters
               filter={filter}
               onStatusChange={setStatusFilter}
@@ -225,37 +221,55 @@ export function TodosScreen(): JSX.Element {
               onClearFilters={clearFilters}
               hasActiveFilters={hasActiveFilters}
             />
-          </Box>
-        </Animated.View>
-      )}
+          </Animated.View>
+        )}
 
-      {/* Todo list con AnimatedList */}
-      {todos.length === 0 ? (
-        <EmptyState
-          icon="todo"
-          title={hasActiveFilters ? 'Nessun risultato' : 'Nessun todo'}
-          description={
-            hasActiveFilters
-              ? 'Prova a modificare i filtri'
-              : 'Inizia aggiungendo il tuo primo todo'
-          }
-          actionLabel={hasActiveFilters ? 'Rimuovi filtri' : 'Aggiungi todo'}
-          onAction={hasActiveFilters ? clearFilters : handleAddTodo}
-        />
-      ) : (
-        <AnimatedList
-          data={todos}
-          renderItem={renderTodoItem}
-          keyExtractor={keyExtractor}
-          ItemSeparatorComponent={ItemSeparator}
-          animation={animationPreset}
-          staggerDelay="fast"
-          maxStaggerItems={15}
-          style={{ flex: 1 }}
-          contentContainerStyle={{ paddingBottom: 16, flexGrow: 1 }}
-          showsVerticalScrollIndicator={true}
-        />
-      )}
+        {/* Todo list */}
+        <Box>
+          <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="sm">
+            <Box flexDirection="row" alignItems="center" gap="xs">
+              <Icon name="list" size="sm" color="textSecondary" />
+              <Text variant="bodySmall" weight="semibold" color="textSecondary">
+                ATTIVITÀ
+              </Text>
+            </Box>
+            {todos.length > 0 && (
+              <Text variant="caption" color="textTertiary">
+                {todos.length} {todos.length === 1 ? 'attività' : 'attività'}
+              </Text>
+            )}
+          </Box>
+
+          {todos.length === 0 ? (
+            <EmptyState
+              icon="todo"
+              title={hasActiveFilters ? 'Nessun risultato' : 'Nessuna attività'}
+              description={
+                hasActiveFilters
+                  ? 'Prova a modificare i filtri'
+                  : 'Inizia aggiungendo la tua prima attività'
+              }
+              actionLabel={hasActiveFilters ? 'Rimuovi filtri' : 'Aggiungi attività'}
+              onAction={hasActiveFilters ? clearFilters : handleAddTodo}
+            />
+          ) : (
+            <VStack spacing="xs">
+              {todos.map((todo) => (
+                <TodoItem
+                  key={todo.id}
+                  todo={todo}
+                  onPress={handleTodoPress}
+                  onToggleStatus={toggleStatus}
+                  onDelete={handleDeleteTodo}
+                />
+              ))}
+            </VStack>
+          )}
+        </Box>
+
+        {/* Bottom spacing */}
+        <Box height={20} />
+      </VStack>
 
       {/* Form BottomSheet */}
       <TodoForm
@@ -287,3 +301,28 @@ export function TodosScreen(): JSX.Element {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  statsCard: {
+    backgroundColor: '#f8fafc',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+    paddingTop: 20,
+    marginTop: 12,
+  },
+  statsText: {
+    fontSize: 32,
+    letterSpacing: -0.5,
+  },
+  statusBox: {
+    backgroundColor: 'rgba(0,0,0,0.03)',
+  },
+  addButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#f59e0b',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

@@ -1,14 +1,14 @@
 /**
- * TodoItem Component
- * Design pulito e moderno con stato visibile
+ * TodoItem Component - Modern Design
+ * Stile coerente con TransactionItem
  */
 
 import React, { useCallback } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   Box,
   Text,
   Icon,
-  Chip,
   SwipeableRow,
   AnimatedPressable,
   type SwipeAction,
@@ -23,19 +23,25 @@ interface TodoItemProps {
   onDelete?: (id: string) => void;
 }
 
-// Intent per priorità
-const priorityIntent = {
-  high: 'error',
-  medium: 'warning',
-  low: 'info',
-} as const;
+// Colori per stato
+const statusColors: Record<string, string> = {
+  todo: '#3b82f6',
+  doing: '#f59e0b',
+  done: '#22c55e',
+};
 
-// Intent per stato
-const statusIntent = {
-  todo: 'primary',
-  doing: 'warning',
-  done: 'success',
-} as const;
+const statusBgColors: Record<string, string> = {
+  todo: 'rgba(59, 130, 246, 0.12)',
+  doing: 'rgba(245, 158, 11, 0.12)',
+  done: 'rgba(34, 197, 94, 0.12)',
+};
+
+// Colori per priorità
+const priorityColors: Record<string, string> = {
+  high: '#ef4444',
+  medium: '#f59e0b',
+  low: '#6b7280',
+};
 
 export function TodoItem({
   todo,
@@ -45,6 +51,8 @@ export function TodoItem({
 }: TodoItemProps): JSX.Element {
   const isDone = todo.status === 'done';
   const isOverdue = todo.dueDate && new Date(todo.dueDate) < new Date() && !isDone;
+  const statusColor = statusColors[todo.status];
+  const statusBgColor = statusBgColors[todo.status];
 
   // Swipe actions
   const leftActions: SwipeAction[] = [
@@ -86,12 +94,12 @@ export function TodoItem({
       >
         <Box
           flexDirection="row"
-          backgroundColor="surface"
-          borderRadius="lg"
-          padding="md"
-          gap="md"
           alignItems="center"
-          opacity={isDone ? 0.6 : 1}
+          gap="md"
+          padding="md"
+          borderRadius="lg"
+          backgroundColor="surface"
+          style={styles.itemContainer}
         >
           {/* Checkbox */}
           <AnimatedPressable
@@ -102,95 +110,102 @@ export function TodoItem({
             accessibilityRole="checkbox"
           >
             <Box
-              width={22}
-              height={22}
+              width={24}
+              height={24}
               borderRadius="full"
               borderWidth={2}
-              borderColor={isDone ? 'success' : 'border'}
-              backgroundColor={isDone ? 'success' : 'transparent'}
               alignItems="center"
               justifyContent="center"
+              style={{
+                borderColor: statusColor,
+                backgroundColor: isDone ? statusColor : 'transparent',
+              }}
             >
               {isDone && <Icon name="check" size="xs" color="onSuccess" />}
             </Box>
           </AnimatedPressable>
 
           {/* Content */}
-          <Box flex={1} gap="xs">
-            <Text
-              variant="bodyMedium"
-              weight="medium"
-              numberOfLines={2}
-              decoration={isDone ? 'line-through' : undefined}
-              color={isDone ? 'textTertiary' : 'textPrimary'}
-            >
-              {todo.title}
-            </Text>
-
-            {todo.description && (
+          <Box flex={1}>
+            <Box flexDirection="row" alignItems="center" justifyContent="space-between">
               <Text
-                variant="bodySmall"
-                color="textTertiary"
+                variant="bodyMedium"
+                weight="semibold"
                 numberOfLines={1}
+                style={{
+                  flex: 1,
+                  textDecorationLine: isDone ? 'line-through' : 'none',
+                  opacity: isDone ? 0.5 : 1,
+                }}
               >
-                {todo.description}
+                {todo.title}
               </Text>
-            )}
-
-            {/* Meta row: stato, priorità, data, tags */}
-            <Box flexDirection="row" alignItems="center" gap="sm" flexWrap="wrap">
-              {/* Status chip - sempre visibile */}
-              <Chip
-                label={statusLabels[todo.status]}
-                size="sm"
-                variant="soft"
-                intent={statusIntent[todo.status]}
-              />
-
-              {/* Priority chip - solo se non completato */}
               {!isDone && (
-                <Chip
-                  label={priorityLabels[todo.priority]}
-                  size="sm"
-                  variant="outlined"
-                  intent={priorityIntent[todo.priority]}
-                />
-              )}
-
-              {/* Due date */}
-              {todo.dueDate && (
-                <Box flexDirection="row" alignItems="center" gap="xxs">
-                  <Icon
-                    name="calendar"
-                    size="xs"
-                    color={isOverdue ? 'error' : 'textTertiary'}
-                  />
-                  <Text
-                    variant="caption"
-                    color={isOverdue ? 'error' : 'textTertiary'}
-                  >
-                    {formatRelativeDate(todo.dueDate)}
-                  </Text>
-                </Box>
-              )}
-
-              {/* Tags */}
-              {todo.tags.length > 0 && (
-                <Box flexDirection="row" alignItems="center" gap="xxs">
-                  <Icon name="tag" size="xs" color="textTertiary" />
-                  <Text variant="caption" color="textTertiary">
-                    {todo.tags.slice(0, 2).join(', ')}
-                    {todo.tags.length > 2 && ` +${todo.tags.length - 2}`}
+                <Box
+                  borderRadius="sm"
+                  style={{
+                    backgroundColor: statusBgColor,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                  }}
+                >
+                  <Text variant="caption" style={{ color: statusColor, fontSize: 10 }}>
+                    {statusLabels[todo.status]}
                   </Text>
                 </Box>
               )}
             </Box>
+            <Box flexDirection="row" alignItems="center" justifyContent="space-between" marginTop="xxs">
+              <Box flexDirection="row" alignItems="center" gap="sm">
+                {/* Priority indicator */}
+                {!isDone && (
+                  <Box flexDirection="row" alignItems="center" gap="xxs">
+                    <Box
+                      width={6}
+                      height={6}
+                      borderRadius="full"
+                      style={{ backgroundColor: priorityColors[todo.priority] }}
+                    />
+                    <Text variant="caption" color="textSecondary">
+                      {priorityLabels[todo.priority]}
+                    </Text>
+                  </Box>
+                )}
+                {/* Due date */}
+                {todo.dueDate && (
+                  <Text
+                    variant="caption"
+                    style={{ color: isOverdue ? '#ef4444' : '#9ca3af' }}
+                  >
+                    {formatRelativeDate(todo.dueDate)}
+                  </Text>
+                )}
+                {/* Tags count */}
+                {todo.tags.length > 0 && (
+                  <Box flexDirection="row" alignItems="center" gap="xxs">
+                    <Icon name="tag" size="xs" color="textTertiary" />
+                    <Text variant="caption" color="textTertiary">
+                      {todo.tags.length}
+                    </Text>
+                  </Box>
+                )}
+              </Box>
+              {isDone && (
+                <Text variant="caption" color="success">
+                  Completato
+                </Text>
+              )}
+            </Box>
           </Box>
-
-          {/* Chevron */}
-          <Icon name="chevronRight" size="sm" color="textTertiary" />
         </Box>
       </AnimatedPressable>
     </SwipeableRow>
   );
 }
+
+const styles = StyleSheet.create({
+  itemContainer: {
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.04)',
+  },
+});

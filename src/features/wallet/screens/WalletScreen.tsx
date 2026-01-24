@@ -5,8 +5,8 @@
 
 import React, { useState, useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import { Screen, Box, VStack, Button, Icon, Text, GlassCard, IconName } from '@shared/ui';
-import { ScreenTitle, EmptyState } from '@shared/ui/molecules';
+import { Screen, Box, VStack, Icon, Text, GlassCard, IconName } from '@shared/ui';
+import { EmptyState } from '@shared/ui/molecules';
 import {
   TransactionItem,
   TransactionForm,
@@ -152,46 +152,41 @@ export function WalletScreen(): JSX.Element {
 
   return (
     <Screen scroll paddingHorizontal="lg">
-      {/* Header */}
-      <ScreenTitle
-        title="Wallet"
-        topContent={
-          <SpaceSelector
-            onCreateSpace={() => setShowCreateSpace(true)}
-            onOpenSettings={handleOpenSpaceSettings}
-            onOpenInvites={() => setShowInvites(true)}
-          />
-        }
-        rightAction={
-          <Button
-            title=""
-            size="sm"
-            onPress={handleAddTransaction}
-            accessibilityLabel="Aggiungi nuova spesa"
-            leftIcon={<Icon name="add" size="md" color="onPrimary" />}
-          />
-        }
+      {/* Space Selector */}
+      <SpaceSelector
+        onCreateSpace={() => setShowCreateSpace(true)}
+        onOpenSettings={handleOpenSpaceSettings}
+        onOpenInvites={() => setShowInvites(true)}
       />
 
       <VStack spacing="lg">
-        {/* Main Balance Card */}
+        {/* Main Balance Card with Add Button */}
         <Box
           borderRadius="xl"
           padding="md"
           style={styles.balanceCard}
         >
           <Box gap="md">
-            {/* Saldo principale */}
-            <Box>
-              <Text variant="caption" color="textSecondary">
-                Saldo totale
-              </Text>
-              <Text variant="headingLarge" weight="bold" color="textPrimary" style={styles.balanceText}>
-                {totalBalance >= 0 ? '' : '-'}€{Math.abs(totalBalance).toLocaleString('it-IT', { minimumFractionDigits: 2 })}
-              </Text>
-              <Text variant="caption" color="textTertiary">
-                {accounts.length} {accounts.length === 1 ? 'conto attivo' : 'conti attivi'}
-              </Text>
+            {/* Header row with balance and add button */}
+            <Box flexDirection="row" alignItems="flex-start" justifyContent="space-between">
+              <Box>
+                <Text variant="caption" color="textSecondary">
+                  Saldo totale
+                </Text>
+                <Text variant="headingLarge" weight="bold" color="textPrimary" style={styles.balanceText}>
+                  {totalBalance >= 0 ? '' : '-'}€{Math.abs(totalBalance).toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                </Text>
+                <Text variant="caption" color="textTertiary">
+                  {accounts.length} {accounts.length === 1 ? 'conto attivo' : 'conti attivi'}
+                </Text>
+              </Box>
+              <Pressable
+                onPress={handleAddTransaction}
+                style={styles.addButton}
+                accessibilityLabel="Aggiungi nuova transazione"
+              >
+                <Icon name="add" size="md" color="onPrimary" />
+              </Pressable>
             </Box>
 
             {/* Month selector */}
@@ -461,10 +456,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.06)',
     paddingTop: 20,
+    marginTop: 12,
   },
   balanceText: {
     fontSize: 32,
     letterSpacing: -0.5,
+  },
+  addButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#f59e0b',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   monthSelector: {
     backgroundColor: 'rgba(0,0,0,0.04)',

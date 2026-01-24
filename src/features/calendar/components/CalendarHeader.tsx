@@ -1,10 +1,11 @@
 /**
- * CalendarHeader Component
- * Header con navigazione mese - NO TAG NATIVI
+ * CalendarHeader Component - Modern Design
+ * Header con navigazione mese - Stile coerente con Wallet
  */
 
 import React from 'react';
-import { Box, Text, Pressable, Icon, Button } from '@shared/ui';
+import { StyleSheet, Pressable } from 'react-native';
+import { Box, Text, Icon, GlassCard } from '@shared/ui';
 import { getMonthName, parseISO } from '@shared/lib/date';
 
 interface CalendarHeaderProps {
@@ -24,49 +25,66 @@ export function CalendarHeader({
   const monthName = getMonthName(currentDate);
 
   return (
-    <Box
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-      paddingY="md"
-    >
-      {/* Navigation arrows */}
-      <Box flexDirection="row" alignItems="center" gap="xs">
-        <Pressable
-          onPress={onPrevMonth}
-          accessibilityLabel="Mese precedente"
-          padding="sm"
-          borderRadius="full"
-        >
-          <Icon name="chevronLeft" size="md" />
-        </Pressable>
+    <GlassCard variant="solid" padding="sm">
+      <Box flexDirection="row" alignItems="center" justifyContent="space-between">
+        {/* Month/Year display */}
+        <Box flexDirection="row" alignItems="center" gap="sm">
+          <Box
+            width={40}
+            height={40}
+            borderRadius="lg"
+            alignItems="center"
+            justifyContent="center"
+            style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+          >
+            <Icon name="calendar" size="sm" color="primary" />
+          </Box>
+          <Box>
+            <Text variant="bodyMedium" weight="semibold" color="textPrimary">
+              {monthName}
+            </Text>
+            <Text variant="caption" color="textSecondary">
+              {currentDate.getFullYear()}
+            </Text>
+          </Box>
+        </Box>
 
-        <Pressable
-          onPress={onNextMonth}
-          accessibilityLabel="Mese successivo"
-          padding="sm"
-          borderRadius="full"
-        >
-          <Icon name="chevronRight" size="md" />
-        </Pressable>
+        {/* Navigation */}
+        <Box flexDirection="row" alignItems="center" gap="xs">
+          {/* Today button */}
+          <Pressable onPress={onToday} style={styles.todayButton}>
+            <Text variant="caption" weight="semibold" color="primary">
+              Oggi
+            </Text>
+          </Pressable>
+
+          {/* Month navigation */}
+          <Box flexDirection="row" alignItems="center" style={styles.navContainer}>
+            <Pressable onPress={onPrevMonth} style={styles.navButton}>
+              <Icon name="chevronLeft" size="sm" color="textSecondary" />
+            </Pressable>
+            <Pressable onPress={onNextMonth} style={styles.navButton}>
+              <Icon name="chevronRight" size="sm" color="textSecondary" />
+            </Pressable>
+          </Box>
+        </Box>
       </Box>
-
-      {/* Month/Year display */}
-      <Text variant="headingMedium" weight="semibold">
-        {monthName}
-      </Text>
-
-      {/* Today button */}
-      <Pressable
-        onPress={onToday}
-        accessibilityLabel="Vai a oggi"
-        paddingX="md"
-        paddingY="xs"
-        borderRadius="md"
-        backgroundColor="secondary"
-      >
-        <Text variant="labelMedium">Oggi</Text>
-      </Pressable>
-    </Box>
+    </GlassCard>
   );
 }
+
+const styles = StyleSheet.create({
+  todayButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+  },
+  navContainer: {
+    backgroundColor: 'rgba(0,0,0,0.04)',
+    borderRadius: 8,
+  },
+  navButton: {
+    padding: 8,
+  },
+});
