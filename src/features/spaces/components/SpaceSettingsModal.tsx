@@ -195,8 +195,8 @@ export function SpaceSettingsModal({ visible, space, onClose }: SpaceSettingsMod
           </Box>
 
           {/* Membri */}
-          <Box marginBottom="lg">
-            <Text variant="caption" color="textSecondary" style={{ marginBottom: 8 }}>
+          <Box marginBottom="lg" gap="sm">
+            <Text variant="caption" color="textSecondary">
               MEMBRI
             </Text>
             {space.members.map((member) => (
@@ -233,8 +233,8 @@ export function SpaceSettingsModal({ visible, space, onClose }: SpaceSettingsMod
 
           {/* Invita membri (solo se non è spazio personale e ha permessi) */}
           {!space.isPersonal && canInvite && (
-            <Box marginBottom="lg">
-              <Text variant="caption" color="textSecondary" style={{ marginBottom: 8 }}>
+            <Box marginBottom="lg" gap="sm">
+              <Text variant="caption" color="textSecondary">
                 INVITA NUOVI MEMBRI
               </Text>
               <Box flexDirection="row" alignItems="flex-start">
@@ -266,22 +266,26 @@ export function SpaceSettingsModal({ visible, space, onClose }: SpaceSettingsMod
                 </Box>
               </Box>
               {inviteError && (
-                <Text variant="caption" color="error" style={{ marginTop: 4 }}>
-                  {inviteError}
-                </Text>
+                <Box marginTop="xs">
+                  <Text variant="caption" color="error">
+                    {inviteError}
+                  </Text>
+                </Box>
               )}
               {inviteSuccess && (
-                <Text variant="caption" color="success" style={{ marginTop: 4 }}>
-                  {inviteSuccess}
-                </Text>
+                <Box marginTop="xs">
+                  <Text variant="caption" color="success">
+                    {inviteSuccess}
+                  </Text>
+                </Box>
               )}
             </Box>
           )}
 
           {/* Azioni */}
           {!space.isPersonal && (
-            <Box marginTop="lg">
-              <Text variant="caption" color="textSecondary" style={{ marginBottom: 8 }}>
+            <Box marginTop="lg" gap="sm">
+              <Text variant="caption" color="textSecondary">
                 AZIONI
               </Text>
 

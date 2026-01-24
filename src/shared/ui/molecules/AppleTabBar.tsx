@@ -104,14 +104,15 @@ function TabBarItem({
         </Animated.View>
 
         {showLabel && (
-          <Text
-            variant="caption"
-            color={isActive ? 'tabBarActive' : 'tabBarInactive'}
-            weight={isActive ? 'semibold' : 'regular'}
-            style={{ marginTop: 2 }}
-          >
-            {tab.label}
-          </Text>
+          <Box marginTop="xxs">
+            <Text
+              variant="caption"
+              color={isActive ? 'tabBarActive' : 'tabBarInactive'}
+              weight={isActive ? 'semibold' : 'regular'}
+            >
+              {tab.label}
+            </Text>
+          </Box>
         )}
       </Box>
     </AnimatedPressable>

@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 import { Dimensions } from 'react-native';
 import { Box, Text, AnimatedPressable } from '@shared/ui';
 import { useTheme } from '@shared/ui/theme';
-import { eventColors, EventColor, surfaceColors, palette } from '@shared/ui/tokens';
+import { eventColors, EventColor, surfaceColors, palette, spacing, radius } from '@shared/ui/tokens';
 import { CalendarEvent } from '../domain/types';
 import {
   startOfMonth,
@@ -47,10 +47,10 @@ interface EventBar {
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GRID_WIDTH = SCREEN_WIDTH;
 const DAY_WIDTH = GRID_WIDTH / 7;
-const EVENT_HEIGHT = 16;
-const EVENT_GAP = 1;
+const EVENT_HEIGHT = 18;
+const EVENT_GAP = 2;
 const MAX_VISIBLE_EVENTS = 2;
-const DAY_NUMBER_HEIGHT = 22;
+const DAY_NUMBER_HEIGHT = 24;
 
 export function CalendarMonthView({
   selectedDate,
@@ -175,15 +175,15 @@ export function CalendarMonthView({
       style={{
         backgroundColor: surfaceColors.calendarBackground,
         overflow: 'hidden',
-        marginTop: 12,
+        marginTop: spacing.md,
       }}
     >
       {/* Week day headers */}
       <Box
         flexDirection="row"
         style={{
-          paddingBottom: 8,
-          paddingTop: 12,
+          paddingBottom: spacing.sm,
+          paddingTop: spacing.md,
           backgroundColor: surfaceColors.calendarBackground,
         }}
       >
@@ -282,13 +282,13 @@ export function CalendarMonthView({
                     pressScale={0.98}
                     style={{
                       position: 'absolute',
-                      left: bar.startCol * DAY_WIDTH,
+                      left: bar.startCol * DAY_WIDTH + spacing.xxs,
                       top: bar.row * (EVENT_HEIGHT + EVENT_GAP),
-                      width: bar.span * DAY_WIDTH - 2,
+                      width: bar.span * DAY_WIDTH - spacing.xs,
                       height: EVENT_HEIGHT,
                       backgroundColor: eventColors[bar.event.color as EventColor] || eventColors.blue,
-                      borderRadius: 4,
-                      paddingHorizontal: 4,
+                      borderRadius: radius.sm,
+                      paddingHorizontal: spacing.xs,
                       justifyContent: 'center',
                       overflow: 'hidden',
                     }}
@@ -296,7 +296,8 @@ export function CalendarMonthView({
                     <Text
                       numberOfLines={1}
                       style={{
-                        fontSize: 10,
+                        fontSize: 11,
+                        lineHeight: EVENT_HEIGHT,
                         fontWeight: '600',
                         color: palette.white,
                       }}

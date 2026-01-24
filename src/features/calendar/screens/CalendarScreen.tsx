@@ -135,11 +135,11 @@ export function CalendarScreen(): JSX.Element {
       {/* Stats Card with Add Button */}
       <Box
         borderRadius="xl"
-        padding="md"
+        padding="lg"
         backgroundColor="surface"
         borderWidth={1}
         borderColor="border"
-        style={{ paddingTop: 20, marginTop: 12 }}
+        marginTop="md"
       >
         <Box gap="md">
           {/* Header row with date and add button */}
@@ -178,8 +178,8 @@ export function CalendarScreen(): JSX.Element {
 
           {/* Stats breakdown */}
           <Box flexDirection="row" gap="sm">
-            <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-              <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+            <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+              <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                 <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.todo }} />
                 <Text variant="caption" color="textSecondary">Questo mese</Text>
               </Box>
@@ -187,8 +187,8 @@ export function CalendarScreen(): JSX.Element {
                 {monthStats.total}
               </Text>
             </Box>
-            <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-              <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+            <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+              <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                 <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.doing }} />
                 <Text variant="caption" color="textSecondary">Oggi</Text>
               </Box>
@@ -196,8 +196,8 @@ export function CalendarScreen(): JSX.Element {
                 {monthStats.today}
               </Text>
             </Box>
-            <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-              <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+            <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+              <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                 <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.done }} />
                 <Text variant="caption" color="textSecondary">In arrivo</Text>
               </Box>

@@ -151,7 +151,7 @@ export function WalletScreen(): JSX.Element {
   });
 
   return (
-    <Screen scroll paddingHorizontal="lg">
+    <Screen scroll paddingHorizontal="lg" paddingVertical="none">
       {/* Space Selector */}
       <SpaceSelector
         onCreateSpace={() => setShowCreateSpace(true)}
@@ -159,15 +159,15 @@ export function WalletScreen(): JSX.Element {
         onOpenInvites={() => setShowInvites(true)}
       />
 
-      <VStack spacing="lg">
+      <VStack spacing="md">
         {/* Main Balance Card with Add Button */}
         <Box
           borderRadius="xl"
-          padding="md"
+          padding="lg"
           backgroundColor="surface"
           borderWidth={1}
           borderColor="border"
-          style={{ paddingTop: 20, marginTop: 12 }}
+          marginTop="md"
         >
           <Box gap="md">
             {/* Header row with balance and add button */}
@@ -228,8 +228,8 @@ export function WalletScreen(): JSX.Element {
 
             {/* Summary row */}
             <Box flexDirection="row" gap="sm">
-              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+              <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                   <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: transactionColors.income }}>
                     <Icon name="arrowDown" size="xs" color="onPrimary" />
                   </Box>
@@ -239,8 +239,8 @@ export function WalletScreen(): JSX.Element {
                   +€{totalIncome.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                 </Text>
               </Box>
-              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+              <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                   <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: transactionColors.expense }}>
                     <Icon name="arrowUp" size="xs" color="onPrimary" />
                   </Box>
@@ -255,8 +255,8 @@ export function WalletScreen(): JSX.Element {
         </Box>
 
         {/* Quick Actions - Design a griglia moderna */}
-        <Box>
-          <Text variant="bodySmall" weight="semibold" color="textSecondary" style={{ marginBottom: 12, letterSpacing: 0.5 }}>
+        <Box gap="md">
+          <Text variant="bodySmall" weight="semibold" color="textSecondary" style={{ letterSpacing: 0.5 }}>
             AZIONI RAPIDE
           </Text>
           <Box flexDirection="row" flexWrap="wrap" gap="sm">
@@ -420,7 +420,7 @@ export function WalletScreen(): JSX.Element {
               )}
             </Box>
 
-            <VStack spacing="xs">
+            <VStack spacing="sm">
               {transactions.slice(0, 5).map((transaction) => (
                 <TransactionItem
                   key={transaction.id}
@@ -433,7 +433,7 @@ export function WalletScreen(): JSX.Element {
         )}
 
         {/* Bottom spacing */}
-        <Box height={20} />
+        <Box height="xl" />
       </VStack>
 
       {/* Form modal */}

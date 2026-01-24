@@ -101,7 +101,7 @@ export function TodosScreen(): JSX.Element {
 
 
   return (
-    <Screen scroll paddingHorizontal="lg">
+    <Screen scroll paddingHorizontal="lg" paddingVertical="none">
       {/* Space Selector */}
       <SpaceSelector
         onCreateSpace={() => setShowCreateSpace(true)}
@@ -109,15 +109,15 @@ export function TodosScreen(): JSX.Element {
         onOpenInvites={() => setShowInvites(true)}
       />
 
-      <VStack spacing="lg">
+      <VStack spacing="md">
         {/* Stats Card with Add Button */}
         <Box
           borderRadius="xl"
-          padding="md"
+          padding="lg"
           backgroundColor="surface"
           borderWidth={1}
           borderColor="border"
-          style={{ paddingTop: 20, marginTop: 12 }}
+          marginTop="md"
         >
           <Box gap="md">
             {/* Header row with stats and add button */}
@@ -168,8 +168,8 @@ export function TodosScreen(): JSX.Element {
 
             {/* Status breakdown */}
             <Box flexDirection="row" gap="sm">
-              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+              <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                   <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.todo }} />
                   <Text variant="caption" color="textSecondary">Da fare</Text>
                 </Box>
@@ -177,8 +177,8 @@ export function TodosScreen(): JSX.Element {
                   {countByStatus.todo}
                 </Text>
               </Box>
-              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+              <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                   <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.doing }} />
                   <Text variant="caption" color="textSecondary">In corso</Text>
                 </Box>
@@ -186,8 +186,8 @@ export function TodosScreen(): JSX.Element {
                   {countByStatus.doing}
                 </Text>
               </Box>
-              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
-                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+              <Box flex={1} padding="md" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="sm">
                   <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.done }} />
                   <Text variant="caption" color="textSecondary">Completati</Text>
                 </Box>
@@ -269,7 +269,7 @@ export function TodosScreen(): JSX.Element {
               onAction={hasActiveFilters ? clearFilters : handleAddTodo}
             />
           ) : (
-            <VStack spacing="xs">
+            <VStack spacing="sm">
               {todos.map((todo) => (
                 <TodoItem
                   key={todo.id}
@@ -284,7 +284,7 @@ export function TodosScreen(): JSX.Element {
         </Box>
 
         {/* Bottom spacing */}
-        <Box height={20} />
+        <Box height="xl" />
       </VStack>
 
       {/* Form BottomSheet */}

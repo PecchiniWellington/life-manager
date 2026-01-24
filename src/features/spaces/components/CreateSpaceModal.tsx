@@ -78,8 +78,8 @@ export function CreateSpaceModal({ visible, onClose }: CreateSpaceModalProps): J
       <ScrollContainer>
         <Box paddingX="lg" paddingBottom="xl">
           {/* Name Input */}
-          <Box marginBottom="lg">
-            <Text variant="caption" color="textSecondary" style={{ marginBottom: 4 }}>
+          <Box marginBottom="lg" gap="xs">
+            <Text variant="caption" color="textSecondary">
               NOME SPAZIO
             </Text>
             <Input
@@ -93,15 +93,17 @@ export function CreateSpaceModal({ visible, onClose }: CreateSpaceModalProps): J
               returnKeyType="done"
             />
             {error && (
-              <Text variant="caption" color="error" style={{ marginTop: 4 }}>
-                {error}
-              </Text>
+              <Box marginTop="xs">
+                <Text variant="caption" color="error">
+                  {error}
+                </Text>
+              </Box>
             )}
           </Box>
 
           {/* Color Selection */}
-          <Box marginBottom="lg">
-            <Text variant="caption" color="textSecondary" style={{ marginBottom: 8 }}>
+          <Box marginBottom="lg" gap="sm">
+            <Text variant="caption" color="textSecondary">
               COLORE
             </Text>
             <Box flexDirection="row" flexWrap="wrap" gap="sm">
@@ -131,8 +133,8 @@ export function CreateSpaceModal({ visible, onClose }: CreateSpaceModalProps): J
           </Box>
 
           {/* Icon Selection */}
-          <Box marginBottom="xl">
-            <Text variant="caption" color="textSecondary" style={{ marginBottom: 8 }}>
+          <Box marginBottom="xl" gap="sm">
+            <Text variant="caption" color="textSecondary">
               ICONA
             </Text>
             <Box flexDirection="row" flexWrap="wrap" gap="sm">
@@ -162,8 +164,8 @@ export function CreateSpaceModal({ visible, onClose }: CreateSpaceModalProps): J
           </Box>
 
           {/* Preview */}
-          <Box marginBottom="xl">
-            <Text variant="caption" color="textSecondary" style={{ marginBottom: 8 }}>
+          <Box marginBottom="xl" gap="sm">
+            <Text variant="caption" color="textSecondary">
               ANTEPRIMA
             </Text>
             <Box

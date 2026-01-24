@@ -243,7 +243,11 @@ export function RecurringStats({ recurring, onPress }: RecurringStatsProps): JSX
       </GlassCard>
     );
 
-    return onPress ? <Pressable onPress={onPress}>{emptyContent}</Pressable> : emptyContent;
+    return onPress ? (
+      <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+        {emptyContent}
+      </AnimatedPressable>
+    ) : emptyContent;
   }
 
   const content = (

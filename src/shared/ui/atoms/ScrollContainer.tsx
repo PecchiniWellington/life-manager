@@ -170,7 +170,7 @@ export function VirtualList<T>({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // Removed flex: 1 to allow maxHeight to work properly
   },
   fillHeight: {
     flexGrow: 1,

@@ -7,6 +7,7 @@
 import React from 'react';
 import { Switch, SwitchProps } from 'react-native';
 import { useTheme } from '../theme';
+import { palette } from '../tokens';
 
 export interface ToggleProps extends Omit<SwitchProps, 'trackColor' | 'thumbColor'> {
   /** Whether the toggle is on */
@@ -40,7 +41,7 @@ export function Toggle({
         false: colors.border,
         true: colors.primary,
       }}
-      thumbColor="#FFFFFF"
+      thumbColor={palette.white}
       ios_backgroundColor={colors.border}
       style={{
         transform: [{ scale }],

@@ -54,12 +54,12 @@ export function CalendarHeader({
           {/* Today button */}
           <AnimatedPressable onPress={onToday} haptic="light" pressScale={0.95}>
             <Box
-              paddingHorizontal="md"
-              paddingVertical="xs"
-              borderRadius="md"
-              style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+              paddingHorizontal="lg"
+              paddingVertical="sm"
+              borderRadius="lg"
+              backgroundColor="surfaceSecondary"
             >
-              <Text variant="caption" weight="semibold" color="primary">
+              <Text variant="bodySmall" weight="semibold" color="primary">
                 Oggi
               </Text>
             </Box>

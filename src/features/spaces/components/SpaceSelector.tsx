@@ -11,7 +11,7 @@ import {
   Icon,
   AnimatedPressable,
   BottomSheetModal,
-  VirtualList,
+  ScrollContainer,
   palette,
 } from '@shared/ui';
 import { useSpaces } from '../hooks';
@@ -41,52 +41,56 @@ export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: 
   return (
     <>
       {/* Trigger Button */}
-      <AnimatedPressable onPress={() => setIsOpen(true)} haptic="light">
-        <Box
-          flexDirection="row"
-          alignItems="center"
-          backgroundColor="surfaceSecondary"
-          paddingHorizontal="md"
-          paddingVertical="sm"
-          borderRadius="lg"
-        >
+      <Box paddingTop="md">
+        <AnimatedPressable onPress={() => setIsOpen(true)} haptic="light">
           <Box
-            width={28}
-            height={28}
-            borderRadius="sm"
+            flexDirection="row"
             alignItems="center"
-            justifyContent="center"
-            style={{ backgroundColor: currentSpace?.color || SPACE_COLORS[0] }}
+            backgroundColor="surfaceSecondary"
+            paddingHorizontal="lg"
+            paddingVertical="md"
+            borderRadius="lg"
+            gap="md"
           >
-            <Icon
-              name={currentSpace ? getSpaceIcon(currentSpace) : 'folder'}
-              size="sm"
-              color="surface"
-            />
-          </Box>
-          <Text variant="labelMedium" weight="semibold" style={{ marginLeft: 8, flex: 1 }} numberOfLines={1}>
-            {currentSpace?.name || 'Seleziona spazio'}
-          </Text>
-          <Icon name="chevronDown" size="sm" color="textSecondary" />
-          {pendingInvitesCount > 0 && (
             <Box
-              position="absolute"
-              top={-4}
-              right={-4}
-              width={18}
-              height={18}
-              borderRadius="full"
-              backgroundColor="error"
+              width={32}
+              height={32}
+              borderRadius="md"
               alignItems="center"
               justifyContent="center"
+              style={{ backgroundColor: currentSpace?.color || SPACE_COLORS[0] }}
             >
-              <Text variant="caption" weight="bold" style={{ color: palette.white, fontSize: 10 }}>
-                {pendingInvitesCount}
-              </Text>
+              <Icon
+                name={currentSpace ? getSpaceIcon(currentSpace) : 'folder'}
+                size="sm"
+                color="surface"
+              />
             </Box>
-          )}
-        </Box>
-      </AnimatedPressable>
+            <Text variant="labelMedium" weight="semibold" style={{ flex: 1 }} numberOfLines={1}>
+              {currentSpace?.name || 'Seleziona spazio'}
+            </Text>
+            <Icon name="chevronDown" size="sm" color="textSecondary" />
+            {pendingInvitesCount > 0 && (
+              <Box
+                position="absolute"
+                top={-6}
+                right={-6}
+                minWidth={20}
+                height={20}
+                paddingHorizontal="xs"
+                borderRadius="full"
+                backgroundColor="error"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Text variant="caption" weight="bold" style={{ color: palette.white, fontSize: 11 }}>
+                  {pendingInvitesCount}
+                </Text>
+              </Box>
+            )}
+          </Box>
+        </AnimatedPressable>
+      </Box>
 
       {/* Modal Dropdown */}
       <BottomSheetModal
@@ -105,11 +109,10 @@ export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: 
             </AnimatedPressable>
           </Box>
 
-          <VirtualList
-            data={spaces}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
+          <ScrollContainer style={{ maxHeight: 300 }}>
+            {spaces.map((item) => (
               <AnimatedPressable
+                key={item.id}
                 onPress={() => handleSelect(item)}
                 haptic="selection"
                 pressScale={0.98}
@@ -163,9 +166,8 @@ export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: 
                   )}
                 </Box>
               </AnimatedPressable>
-            )}
-            style={{ maxHeight: 300 }}
-          />
+            ))}
+          </ScrollContainer>
 
           {/* Create New Space Button */}
           {onCreateSpace && (

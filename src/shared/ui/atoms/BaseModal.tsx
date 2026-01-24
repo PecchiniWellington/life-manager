@@ -61,10 +61,13 @@ export function BaseModal({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
-          {dismissOnBackdrop && (
-            <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-          )}
+        {dismissOnBackdrop && (
+          <Pressable
+            style={[StyleSheet.absoluteFill, { backgroundColor: overlayColor }]}
+            onPress={onClose}
+          />
+        )}
+        <View style={[styles.overlay, !dismissOnBackdrop && { backgroundColor: overlayColor }]} pointerEvents="box-none">
           {children}
         </View>
       </KeyboardAvoidingView>
@@ -132,7 +135,9 @@ export function BottomSheetModal({
               />
             </View>
           )}
-          {children}
+          <View style={{ paddingTop: spacing.sm }}>
+            {children}
+          </View>
         </View>
       </View>
     </BaseModal>

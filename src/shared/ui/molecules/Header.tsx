@@ -49,7 +49,7 @@ export function Header({
       alignItems="center"
       justifyContent="space-between"
       paddingX="lg"
-      paddingY="md"
+      paddingY="lg"
       backgroundColor="background"
     >
       {/* Left Section */}
@@ -59,7 +59,7 @@ export function Header({
             <Pressable
               onPress={onBack}
               accessibilityLabel="Torna indietro"
-              padding="xs"
+              padding="sm"
             >
               <Icon name="arrowBack" size="md" />
             </Pressable>
@@ -83,7 +83,7 @@ export function Header({
           <Pressable
             onPress={secondaryRightAction.onPress}
             accessibilityLabel={secondaryRightAction.accessibilityLabel}
-            padding="xs"
+            padding="sm"
           >
             <Icon name={secondaryRightAction.icon} size="md" />
           </Pressable>
@@ -92,7 +92,7 @@ export function Header({
           <Pressable
             onPress={rightAction.onPress}
             accessibilityLabel={rightAction.accessibilityLabel}
-            padding="xs"
+            padding="sm"
           >
             <Icon name={rightAction.icon} size="md" />
           </Pressable>
