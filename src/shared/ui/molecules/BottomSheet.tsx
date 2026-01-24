@@ -1,10 +1,11 @@
 /**
  * BottomSheet
  * Bottom sheet Apple-style con gesture e backdrop fullscreen
+ * MOLECULE: Usa solo atoms del design system + libreria @gorhom/bottom-sheet
  */
 
 import React, { useCallback, useMemo, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import { StyleSheet, View, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
@@ -13,10 +14,7 @@ import {
   BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Box } from '../atoms/Box';
-import { Text } from '../atoms/Text';
-import { AnimatedPressable } from '../atoms/AnimatedPressable';
-import { Icon } from '../atoms/Icon';
+import { Box, Text, AnimatedPressable, Icon } from '../atoms';
 import { useTheme } from '../theme';
 import { radius, shadows } from '../tokens';
 
@@ -146,16 +144,16 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
     const renderHandle = useCallback(
       () =>
         showHandle ? (
-          <Box alignItems="center" paddingY="sm">
-            <View
-              style={[
-                styles.handle,
-                { backgroundColor: theme.colors.separatorOpaque },
-              ]}
+          <Box alignItems="center" paddingVertical="sm">
+            <Box
+              width={36}
+              height={5}
+              borderRadius="sm"
+              backgroundColor="separatorOpaque"
             />
           </Box>
         ) : null,
-      [showHandle, theme.colors.separatorOpaque]
+      [showHandle]
     );
 
     // Content wrapper
@@ -181,7 +179,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
         style={shadows.sheet}
       >
         <ContentWrapper
-          style={[styles.contentContainer, { paddingBottom: insets.bottom }]}
+          style={{ flex: 1, paddingBottom: insets.bottom }}
         >
           {/* Header */}
           {(title || showCloseButton) && (
@@ -189,7 +187,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
               flexDirection="row"
               alignItems="center"
               justifyContent="space-between"
-              paddingX="lg"
+              paddingHorizontal="lg"
               paddingBottom="md"
               borderBottomWidth={1}
               borderColor="separator"
@@ -206,19 +204,24 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
                 <AnimatedPressable
                   onPress={() => bottomSheetRef.current?.dismiss()}
                   haptic="light"
-                  style={[
-                    styles.closeButton,
-                    { backgroundColor: theme.colors.backgroundTertiary },
-                  ]}
                 >
-                  <Icon name="close" size="sm" color="textSecondary" />
+                  <Box
+                    width={30}
+                    height={30}
+                    borderRadius="full"
+                    backgroundColor="backgroundTertiary"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Icon name="close" size="sm" color="textSecondary" />
+                  </Box>
                 </AnimatedPressable>
               )}
             </Box>
           )}
 
           {/* Content */}
-          <Box flex={1} paddingX="lg" paddingTop="md">
+          <Box flex={1} paddingHorizontal="lg" paddingTop="md">
             {children}
           </Box>
         </ContentWrapper>
@@ -226,23 +229,5 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
     );
   }
 );
-
-const styles = StyleSheet.create({
-  handle: {
-    width: 36,
-    height: 5,
-    borderRadius: 3,
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  closeButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default BottomSheet;

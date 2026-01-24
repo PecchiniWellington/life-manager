@@ -1,10 +1,10 @@
 /**
  * EventItem Component - Modern Design
  * Singolo evento nella lista - Stile coerente con TransactionItem
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React, { useCallback } from 'react';
-import { StyleSheet } from 'react-native';
 import {
   Box,
   Text,
@@ -66,7 +66,9 @@ export function EventItem({
           padding="md"
           borderRadius="lg"
           backgroundColor="surface"
-          style={styles.itemContainer}
+          borderWidth={1}
+          borderColor="border"
+          style={{ borderColor: 'rgba(0,0,0,0.04)' }}
         >
           {/* Color indicator with icon */}
           <Box
@@ -93,11 +95,9 @@ export function EventItem({
               {event.allDay && (
                 <Box
                   borderRadius="sm"
-                  style={{
-                    backgroundColor: `${eventColor}15`,
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                  }}
+                  paddingHorizontal="sm"
+                  paddingVertical="xxs"
+                  style={{ backgroundColor: `${eventColor}15` }}
                 >
                   <Text variant="caption" style={{ color: eventColor, fontSize: 10 }}>
                     Tutto il giorno
@@ -137,10 +137,3 @@ export function EventItem({
     </SwipeableRow>
   );
 }
-
-const styles = StyleSheet.create({
-  itemContainer: {
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.04)',
-  },
-});

@@ -1,10 +1,11 @@
 /**
  * Profile Avatar Component
  * Avatar con immagine o iniziali
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image } from 'react-native';
 import { Box, Text } from '@shared/ui';
 import { useTheme } from '@shared/ui/theme';
 
@@ -21,34 +22,29 @@ export function ProfileAvatar({
 }: ProfileAvatarProps): JSX.Element {
   const theme = useTheme();
 
-  const styles = StyleSheet.create({
-    image: {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-    },
-    container: {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      backgroundColor: theme.colors.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
-
   if (photoURL) {
     return (
       <Image
         source={{ uri: photoURL }}
-        style={styles.image}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+        }}
         resizeMode="cover"
       />
     );
   }
 
   return (
-    <Box style={styles.container}>
+    <Box
+      width={size}
+      height={size}
+      borderRadius="full"
+      alignItems="center"
+      justifyContent="center"
+      style={{ backgroundColor: theme.colors.primary }}
+    >
       <Text
         variant="title1"
         weight="bold"

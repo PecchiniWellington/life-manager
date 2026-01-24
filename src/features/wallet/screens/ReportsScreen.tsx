@@ -1,11 +1,20 @@
 /**
  * ReportsScreen
  * Report e statistiche avanzate
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useMemo } from 'react';
-import { ScrollView, StyleSheet, Pressable } from 'react-native';
-import { Screen, Box, Text, Button, Icon, GlassCard } from '@shared/ui';
+import {
+  Screen,
+  Box,
+  Text,
+  Button,
+  Icon,
+  GlassCard,
+  ScrollContainer,
+  AnimatedPressable,
+} from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
 import { useAppSelector } from '@app/store/hooks';
@@ -117,26 +126,35 @@ export function ReportsScreen(): JSX.Element {
         }
       />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollContainer showsVerticalScrollIndicator={false}>
         {/* Period selector */}
         <Box flexDirection="row" gap="sm" marginBottom="lg">
           {(['week', 'month', 'year'] as Period[]).map((period) => (
-            <Pressable
+            <AnimatedPressable
               key={period}
               onPress={() => setSelectedPeriod(period)}
-              style={[
-                styles.periodButton,
-                selectedPeriod === period && { backgroundColor: colors.primary },
-              ]}
+              haptic="selection"
+              pressScale={0.98}
+              style={{ flex: 1 }}
             >
-              <Text
-                variant="bodySmall"
-                weight="semibold"
-                color={selectedPeriod === period ? 'onPrimary' : 'textSecondary'}
+              <Box
+                paddingVertical="sm"
+                paddingHorizontal="md"
+                borderRadius="md"
+                alignItems="center"
+                style={{
+                  backgroundColor: selectedPeriod === period ? colors.primary : 'rgba(0,0,0,0.05)',
+                }}
               >
-                {periodLabels[period]}
-              </Text>
-            </Pressable>
+                <Text
+                  variant="bodySmall"
+                  weight="semibold"
+                  color={selectedPeriod === period ? 'onPrimary' : 'textSecondary'}
+                >
+                  {periodLabels[period]}
+                </Text>
+              </Box>
+            </AnimatedPressable>
           ))}
         </Box>
 
@@ -273,18 +291,7 @@ export function ReportsScreen(): JSX.Element {
             </Box>
           </GlassCard>
         </Box>
-      </ScrollView>
+      </ScrollContainer>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  periodButton: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.05)',
-  },
-});

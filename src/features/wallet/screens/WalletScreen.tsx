@@ -1,11 +1,11 @@
 /**
  * WalletScreen - Modern Fintech UI
  * Design pulito e professionale con icone vettoriali
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { Screen, Box, VStack, Icon, Text, GlassCard, IconName } from '@shared/ui';
+import { Screen, Box, VStack, Icon, Text, GlassCard, IconName, AnimatedPressable } from '@shared/ui';
 import { EmptyState } from '@shared/ui/molecules';
 import {
   TransactionItem,
@@ -164,7 +164,10 @@ export function WalletScreen(): JSX.Element {
         <Box
           borderRadius="xl"
           padding="md"
-          style={styles.balanceCard}
+          backgroundColor="surface"
+          borderWidth={1}
+          borderColor="border"
+          style={{ paddingTop: 20, marginTop: 12 }}
         >
           <Box gap="md">
             {/* Header row with balance and add button */}
@@ -173,20 +176,30 @@ export function WalletScreen(): JSX.Element {
                 <Text variant="caption" color="textSecondary">
                   Saldo totale
                 </Text>
-                <Text variant="headingLarge" weight="bold" color="textPrimary" style={styles.balanceText}>
+                <Text variant="headingLarge" weight="bold" color="textPrimary" style={{ fontSize: 32, letterSpacing: -0.5 }}>
                   {totalBalance >= 0 ? '' : '-'}€{Math.abs(totalBalance).toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                 </Text>
                 <Text variant="caption" color="textTertiary">
                   {accounts.length} {accounts.length === 1 ? 'conto attivo' : 'conti attivi'}
                 </Text>
               </Box>
-              <Pressable
+              <AnimatedPressable
                 onPress={handleAddTransaction}
-                style={styles.addButton}
+                haptic="light"
+                pressScale={0.95}
                 accessibilityLabel="Aggiungi nuova transazione"
               >
-                <Icon name="add" size="md" color="onPrimary" />
-              </Pressable>
+                <Box
+                  width={44}
+                  height={44}
+                  borderRadius="lg"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: '#f59e0b' }}
+                >
+                  <Icon name="add" size="md" color="onPrimary" />
+                </Box>
+              </AnimatedPressable>
             </Box>
 
             {/* Month selector */}
@@ -196,40 +209,44 @@ export function WalletScreen(): JSX.Element {
               justifyContent="space-between"
               padding="sm"
               borderRadius="lg"
-              style={styles.monthSelector}
+              style={{ backgroundColor: 'rgba(0,0,0,0.04)' }}
             >
-              <Pressable onPress={goToPrevMonth} style={styles.monthButton}>
-                <Icon name="chevronLeft" size="sm" color="textSecondary" />
-              </Pressable>
+              <AnimatedPressable onPress={goToPrevMonth} haptic="light">
+                <Box padding="xs">
+                  <Icon name="chevronLeft" size="sm" color="textSecondary" />
+                </Box>
+              </AnimatedPressable>
               <Text variant="bodyMedium" weight="semibold" color="textPrimary">
                 {monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}
               </Text>
-              <Pressable onPress={goToNextMonth} style={styles.monthButton}>
-                <Icon name="chevronRight" size="sm" color="textSecondary" />
-              </Pressable>
+              <AnimatedPressable onPress={goToNextMonth} haptic="light">
+                <Box padding="xs">
+                  <Icon name="chevronRight" size="sm" color="textSecondary" />
+                </Box>
+              </AnimatedPressable>
             </Box>
 
             {/* Summary row */}
             <Box flexDirection="row" gap="sm">
-              <Box flex={1} padding="sm" borderRadius="lg" style={styles.summaryBox}>
+              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={styles.incomeIconBg}>
+                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#22c55e' }}>
                     <Icon name="arrowDown" size="xs" color="onPrimary" />
                   </Box>
                   <Text variant="caption" color="textSecondary">Entrate</Text>
                 </Box>
-                <Text variant="bodyMedium" weight="bold" style={styles.incomeText}>
+                <Text variant="bodyMedium" weight="bold" style={{ color: '#16a34a' }}>
                   +€{totalIncome.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                 </Text>
               </Box>
-              <Box flex={1} padding="sm" borderRadius="lg" style={styles.summaryBox}>
+              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={styles.expenseIconBg}>
+                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#ef4444' }}>
                     <Icon name="arrowUp" size="xs" color="onPrimary" />
                   </Box>
                   <Text variant="caption" color="textSecondary">Uscite</Text>
                 </Box>
-                <Text variant="bodyMedium" weight="bold" style={styles.expenseText}>
+                <Text variant="bodyMedium" weight="bold" style={{ color: '#dc2626' }}>
                   -€{totalExpenses.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                 </Text>
               </Box>
@@ -239,18 +256,17 @@ export function WalletScreen(): JSX.Element {
 
         {/* Quick Actions - Design a griglia moderna */}
         <Box>
-          <Text variant="bodySmall" weight="semibold" color="textSecondary" style={styles.sectionTitle}>
+          <Text variant="bodySmall" weight="semibold" color="textSecondary" style={{ marginBottom: 12, letterSpacing: 0.5 }}>
             AZIONI RAPIDE
           </Text>
           <Box flexDirection="row" flexWrap="wrap" gap="sm">
             {quickActions.map((action) => (
-              <Pressable
+              <AnimatedPressable
                 key={action.key}
                 onPress={() => handleQuickAction(action.key)}
-                style={({ pressed }) => [
-                  styles.quickActionButton,
-                  pressed && styles.quickActionPressed,
-                ]}
+                haptic="light"
+                pressScale={0.98}
+                style={{ width: '31%' }}
               >
                 <Box
                   alignItems="center"
@@ -259,7 +275,7 @@ export function WalletScreen(): JSX.Element {
                   padding="md"
                   borderRadius="lg"
                   backgroundColor="backgroundSecondary"
-                  style={styles.quickActionInner}
+                  style={{ minHeight: 80 }}
                 >
                   <Box
                     width={40}
@@ -275,7 +291,7 @@ export function WalletScreen(): JSX.Element {
                     {action.label}
                   </Text>
                 </Box>
-              </Pressable>
+              </AnimatedPressable>
             ))}
           </Box>
         </Box>
@@ -290,11 +306,11 @@ export function WalletScreen(): JSX.Element {
                   BUDGET MENSILE
                 </Text>
               </Box>
-              <Pressable onPress={() => navigation.navigate('Budget')}>
+              <AnimatedPressable onPress={() => navigation.navigate('Budget')} haptic="light">
                 <Text variant="caption" color="primary" weight="semibold">
                   Gestisci
                 </Text>
-              </Pressable>
+              </AnimatedPressable>
             </Box>
             <BudgetProgress
               budget={currentBudget}
@@ -327,11 +343,11 @@ export function WalletScreen(): JSX.Element {
                   PER CATEGORIA
                 </Text>
               </Box>
-              <Pressable onPress={() => navigation.navigate('Reports')}>
+              <AnimatedPressable onPress={() => navigation.navigate('Reports')} haptic="light">
                 <Text variant="caption" color="primary" weight="semibold">
                   Report
                 </Text>
-              </Pressable>
+              </AnimatedPressable>
             </Box>
             <GlassCard variant="solid" padding="md">
               <VStack spacing="sm">
@@ -350,7 +366,7 @@ export function WalletScreen(): JSX.Element {
                             backgroundColor={categoryColors[cat.category]}
                             style={{ opacity: 0.15 }}
                           />
-                          <Box style={styles.categoryIconOverlay}>
+                          <Box style={{ position: 'absolute', left: 6 }}>
                             <Icon name={categoryIcons[cat.category]} size="sm" color={categoryColors[cat.category]} />
                           </Box>
                           <Text variant="bodySmall" weight="medium">{categoryLabels[cat.category]}</Text>
@@ -396,11 +412,11 @@ export function WalletScreen(): JSX.Element {
                 </Text>
               </Box>
               {transactions.length > 5 && (
-                <Pressable>
+                <AnimatedPressable haptic="light">
                   <Text variant="caption" color="primary" weight="semibold">
                     Vedi tutti ({transactions.length})
                   </Text>
-                </Pressable>
+                </AnimatedPressable>
               )}
             </Box>
 
@@ -449,64 +465,3 @@ export function WalletScreen(): JSX.Element {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  balanceCard: {
-    backgroundColor: '#f8fafc',
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.06)',
-    paddingTop: 20,
-    marginTop: 12,
-  },
-  balanceText: {
-    fontSize: 32,
-    letterSpacing: -0.5,
-  },
-  addButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: '#f59e0b',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  monthSelector: {
-    backgroundColor: 'rgba(0,0,0,0.04)',
-  },
-  monthButton: {
-    padding: 8,
-  },
-  summaryBox: {
-    backgroundColor: 'rgba(0,0,0,0.03)',
-  },
-  incomeIconBg: {
-    backgroundColor: '#22c55e',
-  },
-  expenseIconBg: {
-    backgroundColor: '#ef4444',
-  },
-  incomeText: {
-    color: '#16a34a',
-  },
-  expenseText: {
-    color: '#dc2626',
-  },
-  sectionTitle: {
-    marginBottom: 12,
-    letterSpacing: 0.5,
-  },
-  quickActionButton: {
-    width: '31%',
-  },
-  quickActionPressed: {
-    opacity: 0.7,
-    transform: [{ scale: 0.98 }],
-  },
-  quickActionInner: {
-    minHeight: 80,
-  },
-  categoryIconOverlay: {
-    position: 'absolute',
-    left: 6,
-  },
-});

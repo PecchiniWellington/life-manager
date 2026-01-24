@@ -1,11 +1,24 @@
 /**
  * AccountsScreen
  * Gestione conti e saldi
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback } from 'react';
-import { FlatList, StyleSheet, Modal, Pressable, Alert } from 'react-native';
-import { Screen, Box, Text, Button, Icon, GlassCard, Input } from '@shared/ui';
+import { Alert } from 'react-native';
+import {
+  Screen,
+  Box,
+  Text,
+  Button,
+  Icon,
+  GlassCard,
+  Input,
+  VirtualList,
+  BottomSheetModal,
+  AnimatedPressable,
+  ScrollContainer,
+} from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
@@ -129,16 +142,6 @@ export function AccountsScreen(): JSX.Element {
     );
   }, [dispatch]);
 
-  const renderAccount = useCallback(({ item }: { item: Account }) => (
-    <Box marginBottom="sm">
-      <AccountCard
-        account={item}
-        onPress={() => openEditForm(item)}
-        onLongPress={() => handleDelete(item)}
-      />
-    </Box>
-  ), [openEditForm, handleDelete]);
-
   // Calculate total balance
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.initialBalance, 0);
 
@@ -166,7 +169,7 @@ export function AccountsScreen(): JSX.Element {
       />
 
       {/* Total balance card */}
-      <GlassCard variant="solid" padding="lg" style={styles.totalCard}>
+      <GlassCard variant="solid" padding="lg" style={{ marginBottom: 16 }}>
         <Box alignItems="center" gap="xs">
           <Text variant="bodySmall" color="textSecondary">
             Saldo totale
@@ -181,18 +184,26 @@ export function AccountsScreen(): JSX.Element {
       </GlassCard>
 
       {/* Accounts list */}
-      <FlatList
+      <VirtualList
         data={accounts}
         keyExtractor={(item) => item.id}
-        renderItem={renderAccount}
-        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => (
+          <Box marginBottom="sm">
+            <AccountCard
+              account={item}
+              onPress={() => openEditForm(item)}
+              onLongPress={() => handleDelete(item)}
+            />
+          </Box>
+        )}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <Box alignItems="center" padding="xl">
             <Text variant="bodyMedium" color="textSecondary">
               Nessun conto creato
             </Text>
-            <Text variant="caption" color="textSecondary" style={styles.emptyHint}>
+            <Text variant="caption" color="textSecondary" style={{ marginTop: 4 }}>
               Crea il tuo primo conto per iniziare
             </Text>
           </Box>
@@ -200,94 +211,115 @@ export function AccountsScreen(): JSX.Element {
       />
 
       {/* Form Modal */}
-      <Modal
+      <BottomSheetModal
         visible={showForm}
-        animationType="slide"
-        transparent
-        onRequestClose={handleCloseForm}
+        onClose={handleCloseForm}
+        showHandle
+        maxHeight="90%"
       >
-        <Pressable style={styles.modalOverlay} onPress={handleCloseForm}>
-          <Pressable
-            style={[styles.modalContent, { backgroundColor: colors.background }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <Box padding="lg" gap="lg">
-              <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                <Text variant="headingSmall" weight="bold">
-                  {editingAccount ? 'Modifica conto' : 'Nuovo conto'}
-                </Text>
-                <Button
-                  title=""
-                  variant="ghost"
-                  size="sm"
-                  onPress={handleCloseForm}
-                  leftIcon={<Icon name="close" size="md" color="textSecondary" />}
-                />
-              </Box>
+        <ScrollContainer showsVerticalScrollIndicator={false}>
+          <Box padding="lg" gap="lg">
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+              <Text variant="headingSmall" weight="bold">
+                {editingAccount ? 'Modifica conto' : 'Nuovo conto'}
+              </Text>
+              <AnimatedPressable onPress={handleCloseForm} haptic="light">
+                <Icon name="close" size="md" color="textSecondary" />
+              </AnimatedPressable>
+            </Box>
 
-              {/* Name */}
-              <Input
-                label="Nome"
-                value={name}
-                onChangeText={setName}
-                placeholder="Es. Conto principale"
-              />
+            {/* Name */}
+            <Input
+              label="Nome"
+              value={name}
+              onChangeText={setName}
+              placeholder="Es. Conto principale"
+            />
 
-              {/* Type */}
-              <Box gap="xs">
-                <Text variant="caption" color="textSecondary">
-                  Tipo
-                </Text>
-                <Box flexDirection="row" flexWrap="wrap" gap="xs">
-                  {accountTypeOptions.map((option) => (
-                    <Pressable
-                      key={option.type}
-                      onPress={() => setType(option.type)}
-                      style={[
-                        styles.typeOption,
-                        type === option.type && { borderColor: colors.primary, borderWidth: 2 },
-                      ]}
+            {/* Type */}
+            <Box gap="xs">
+              <Text variant="caption" color="textSecondary">
+                Tipo
+              </Text>
+              <Box flexDirection="row" flexWrap="wrap" gap="xs">
+                {accountTypeOptions.map((option) => (
+                  <AnimatedPressable
+                    key={option.type}
+                    onPress={() => setType(option.type)}
+                    haptic="selection"
+                    pressScale={0.95}
+                  >
+                    <Box
+                      padding="sm"
+                      borderRadius="md"
+                      alignItems="center"
+                      gap="xxs"
+                      borderWidth={2}
+                      style={{
+                        borderColor: type === option.type ? colors.primary : 'transparent',
+                        minWidth: 80,
+                      }}
                     >
                       <Text style={{ fontSize: 20 }}>{option.icon}</Text>
                       <Text variant="caption">{option.label}</Text>
-                    </Pressable>
-                  ))}
-                </Box>
+                    </Box>
+                  </AnimatedPressable>
+                ))}
               </Box>
+            </Box>
 
-              {/* Color */}
-              <Box gap="xs">
-                <Text variant="caption" color="textSecondary">
-                  Colore
-                </Text>
-                <Box flexDirection="row" flexWrap="wrap" gap="sm">
-                  {colorOptions.map((c) => (
-                    <Pressable
-                      key={c}
-                      onPress={() => setColor(c)}
-                      style={[
-                        styles.colorOption,
-                        { backgroundColor: c },
-                        color === c && styles.colorSelected,
-                      ]}
+            {/* Color */}
+            <Box gap="xs">
+              <Text variant="caption" color="textSecondary">
+                Colore
+              </Text>
+              <Box flexDirection="row" flexWrap="wrap" gap="sm">
+                {colorOptions.map((c) => (
+                  <AnimatedPressable
+                    key={c}
+                    onPress={() => setColor(c)}
+                    haptic="selection"
+                    pressScale={0.9}
+                  >
+                    <Box
+                      width={36}
+                      height={36}
+                      borderRadius="full"
+                      style={{
+                        backgroundColor: c,
+                        borderWidth: color === c ? 3 : 0,
+                        borderColor: 'white',
+                        shadowColor: color === c ? '#000' : 'transparent',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: color === c ? 0.25 : 0,
+                        shadowRadius: 4,
+                        elevation: color === c ? 4 : 0,
+                      }}
                     />
-                  ))}
-                </Box>
+                  </AnimatedPressable>
+                ))}
               </Box>
+            </Box>
 
-              {/* Initial Balance */}
-              <Input
-                label="Saldo iniziale"
-                value={initialBalance}
-                onChangeText={setInitialBalance}
-                keyboardType="numeric"
-                placeholder="0.00"
-              />
+            {/* Initial Balance */}
+            <Input
+              label="Saldo iniziale"
+              value={initialBalance}
+              onChangeText={setInitialBalance}
+              keyboardType="numeric"
+              placeholder="0.00"
+            />
 
-              {/* Default toggle */}
-              <Pressable
-                onPress={() => setIsDefault(!isDefault)}
-                style={styles.toggleRow}
+            {/* Default toggle */}
+            <AnimatedPressable
+              onPress={() => setIsDefault(!isDefault)}
+              haptic="selection"
+            >
+              <Box
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+                paddingVertical="sm"
               >
                 <Text variant="bodyMedium">Conto predefinito</Text>
                 <Box
@@ -310,69 +342,18 @@ export function AccountsScreen(): JSX.Element {
                     }}
                   />
                 </Box>
-              </Pressable>
+              </Box>
+            </AnimatedPressable>
 
-              {/* Submit */}
-              <Button
-                title={editingAccount ? 'Salva modifiche' : 'Crea conto'}
-                onPress={handleSubmit}
-                loading={loading}
-              />
-            </Box>
-          </Pressable>
-        </Pressable>
-      </Modal>
+            {/* Submit */}
+            <Button
+              title={editingAccount ? 'Salva modifiche' : 'Crea conto'}
+              onPress={handleSubmit}
+              loading={loading}
+            />
+          </Box>
+        </ScrollContainer>
+      </BottomSheetModal>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  totalCard: {
-    marginBottom: 16,
-  },
-  listContent: {
-    paddingBottom: 40,
-  },
-  emptyHint: {
-    marginTop: 4,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
-  },
-  typeOption: {
-    padding: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    gap: 4,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    minWidth: 80,
-  },
-  colorOption: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-  },
-  colorSelected: {
-    borderWidth: 3,
-    borderColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  toggleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-});

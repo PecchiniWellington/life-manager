@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { ScrollView } from 'react-native';
 import {
   Box,
   Text,
@@ -12,6 +11,7 @@ import {
   Input,
   Button,
   AnimatedPressable,
+  ScrollContainer,
 } from '@shared/ui';
 import { BottomSheet, BottomSheetRef } from '@shared/ui/molecules';
 import { useSpaces } from '../hooks';
@@ -75,7 +75,7 @@ export function CreateSpaceModal({ visible, onClose }: CreateSpaceModalProps): J
       snapPoints={['70%']}
       onClose={handleClose}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollContainer>
         <Box paddingX="lg" paddingBottom="xl">
           {/* Name Input */}
           <Box marginBottom="lg">
@@ -203,7 +203,7 @@ export function CreateSpaceModal({ visible, onClose }: CreateSpaceModalProps): J
             accessibilityLabel="Crea nuovo spazio"
           />
         </Box>
-      </ScrollView>
+      </ScrollContainer>
     </BottomSheet>
   );
 }

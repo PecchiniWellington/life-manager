@@ -1,11 +1,11 @@
 /**
  * AccountCard Component
  * Card che mostra un conto con saldo
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React from 'react';
-import { Pressable } from 'react-native';
-import { Box, Text, GlassCard } from '@shared/ui';
+import { Box, Text, GlassCard, AnimatedPressable } from '@shared/ui';
 import { Account, AccountWithBalance, accountTypeLabels } from '../domain/types';
 
 interface AccountCardProps {
@@ -62,9 +62,9 @@ export function AccountCard({
     );
 
     return onPress ? (
-      <Pressable onPress={onPress} onLongPress={onLongPress}>
+      <AnimatedPressable onPress={onPress} onLongPress={onLongPress} haptic="light" pressScale={0.98}>
         {compactContent}
-      </Pressable>
+      </AnimatedPressable>
     ) : compactContent;
   }
 
@@ -126,8 +126,8 @@ export function AccountCard({
   );
 
   return onPress ? (
-    <Pressable onPress={onPress} onLongPress={onLongPress}>
+    <AnimatedPressable onPress={onPress} onLongPress={onLongPress} haptic="light" pressScale={0.98}>
       {fullContent}
-    </Pressable>
+    </AnimatedPressable>
   ) : fullContent;
 }

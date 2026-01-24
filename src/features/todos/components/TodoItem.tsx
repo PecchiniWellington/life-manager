@@ -1,10 +1,10 @@
 /**
  * TodoItem Component - Modern Design
  * Stile coerente con TransactionItem
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React, { useCallback } from 'react';
-import { StyleSheet } from 'react-native';
 import {
   Box,
   Text,
@@ -99,7 +99,9 @@ export function TodoItem({
           padding="md"
           borderRadius="lg"
           backgroundColor="surface"
-          style={styles.itemContainer}
+          borderWidth={1}
+          borderColor="border"
+          style={{ borderColor: 'rgba(0,0,0,0.04)' }}
         >
           {/* Checkbox */}
           <AnimatedPressable
@@ -143,11 +145,9 @@ export function TodoItem({
               {!isDone && (
                 <Box
                   borderRadius="sm"
-                  style={{
-                    backgroundColor: statusBgColor,
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                  }}
+                  paddingHorizontal="sm"
+                  paddingVertical="xxs"
+                  style={{ backgroundColor: statusBgColor }}
                 >
                   <Text variant="caption" style={{ color: statusColor, fontSize: 10 }}>
                     {statusLabels[todo.status]}
@@ -202,10 +202,3 @@ export function TodoItem({
     </SwipeableRow>
   );
 }
-
-const styles = StyleSheet.create({
-  itemContainer: {
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.04)',
-  },
-});

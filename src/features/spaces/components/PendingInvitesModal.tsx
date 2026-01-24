@@ -4,12 +4,12 @@
  */
 
 import React, { useCallback, useRef, useEffect } from 'react';
-import { ScrollView } from 'react-native';
 import {
   Box,
   Text,
   Icon,
   Button,
+  ScrollContainer,
 } from '@shared/ui';
 import { BottomSheet, BottomSheetRef } from '@shared/ui/molecules';
 import { useSpaces } from '../hooks';
@@ -60,7 +60,7 @@ export function PendingInvitesModal({ visible, onClose }: PendingInvitesModalPro
       snapPoints={['60%']}
       onClose={onClose}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollContainer>
         <Box paddingX="lg" paddingBottom="xl">
           {pendingInvites.length === 0 ? (
             <Box alignItems="center" paddingY="xl">
@@ -82,7 +82,7 @@ export function PendingInvitesModal({ visible, onClose }: PendingInvitesModalPro
             ))
           )}
         </Box>
-      </ScrollView>
+      </ScrollContainer>
     </BottomSheet>
   );
 }

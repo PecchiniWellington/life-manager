@@ -1,10 +1,10 @@
 /**
  * TodosScreen - Modern Design
  * Stile coerente con WalletScreen
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, Pressable } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import {
   Screen,
@@ -13,6 +13,7 @@ import {
   Text,
   VStack,
   GlassCard,
+  AnimatedPressable,
 } from '@shared/ui';
 import { EmptyState } from '@shared/ui/molecules';
 import { TodoItem, TodoFilters, TodoForm } from '../components';
@@ -111,7 +112,10 @@ export function TodosScreen(): JSX.Element {
         <Box
           borderRadius="xl"
           padding="md"
-          style={styles.statsCard}
+          backgroundColor="surface"
+          borderWidth={1}
+          borderColor="border"
+          style={{ paddingTop: 20, marginTop: 12 }}
         >
           <Box gap="md">
             {/* Header row with stats and add button */}
@@ -120,20 +124,30 @@ export function TodosScreen(): JSX.Element {
                 <Text variant="caption" color="textSecondary">
                   Attività totali
                 </Text>
-                <Text variant="headingLarge" weight="bold" color="textPrimary" style={styles.statsText}>
+                <Text variant="headingLarge" weight="bold" color="textPrimary" style={{ fontSize: 32, letterSpacing: -0.5 }}>
                   {totalTodos}
                 </Text>
                 <Text variant="caption" color="textTertiary">
                   {completionProgress}% completato
                 </Text>
               </Box>
-              <Pressable
+              <AnimatedPressable
                 onPress={handleAddTodo}
-                style={styles.addButton}
+                haptic="light"
+                pressScale={0.95}
                 accessibilityLabel="Aggiungi nuovo todo"
               >
-                <Icon name="add" size="md" color="onPrimary" />
-              </Pressable>
+                <Box
+                  width={44}
+                  height={44}
+                  borderRadius="lg"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: '#f59e0b' }}
+                >
+                  <Icon name="add" size="md" color="onPrimary" />
+                </Box>
+              </AnimatedPressable>
             </Box>
 
             {/* Progress bar */}
@@ -152,7 +166,7 @@ export function TodosScreen(): JSX.Element {
 
             {/* Status breakdown */}
             <Box flexDirection="row" gap="sm">
-              <Box flex={1} padding="sm" borderRadius="lg" style={styles.statusBox}>
+              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
                   <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#3b82f6' }} />
                   <Text variant="caption" color="textSecondary">Da fare</Text>
@@ -161,7 +175,7 @@ export function TodosScreen(): JSX.Element {
                   {countByStatus.todo}
                 </Text>
               </Box>
-              <Box flex={1} padding="sm" borderRadius="lg" style={styles.statusBox}>
+              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
                   <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#f59e0b' }} />
                   <Text variant="caption" color="textSecondary">In corso</Text>
@@ -170,7 +184,7 @@ export function TodosScreen(): JSX.Element {
                   {countByStatus.doing}
                 </Text>
               </Box>
-              <Box flex={1} padding="sm" borderRadius="lg" style={styles.statusBox}>
+              <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
                   <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#22c55e' }} />
                   <Text variant="caption" color="textSecondary">Completati</Text>
@@ -184,7 +198,7 @@ export function TodosScreen(): JSX.Element {
         </Box>
 
         {/* Filter toggle */}
-        <Pressable onPress={toggleFilters}>
+        <AnimatedPressable onPress={toggleFilters} haptic="light" pressScale={0.98}>
           <GlassCard variant="solid" padding="sm">
             <Box flexDirection="row" alignItems="center" gap="md">
               <Box
@@ -208,7 +222,7 @@ export function TodosScreen(): JSX.Element {
               <Icon name={showFilters ? 'chevronUp' : 'chevronDown'} size="sm" color="textTertiary" />
             </Box>
           </GlassCard>
-        </Pressable>
+        </AnimatedPressable>
 
         {/* Filters */}
         {showFilters && (
@@ -301,28 +315,3 @@ export function TodosScreen(): JSX.Element {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  statsCard: {
-    backgroundColor: '#f8fafc',
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.06)',
-    paddingTop: 20,
-    marginTop: 12,
-  },
-  statsText: {
-    fontSize: 32,
-    letterSpacing: -0.5,
-  },
-  statusBox: {
-    backgroundColor: 'rgba(0,0,0,0.03)',
-  },
-  addButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: '#f59e0b',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

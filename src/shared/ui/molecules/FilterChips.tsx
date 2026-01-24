@@ -1,12 +1,11 @@
 /**
  * FilterChips Molecule
  * Gruppo di chip per filtri
+ * MOLECULE: Usa solo atoms del design system
  */
 
 import React from 'react';
-import { ScrollView } from 'react-native';
-import { Box, Chip, ChipIntent } from '../atoms';
-import { useTheme } from '../theme';
+import { HorizontalScroll, Chip, ChipIntent } from '../atoms';
 
 /**
  * Filter option
@@ -49,8 +48,6 @@ export function FilterChips<T = string>({
   allLabel = 'Tutti',
   showAll = true,
 }: FilterChipsProps<T>): JSX.Element {
-  const theme = useTheme();
-
   const handlePress = (optionValue: T | null) => {
     if (allowDeselect && value === optionValue) {
       onChange(null);
@@ -60,11 +57,7 @@ export function FilterChips<T = string>({
   };
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ gap: theme.spacing.sm }}
-    >
+    <HorizontalScroll gap="sm">
       {showAll && (
         <Chip
           label={allLabel}
@@ -83,7 +76,7 @@ export function FilterChips<T = string>({
           intent={option.intent}
         />
       ))}
-    </ScrollView>
+    </HorizontalScroll>
   );
 }
 
@@ -108,8 +101,6 @@ export function MultiFilterChips<T = string>({
   values,
   onChange,
 }: MultiFilterChipsProps<T>): JSX.Element {
-  const theme = useTheme();
-
   const handlePress = (optionValue: T) => {
     if (values.includes(optionValue)) {
       onChange(values.filter((v) => v !== optionValue));
@@ -119,11 +110,7 @@ export function MultiFilterChips<T = string>({
   };
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ gap: theme.spacing.sm }}
-    >
+    <HorizontalScroll gap="sm">
       {options.map((option) => (
         <Chip
           key={String(option.value)}
@@ -134,6 +121,6 @@ export function MultiFilterChips<T = string>({
           intent={option.intent}
         />
       ))}
-    </ScrollView>
+    </HorizontalScroll>
   );
 }

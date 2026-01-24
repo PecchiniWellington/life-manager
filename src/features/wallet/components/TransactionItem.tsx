@@ -1,11 +1,10 @@
 /**
  * TransactionItem Component - Modern Design
- * MOLECULE: Usa solo atoms del design system
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  * Features: AnimatedPressable, SwipeableRow, design pulito
  */
 
 import React, { useCallback } from 'react';
-import { StyleSheet } from 'react-native';
 import {
   Box,
   Text,
@@ -90,7 +89,9 @@ export function TransactionItem({
           padding="md"
           borderRadius="lg"
           backgroundColor="surface"
-          style={styles.itemContainer}
+          borderWidth={1}
+          borderColor="border"
+          style={{ borderColor: 'rgba(0,0,0,0.04)' }}
         >
           {/* Category icon */}
           <Box
@@ -144,10 +145,3 @@ export function TransactionItem({
     </SwipeableRow>
   );
 }
-
-const styles = StyleSheet.create({
-  itemContainer: {
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.04)',
-  },
-});

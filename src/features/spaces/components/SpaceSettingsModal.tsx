@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { ScrollView, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import {
   Box,
   Text,
@@ -12,6 +12,7 @@ import {
   Input,
   Button,
   AnimatedPressable,
+  ScrollContainer,
 } from '@shared/ui';
 import { BottomSheet, BottomSheetRef } from '@shared/ui/molecules';
 import { useSpaces } from '../hooks';
@@ -160,7 +161,7 @@ export function SpaceSettingsModal({ visible, space, onClose }: SpaceSettingsMod
       snapPoints={['80%']}
       onClose={handleClose}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollContainer>
         <Box paddingX="lg" paddingBottom="xl">
           {/* Space Info */}
           <Box
@@ -316,7 +317,7 @@ export function SpaceSettingsModal({ visible, space, onClose }: SpaceSettingsMod
             </Box>
           )}
         </Box>
-      </ScrollView>
+      </ScrollContainer>
     </BottomSheet>
   );
 }

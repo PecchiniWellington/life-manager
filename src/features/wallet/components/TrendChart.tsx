@@ -4,8 +4,7 @@
  */
 
 import React from 'react';
-import { Pressable } from 'react-native';
-import { Box, Text, GlassCard } from '@shared/ui';
+import { Box, Text, GlassCard, AnimatedPressable } from '@shared/ui';
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
 
@@ -276,7 +275,8 @@ export function MonthlyComparison({
           {/* Balance comparison */}
           <Box
             paddingTop="sm"
-            style={{ borderTopWidth: 1, borderTopColor: 'rgba(0,0,0,0.1)' }}
+            borderTopWidth={1}
+            borderColor="border"
           >
             <Box
               flexDirection="row"
@@ -336,7 +336,11 @@ export function BalanceHistoryMini({
         </Box>
       </GlassCard>
     );
-    return onPress ? <Pressable onPress={onPress}>{emptyContent}</Pressable> : emptyContent;
+    return onPress ? (
+      <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+        {emptyContent}
+      </AnimatedPressable>
+    ) : emptyContent;
   }
 
   const latestBalance = data[data.length - 1]?.balance || 0;
@@ -391,5 +395,9 @@ export function BalanceHistoryMini({
     </GlassCard>
   );
 
-  return onPress ? <Pressable onPress={onPress}>{content}</Pressable> : content;
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+      {content}
+    </AnimatedPressable>
+  ) : content;
 }

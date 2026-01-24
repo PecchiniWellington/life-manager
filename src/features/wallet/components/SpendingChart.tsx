@@ -4,8 +4,7 @@
  */
 
 import React from 'react';
-import { Pressable } from 'react-native';
-import { Box, Text, GlassCard } from '@shared/ui';
+import { Box, Text, GlassCard, AnimatedPressable } from '@shared/ui';
 import { Category } from '../domain/types';
 
 interface CategorySpending {
@@ -89,7 +88,8 @@ export function SpendingBarChart({
           flexDirection="row"
           justifyContent="space-between"
           paddingTop="sm"
-          style={{ borderTopWidth: 1, borderTopColor: 'rgba(0,0,0,0.1)' }}
+          borderTopWidth={1}
+          borderColor="border"
         >
           <Text variant="bodyMedium" weight="semibold">
             Totale
@@ -284,5 +284,9 @@ export function MiniSpendingOverview({
     </GlassCard>
   );
 
-  return onPress ? <Pressable onPress={onPress}>{content}</Pressable> : content;
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+      {content}
+    </AnimatedPressable>
+  ) : content;
 }

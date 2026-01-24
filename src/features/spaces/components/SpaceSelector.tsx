@@ -1,19 +1,18 @@
 /**
  * Space Selector Component
  * Dropdown per selezionare lo spazio attivo
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback } from 'react';
-import { Modal, FlatList, StyleSheet, Pressable as RNPressable } from 'react-native';
-import Animated, { FadeIn, FadeOut, SlideInDown } from 'react-native-reanimated';
 import {
   Box,
   Text,
   Icon,
   AnimatedPressable,
+  BottomSheetModal,
+  VirtualList,
 } from '@shared/ui';
-import { useTheme } from '@shared/ui/theme';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSpaces } from '../hooks';
 import { Space, SPACE_COLORS } from '../domain/types';
 import { IconName } from '@shared/ui/atoms/Icon';
@@ -25,8 +24,6 @@ interface SpaceSelectorProps {
 }
 
 export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: SpaceSelectorProps): JSX.Element {
-  const theme = useTheme();
-  const insets = useSafeAreaInsets();
   const { spaces, currentSpace, switchSpace, pendingInvitesCount } = useSpaces();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -48,8 +45,8 @@ export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: 
           flexDirection="row"
           alignItems="center"
           backgroundColor="surfaceSecondary"
-          paddingX="md"
-          paddingY="sm"
+          paddingHorizontal="md"
+          paddingVertical="sm"
           borderRadius="lg"
         >
           <Box
@@ -91,117 +88,38 @@ export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: 
       </AnimatedPressable>
 
       {/* Modal Dropdown */}
-      <Modal
+      <BottomSheetModal
         visible={isOpen}
-        transparent
-        animationType="none"
-        onRequestClose={() => setIsOpen(false)}
+        onClose={() => setIsOpen(false)}
+        showHandle
+        maxHeight="60%"
       >
-        <RNPressable
-          style={styles.overlay}
-          onPress={() => setIsOpen(false)}
-        >
-          <Animated.View
-            style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.3)' }]}
-            entering={FadeIn.duration(200)}
-            exiting={FadeOut.duration(200)}
-          />
-        </RNPressable>
-
-        <Animated.View
-          style={[
-            styles.dropdown,
-            {
-              top: insets.top + 60,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-          entering={SlideInDown.springify().damping(20)}
-        >
-          <Box padding="md">
-            <Text variant="caption" color="textSecondary" style={{ marginBottom: 8 }}>
-              I TUOI SPAZI
+        <Box padding="md">
+          <Box flexDirection="row" alignItems="center" justifyContent="space-between" marginBottom="md">
+            <Text variant="headingSmall" weight="semibold">
+              I tuoi spazi
             </Text>
+            <AnimatedPressable onPress={() => setIsOpen(false)} haptic="light">
+              <Icon name="close" size="md" color="textSecondary" />
+            </AnimatedPressable>
+          </Box>
 
-            <FlatList
-              data={spaces}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <AnimatedPressable
-                  onPress={() => handleSelect(item)}
-                  haptic="selection"
-                >
-                  <Box
-                    flexDirection="row"
-                    alignItems="center"
-                    paddingY="md"
-                    paddingX="sm"
-                    backgroundColor={item.id === currentSpace?.id ? 'surfaceSecondary' : 'transparent'}
-                    borderRadius="md"
-                  >
-                    <Box
-                      width={36}
-                      height={36}
-                      borderRadius="sm"
-                      alignItems="center"
-                      justifyContent="center"
-                      style={{ backgroundColor: item.color }}
-                    >
-                      <Icon
-                        name={getSpaceIcon(item)}
-                        size="md"
-                        color="surface"
-                      />
-                    </Box>
-                    <Box flex={1} marginLeft="md">
-                      <Text variant="bodyMedium" weight={item.id === currentSpace?.id ? 'semibold' : 'regular'}>
-                        {item.name}
-                      </Text>
-                      <Text variant="caption" color="textSecondary">
-                        {item.members.length} {item.members.length === 1 ? 'membro' : 'membri'}
-                      </Text>
-                    </Box>
-                    {item.id === currentSpace?.id && (
-                      <Icon name="checkCircle" size="md" color="primary" />
-                    )}
-                    {/* Settings button */}
-                    {onOpenSettings && !item.isPersonal && (
-                      <AnimatedPressable
-                        onPress={() => {
-                          setIsOpen(false);
-                          onOpenSettings(item);
-                        }}
-                        haptic="light"
-                      >
-                        <Box padding="xs">
-                          <Icon name="settings" size="sm" color="textSecondary" />
-                        </Box>
-                      </AnimatedPressable>
-                    )}
-                  </Box>
-                </AnimatedPressable>
-              )}
-              ItemSeparatorComponent={() => <Box height={4} />}
-              style={{ maxHeight: 300 }}
-            />
-
-            {/* Create New Space Button */}
-            {onCreateSpace && (
+          <VirtualList
+            data={spaces}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
               <AnimatedPressable
-                onPress={() => {
-                  setIsOpen(false);
-                  onCreateSpace();
-                }}
-                haptic="light"
+                onPress={() => handleSelect(item)}
+                haptic="selection"
+                pressScale={0.98}
               >
                 <Box
                   flexDirection="row"
                   alignItems="center"
-                  paddingY="md"
-                  paddingX="sm"
-                  marginTop="sm"
-                  borderTopWidth={1}
-                  borderColor="border"
+                  paddingVertical="md"
+                  paddingHorizontal="sm"
+                  backgroundColor={item.id === currentSpace?.id ? 'surfaceSecondary' : 'transparent'}
+                  borderRadius="md"
                 >
                   <Box
                     width={36}
@@ -209,62 +127,109 @@ export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: 
                     borderRadius="sm"
                     alignItems="center"
                     justifyContent="center"
-                    backgroundColor="surfaceSecondary"
+                    style={{ backgroundColor: item.color }}
                   >
-                    <Icon name="add" size="md" color="primary" />
+                    <Icon
+                      name={getSpaceIcon(item)}
+                      size="md"
+                      color="surface"
+                    />
                   </Box>
-                  <Text variant="bodyMedium" color="primary" weight="semibold" style={{ marginLeft: 12 }}>
-                    Crea nuovo spazio
-                  </Text>
+                  <Box flex={1} marginLeft="md">
+                    <Text variant="bodyMedium" weight={item.id === currentSpace?.id ? 'semibold' : 'regular'}>
+                      {item.name}
+                    </Text>
+                    <Text variant="caption" color="textSecondary">
+                      {item.members.length} {item.members.length === 1 ? 'membro' : 'membri'}
+                    </Text>
+                  </Box>
+                  {item.id === currentSpace?.id && (
+                    <Icon name="checkCircle" size="md" color="primary" />
+                  )}
+                  {/* Settings button */}
+                  {onOpenSettings && !item.isPersonal && (
+                    <AnimatedPressable
+                      onPress={() => {
+                        setIsOpen(false);
+                        onOpenSettings(item);
+                      }}
+                      haptic="light"
+                    >
+                      <Box padding="xs">
+                        <Icon name="settings" size="sm" color="textSecondary" />
+                      </Box>
+                    </AnimatedPressable>
+                  )}
                 </Box>
               </AnimatedPressable>
             )}
+            style={{ maxHeight: 300 }}
+          />
 
-            {/* Pending Invites */}
-            {pendingInvitesCount > 0 && (
-              <AnimatedPressable
-                onPress={() => {
-                  setIsOpen(false);
-                  onOpenInvites?.();
-                }}
-                haptic="light"
+          {/* Create New Space Button */}
+          {onCreateSpace && (
+            <AnimatedPressable
+              onPress={() => {
+                setIsOpen(false);
+                onCreateSpace();
+              }}
+              haptic="light"
+              pressScale={0.98}
+            >
+              <Box
+                flexDirection="row"
+                alignItems="center"
+                paddingVertical="md"
+                paddingHorizontal="sm"
+                marginTop="sm"
+                borderTopWidth={1}
+                borderColor="border"
               >
                 <Box
-                  flexDirection="row"
+                  width={36}
+                  height={36}
+                  borderRadius="sm"
                   alignItems="center"
-                  paddingY="md"
-                  paddingX="sm"
-                  backgroundColor="primaryLight"
-                  borderRadius="md"
-                  marginTop="sm"
+                  justifyContent="center"
+                  backgroundColor="surfaceSecondary"
                 >
-                  <Icon name="mail" size="md" color="primary" />
-                  <Text variant="bodyMedium" color="primary" weight="semibold" style={{ marginLeft: 12 }}>
-                    {pendingInvitesCount} {pendingInvitesCount === 1 ? 'invito' : 'inviti'} in attesa
-                  </Text>
+                  <Icon name="add" size="md" color="primary" />
                 </Box>
-              </AnimatedPressable>
-            )}
-          </Box>
-        </Animated.View>
-      </Modal>
+                <Text variant="bodyMedium" color="primary" weight="semibold" style={{ marginLeft: 12 }}>
+                  Crea nuovo spazio
+                </Text>
+              </Box>
+            </AnimatedPressable>
+          )}
+
+          {/* Pending Invites */}
+          {pendingInvitesCount > 0 && (
+            <AnimatedPressable
+              onPress={() => {
+                setIsOpen(false);
+                onOpenInvites?.();
+              }}
+              haptic="light"
+              pressScale={0.98}
+            >
+              <Box
+                flexDirection="row"
+                alignItems="center"
+                paddingVertical="md"
+                paddingHorizontal="sm"
+                backgroundColor="primaryLight"
+                borderRadius="md"
+                marginTop="sm"
+              >
+                <Icon name="mail" size="md" color="primary" />
+                <Text variant="bodyMedium" color="primary" weight="semibold" style={{ marginLeft: 12 }}>
+                  {pendingInvitesCount} {pendingInvitesCount === 1 ? 'invito' : 'inviti'} in attesa
+                </Text>
+              </Box>
+            </AnimatedPressable>
+          )}
+        </Box>
+      </BottomSheetModal>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  dropdown: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-});

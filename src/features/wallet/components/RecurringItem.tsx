@@ -4,8 +4,7 @@
  */
 
 import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { Box, Text, GlassCard, Icon, IconName } from '@shared/ui';
+import { Box, Text, GlassCard, Icon, IconName, AnimatedPressable } from '@shared/ui';
 import { RecurringTransaction, Category, Account, RecurrenceFrequency } from '../domain/types';
 import { format, parseISO, isToday, isTomorrow, differenceInDays } from 'date-fns';
 import { it } from 'date-fns/locale';
@@ -165,7 +164,11 @@ export function RecurringItem({
     </GlassCard>
   );
 
-  return onPress ? <Pressable onPress={onPress}>{content}</Pressable> : content;
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+      {content}
+    </AnimatedPressable>
+  ) : content;
 }
 
 /**
@@ -285,7 +288,10 @@ export function RecurringStats({ recurring, onPress }: RecurringStatsProps): JSX
     </GlassCard>
   );
 
-  return onPress ? <Pressable onPress={onPress}>{content}</Pressable> : content;
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+      {content}
+    </AnimatedPressable>
+  ) : content;
 }
 
-const styles = StyleSheet.create({});

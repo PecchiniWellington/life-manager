@@ -1,11 +1,24 @@
 /**
  * RecurringScreen
  * Gestione transazioni ricorrenti
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { FlatList, StyleSheet, Modal, Pressable, Alert, ScrollView } from 'react-native';
-import { Screen, Box, Text, Button, Icon, GlassCard, Input } from '@shared/ui';
+import { Alert } from 'react-native';
+import {
+  Screen,
+  Box,
+  Text,
+  Button,
+  Icon,
+  GlassCard,
+  Input,
+  VirtualList,
+  BottomSheetModal,
+  AnimatedPressable,
+  ScrollContainer,
+} from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
@@ -182,22 +195,6 @@ export function RecurringScreen(): JSX.Element {
     );
   }, [openEditForm, handleToggle, handleDelete]);
 
-  const renderItem = useCallback(({ item }: { item: RecurringTransaction }) => {
-    const category = categories.find(c => c.id === item.categoryId);
-    const account = accounts.find(a => a.id === item.accountId);
-
-    return (
-      <Box marginBottom="sm">
-        <RecurringItem
-          recurring={item}
-          category={category}
-          account={account}
-          onPress={() => handleItemPress(item)}
-        />
-      </Box>
-    );
-  }, [categories, accounts, handleItemPress]);
-
   return (
     <Screen paddingHorizontal="lg">
       <ScreenTitle
@@ -222,7 +219,7 @@ export function RecurringScreen(): JSX.Element {
       />
 
       {/* Summary card */}
-      <GlassCard variant="solid" padding="lg" style={styles.summaryCard}>
+      <GlassCard variant="solid" padding="lg" style={{ marginBottom: 16 }}>
         <Box flexDirection="row" justifyContent="space-around">
           <Box alignItems="center">
             <Text variant="caption" color="textSecondary">
@@ -256,16 +253,30 @@ export function RecurringScreen(): JSX.Element {
         </Box>
       </GlassCard>
 
-      <FlatList
+      <VirtualList
         data={recurring}
         keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => {
+          const category = categories.find(c => c.id === item.categoryId);
+          const account = accounts.find(a => a.id === item.accountId);
+
+          return (
+            <Box marginBottom="sm">
+              <RecurringItem
+                recurring={item}
+                category={category}
+                account={account}
+                onPress={() => handleItemPress(item)}
+              />
+            </Box>
+          );
+        }}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <Box alignItems="center" padding="xl">
             <Text style={{ fontSize: 48 }}>🔄</Text>
-            <Text variant="bodyMedium" color="textSecondary" style={styles.emptyTitle}>
+            <Text variant="bodyMedium" color="textSecondary" style={{ marginTop: 12, marginBottom: 4 }}>
               Nessuna transazione ricorrente
             </Text>
             <Text variant="caption" color="textSecondary" align="center">
@@ -276,187 +287,165 @@ export function RecurringScreen(): JSX.Element {
       />
 
       {/* Form Modal */}
-      <Modal
+      <BottomSheetModal
         visible={showForm}
-        animationType="slide"
-        transparent
-        onRequestClose={handleCloseForm}
+        onClose={handleCloseForm}
+        showHandle
+        maxHeight="90%"
       >
-        <Pressable style={styles.modalOverlay} onPress={handleCloseForm}>
-          <Pressable
-            style={[styles.modalContent, { backgroundColor: colors.background }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Box padding="lg" gap="lg">
-                <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                  <Text variant="headingSmall" weight="bold">
-                    {editingRecurring ? 'Modifica ricorrente' : 'Nuova ricorrente'}
-                  </Text>
-                  <Button
-                    title=""
-                    variant="ghost"
-                    size="sm"
-                    onPress={handleCloseForm}
-                    leftIcon={<Icon name="close" size="md" color="textSecondary" />}
-                  />
-                </Box>
+        <ScrollContainer showsVerticalScrollIndicator={false}>
+          <Box padding="lg" gap="lg">
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+              <Text variant="headingSmall" weight="bold">
+                {editingRecurring ? 'Modifica ricorrente' : 'Nuova ricorrente'}
+              </Text>
+              <AnimatedPressable onPress={handleCloseForm} haptic="light">
+                <Icon name="close" size="md" color="textSecondary" />
+              </AnimatedPressable>
+            </Box>
 
-                {/* Type toggle */}
-                <Box flexDirection="row" gap="sm">
-                  <Pressable
-                    onPress={() => setType('expense')}
-                    style={[
-                      styles.typeButton,
-                      type === 'expense' && { backgroundColor: '#FF3B3020', borderColor: '#FF3B30' },
-                    ]}
+            {/* Type toggle */}
+            <Box flexDirection="row" gap="sm">
+              <AnimatedPressable
+                onPress={() => setType('expense')}
+                haptic="selection"
+                pressScale={0.95}
+                style={{ flex: 1 }}
+              >
+                <Box
+                  paddingVertical="sm"
+                  paddingHorizontal="md"
+                  borderRadius="md"
+                  alignItems="center"
+                  borderWidth={2}
+                  style={{
+                    backgroundColor: type === 'expense' ? '#FF3B3020' : 'transparent',
+                    borderColor: type === 'expense' ? '#FF3B30' : 'transparent',
+                  }}
+                >
+                  <Text
+                    variant="bodyMedium"
+                    weight="semibold"
+                    color={type === 'expense' ? 'error' : 'textSecondary'}
                   >
-                    <Text
-                      variant="bodyMedium"
-                      weight="semibold"
-                      color={type === 'expense' ? 'error' : 'textSecondary'}
-                    >
-                      Spesa
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => setType('income')}
-                    style={[
-                      styles.typeButton,
-                      type === 'income' && { backgroundColor: '#34C75920', borderColor: '#34C759' },
-                    ]}
-                  >
-                    <Text
-                      variant="bodyMedium"
-                      weight="semibold"
-                      color={type === 'income' ? 'success' : 'textSecondary'}
-                    >
-                      Entrata
-                    </Text>
-                  </Pressable>
-                </Box>
-
-                {/* Note */}
-                <Input
-                  label="Descrizione"
-                  value={note}
-                  onChangeText={setNote}
-                  placeholder="Es. Netflix, Affitto, Stipendio"
-                />
-
-                {/* Amount */}
-                <Input
-                  label="Importo (€)"
-                  value={amount}
-                  onChangeText={setAmount}
-                  keyboardType="numeric"
-                  placeholder="0.00"
-                />
-
-                {/* Frequency */}
-                <Box gap="xs">
-                  <Text variant="caption" color="textSecondary">
-                    Frequenza
+                    Spesa
                   </Text>
-                  <Box flexDirection="row" flexWrap="wrap" gap="xs">
-                    {frequencyOptions.map((option) => (
-                      <Pressable
-                        key={option.value}
-                        onPress={() => setFrequency(option.value)}
-                        style={[
-                          styles.frequencyOption,
-                          frequency === option.value && {
-                            borderColor: colors.primary,
-                            backgroundColor: `${colors.primary}20`,
-                          },
-                        ]}
+                </Box>
+              </AnimatedPressable>
+              <AnimatedPressable
+                onPress={() => setType('income')}
+                haptic="selection"
+                pressScale={0.95}
+                style={{ flex: 1 }}
+              >
+                <Box
+                  paddingVertical="sm"
+                  paddingHorizontal="md"
+                  borderRadius="md"
+                  alignItems="center"
+                  borderWidth={2}
+                  style={{
+                    backgroundColor: type === 'income' ? '#34C75920' : 'transparent',
+                    borderColor: type === 'income' ? '#34C759' : 'transparent',
+                  }}
+                >
+                  <Text
+                    variant="bodyMedium"
+                    weight="semibold"
+                    color={type === 'income' ? 'success' : 'textSecondary'}
+                  >
+                    Entrata
+                  </Text>
+                </Box>
+              </AnimatedPressable>
+            </Box>
+
+            {/* Note */}
+            <Input
+              label="Descrizione"
+              value={note}
+              onChangeText={setNote}
+              placeholder="Es. Netflix, Affitto, Stipendio"
+            />
+
+            {/* Amount */}
+            <Input
+              label="Importo (€)"
+              value={amount}
+              onChangeText={setAmount}
+              keyboardType="numeric"
+              placeholder="0.00"
+            />
+
+            {/* Frequency */}
+            <Box gap="xs">
+              <Text variant="caption" color="textSecondary">
+                Frequenza
+              </Text>
+              <Box flexDirection="row" flexWrap="wrap" gap="xs">
+                {frequencyOptions.map((option) => (
+                  <AnimatedPressable
+                    key={option.value}
+                    onPress={() => setFrequency(option.value)}
+                    haptic="selection"
+                    pressScale={0.95}
+                  >
+                    <Box
+                      paddingVertical="xs"
+                      paddingHorizontal="sm"
+                      borderRadius="sm"
+                      borderWidth={1}
+                      style={{
+                        borderColor: frequency === option.value ? colors.primary : 'rgba(0,0,0,0.1)',
+                        backgroundColor: frequency === option.value ? `${colors.primary}20` : 'transparent',
+                      }}
+                    >
+                      <Text
+                        variant="caption"
+                        color={frequency === option.value ? 'primary' : 'textSecondary'}
                       >
-                        <Text
-                          variant="caption"
-                          color={frequency === option.value ? 'primary' : 'textSecondary'}
-                        >
-                          {option.label}
-                        </Text>
-                      </Pressable>
-                    ))}
-                  </Box>
-                </Box>
-
-                {/* Account */}
-                <AccountSelector
-                  accounts={accounts}
-                  selectedAccountId={selectedAccountId}
-                  onSelect={(account) => setSelectedAccountId(account.id)}
-                  label="Conto"
-                />
-
-                {/* Category */}
-                <CategoryPicker
-                  categories={filteredCategories}
-                  selectedCategoryId={selectedCategoryId}
-                  onSelect={(category) => setSelectedCategoryId(category.id)}
-                  type={type}
-                  label="Categoria"
-                />
-
-                {/* Start Date */}
-                <Input
-                  label="Data inizio"
-                  value={startDate}
-                  onChangeText={setStartDate}
-                  placeholder="YYYY-MM-DD"
-                />
-
-                {/* Submit */}
-                <Button
-                  title={editingRecurring ? 'Salva modifiche' : 'Crea ricorrente'}
-                  onPress={handleSubmit}
-                  loading={loading}
-                />
+                        {option.label}
+                      </Text>
+                    </Box>
+                  </AnimatedPressable>
+                ))}
               </Box>
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
+            </Box>
+
+            {/* Account */}
+            <AccountSelector
+              accounts={accounts}
+              selectedAccountId={selectedAccountId}
+              onSelect={(account) => setSelectedAccountId(account.id)}
+              label="Conto"
+            />
+
+            {/* Category */}
+            <CategoryPicker
+              categories={filteredCategories}
+              selectedCategoryId={selectedCategoryId}
+              onSelect={(category) => setSelectedCategoryId(category.id)}
+              type={type}
+              label="Categoria"
+            />
+
+            {/* Start Date */}
+            <Input
+              label="Data inizio"
+              value={startDate}
+              onChangeText={setStartDate}
+              placeholder="YYYY-MM-DD"
+            />
+
+            {/* Submit */}
+            <Button
+              title={editingRecurring ? 'Salva modifiche' : 'Crea ricorrente'}
+              onPress={handleSubmit}
+              loading={loading}
+            />
+          </Box>
+        </ScrollContainer>
+      </BottomSheetModal>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  summaryCard: {
-    marginBottom: 16,
-  },
-  listContent: {
-    paddingBottom: 40,
-  },
-  emptyTitle: {
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
-  },
-  typeButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  frequencyOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
-  },
-});

@@ -1,11 +1,11 @@
 /**
  * AccountSelector Component
  * Dropdown per selezionare un conto
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React, { useState } from 'react';
-import { Modal, FlatList, TouchableOpacity, StyleSheet, View } from 'react-native';
-import { Box, Text, Icon } from '@shared/ui';
+import { Box, Text, Icon, AnimatedPressable, BottomSheetModal, VirtualList } from '@shared/ui';
 import { Account } from '../domain/types';
 import { useTheme } from '@shared/ui/theme';
 
@@ -42,7 +42,7 @@ export function AccountSelector({
             {label}
           </Text>
         )}
-        <TouchableOpacity onPress={() => setIsOpen(true)} activeOpacity={0.7}>
+        <AnimatedPressable onPress={() => setIsOpen(true)} haptic="light" pressScale={0.98}>
           <Box
             flexDirection="row"
             alignItems="center"
@@ -72,103 +72,74 @@ export function AccountSelector({
             )}
             <Icon name="chevronDown" size="sm" color="textSecondary" />
           </Box>
-        </TouchableOpacity>
+        </AnimatedPressable>
       </Box>
 
-      <Modal
+      <BottomSheetModal
         visible={isOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsOpen(false)}
+        onClose={() => setIsOpen(false)}
+        showHandle
+        maxHeight="70%"
       >
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={() => setIsOpen(false)}
-        >
-          <View
-            style={[
-              styles.modalContent,
-              { backgroundColor: colors.surface, borderRadius: 16 },
-            ]}
-          >
-            <Box padding="md">
-              <Box flexDirection="row" alignItems="center" justifyContent="space-between" marginBottom="md">
-                <Text variant="headingSmall" weight="semibold">
-                  Seleziona conto
-                </Text>
-                <TouchableOpacity onPress={() => setIsOpen(false)}>
-                  <Icon name="close" size="md" color="textSecondary" />
-                </TouchableOpacity>
-              </Box>
+        <Box padding="md">
+          <Box flexDirection="row" alignItems="center" justifyContent="space-between" marginBottom="md">
+            <Text variant="headingSmall" weight="semibold">
+              Seleziona conto
+            </Text>
+            <AnimatedPressable onPress={() => setIsOpen(false)} haptic="light">
+              <Icon name="close" size="md" color="textSecondary" />
+            </AnimatedPressable>
+          </Box>
 
-              <FlatList
-                data={accounts}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => handleSelect(item)}
-                    activeOpacity={0.7}
-                  >
+          <VirtualList
+            data={accounts}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <AnimatedPressable
+                onPress={() => handleSelect(item)}
+                haptic="selection"
+                pressScale={0.98}
+              >
+                <Box
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="md"
+                  borderRadius="md"
+                  style={item.id === selectedAccountId ? { backgroundColor: `${colors.primary}15` } : undefined}
+                >
+                  <Box flexDirection="row" alignItems="center" gap="md">
                     <Box
-                      flexDirection="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      padding="md"
+                      width={36}
+                      height={36}
                       borderRadius="md"
-                      style={item.id === selectedAccountId ? { backgroundColor: `${colors.primary}15` } : undefined}
+                      alignItems="center"
+                      justifyContent="center"
+                      style={{ backgroundColor: item.color + '20' }}
                     >
-                      <Box flexDirection="row" alignItems="center" gap="md">
-                        <Box
-                          width={36}
-                          height={36}
-                          borderRadius="md"
-                          alignItems="center"
-                          justifyContent="center"
-                          style={{ backgroundColor: item.color + '20' }}
-                        >
-                          <Text style={{ fontSize: 18 }}>{item.icon}</Text>
-                        </Box>
-                        <Box>
-                          <Text variant="bodyMedium" weight="medium">
-                            {item.name}
-                          </Text>
-                          {item.isDefault && (
-                            <Text variant="caption" color="primary">
-                              Principale
-                            </Text>
-                          )}
-                        </Box>
-                      </Box>
-                      {item.id === selectedAccountId && (
-                        <Icon name="check" size="sm" color="primary" />
+                      <Text style={{ fontSize: 18 }}>{item.icon}</Text>
+                    </Box>
+                    <Box>
+                      <Text variant="bodyMedium" weight="medium">
+                        {item.name}
+                      </Text>
+                      {item.isDefault && (
+                        <Text variant="caption" color="primary">
+                          Principale
+                        </Text>
                       )}
                     </Box>
-                  </TouchableOpacity>
-                )}
-                style={styles.list}
-              />
-            </Box>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+                  </Box>
+                  {item.id === selectedAccountId && (
+                    <Icon name="check" size="sm" color="primary" />
+                  )}
+                </Box>
+              </AnimatedPressable>
+            )}
+            style={{ maxHeight: 300 }}
+          />
+        </Box>
+      </BottomSheetModal>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  modalContent: {
-    width: '100%',
-    maxHeight: '70%',
-  },
-  list: {
-    maxHeight: 300,
-  },
-});

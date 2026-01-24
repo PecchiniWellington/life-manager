@@ -39,3 +39,9 @@ export { AnimatedList, useStaggerAnimation, type AnimatedListProps, type ListAni
 export { AnimatedProgressRing, type AnimatedProgressRingProps, type ProgressRingSize } from './AnimatedProgressRing';
 export { AnimatedBar, AnimatedBarGroup, type AnimatedBarProps, type AnimatedBarGroupProps, type BarData, type BarDirection, type BarSize } from './AnimatedBar';
 export { AnimatedNumber, type AnimatedNumberProps, type NumberFormat } from './AnimatedNumber';
+
+// Containers
+export { ScrollContainer, HorizontalScroll, VirtualList, type ScrollContainerProps, type HorizontalScrollProps, type VirtualListProps } from './ScrollContainer';
+
+// Modals
+export { BaseModal, BottomSheetModal, CenterModal, AlertModal, type BaseModalProps, type BottomSheetModalProps, type CenterModalProps, type AlertModalProps, type AlertButton } from './BaseModal';

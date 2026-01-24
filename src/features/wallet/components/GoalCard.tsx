@@ -1,11 +1,11 @@
 /**
  * GoalCard Component
  * Mostra un obiettivo di risparmio con progress ring - Design moderno con icone
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { Box, Text, GlassCard, Icon, IconName } from '@shared/ui';
+import { Box, Text, GlassCard, Icon, IconName, AnimatedPressable } from '@shared/ui';
 import { SavingsGoal } from '../domain/types';
 import { parseISO, differenceInDays } from 'date-fns';
 
@@ -122,7 +122,11 @@ export function GoalCard({ goal, onPress, compact = false }: GoalCardProps): JSX
       </GlassCard>
     );
 
-    return onPress ? <Pressable onPress={onPress}>{compactContent}</Pressable> : compactContent;
+    return onPress ? (
+      <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+        {compactContent}
+      </AnimatedPressable>
+    ) : compactContent;
   }
 
   const fullContent = (
@@ -177,10 +181,8 @@ export function GoalCard({ goal, onPress, compact = false }: GoalCardProps): JSX
               borderRadius="full"
               alignItems="center"
               justifyContent="center"
-              style={{
-                ...styles.progressCircle,
-                borderColor: getProgressColor(),
-              }}
+              borderWidth={4}
+              style={{ borderColor: getProgressColor() }}
             >
               <Text
                 variant="bodySmall"
@@ -252,7 +254,11 @@ export function GoalCard({ goal, onPress, compact = false }: GoalCardProps): JSX
     </GlassCard>
   );
 
-  return onPress ? <Pressable onPress={onPress}>{fullContent}</Pressable> : fullContent;
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+      {fullContent}
+    </AnimatedPressable>
+  ) : fullContent;
 }
 
 /**
@@ -308,7 +314,11 @@ export function MiniGoalProgress({ goals, onPress }: MiniGoalProgressProps): JSX
       </GlassCard>
     );
 
-    return onPress ? <Pressable onPress={onPress}>{emptyContent}</Pressable> : emptyContent;
+    return onPress ? (
+      <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+        {emptyContent}
+      </AnimatedPressable>
+    ) : emptyContent;
   }
 
   const content = (
@@ -349,11 +359,9 @@ export function MiniGoalProgress({ goals, onPress }: MiniGoalProgressProps): JSX
     </GlassCard>
   );
 
-  return onPress ? <Pressable onPress={onPress}>{content}</Pressable> : content;
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+      {content}
+    </AnimatedPressable>
+  ) : content;
 }
-
-const styles = StyleSheet.create({
-  progressCircle: {
-    borderWidth: 4,
-  },
-});

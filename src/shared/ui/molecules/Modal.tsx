@@ -1,26 +1,25 @@
 /**
  * Modal Molecule
  * Componente per dialoghi e modali
+ * MOLECULE: Usa solo atoms del design system
  */
 
 import React from 'react';
 import {
-  Modal as RNModal,
-  ModalProps as RNModalProps,
-  TouchableWithoutFeedback,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Box, Heading, Pressable, Text, Icon } from '../atoms';
-import { useTheme } from '../theme';
+  Box,
+  Heading,
+  Pressable,
+  Text,
+  Icon,
+  BottomSheetModal,
+  ScrollContainer,
+  AnimatedPressable,
+} from '../atoms';
 
 /**
  * Modal Props
  */
-export interface ModalProps extends Omit<RNModalProps, 'animationType' | 'transparent'> {
+export interface ModalProps {
   /** Se true, il modal è visibile */
   visible: boolean;
   /** Callback per chiudere il modal */
@@ -29,12 +28,10 @@ export interface ModalProps extends Omit<RNModalProps, 'animationType' | 'transp
   title?: string;
   /** Se true, mostra il pulsante di chiusura */
   showCloseButton?: boolean;
-  /** Tipo di animazione */
-  animation?: 'slide' | 'fade' | 'none';
-  /** Se true, chiude il modal toccando lo sfondo */
-  dismissOnBackdrop?: boolean;
   /** Abilita scroll interno */
   scrollable?: boolean;
+  /** Se true, chiude il modal toccando lo sfondo */
+  dismissOnBackdrop?: boolean;
   /** Contenuto del modal */
   children: React.ReactNode;
 }
@@ -47,22 +44,10 @@ export function Modal({
   onClose,
   title,
   showCloseButton = true,
-  animation = 'slide',
-  dismissOnBackdrop = true,
   scrollable = false,
+  dismissOnBackdrop = true,
   children,
-  ...rest
 }: ModalProps): JSX.Element {
-  const theme = useTheme();
-  const insets = useSafeAreaInsets();
-
-  const handleBackdropPress = () => {
-    Keyboard.dismiss();
-    if (dismissOnBackdrop) {
-      onClose();
-    }
-  };
-
   const content = (
     <>
       {/* Header */}
@@ -72,6 +57,7 @@ export function Modal({
           alignItems="center"
           justifyContent="space-between"
           marginBottom="lg"
+          paddingHorizontal="lg"
         >
           {title ? (
             <Heading level={5}>{title}</Heading>
@@ -91,54 +77,27 @@ export function Modal({
       )}
 
       {/* Content */}
-      {scrollable ? (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
-        >
-          {children}
-        </ScrollView>
-      ) : (
-        children
-      )}
+      <Box paddingHorizontal="lg" flex={scrollable ? 1 : undefined}>
+        {children}
+      </Box>
     </>
   );
 
   return (
-    <RNModal
+    <BottomSheetModal
       visible={visible}
-      transparent
-      animationType={animation}
-      onRequestClose={onClose}
-      {...rest}
+      onClose={onClose}
+      dismissOnBackdrop={dismissOnBackdrop}
+      showHandle
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <TouchableWithoutFeedback onPress={handleBackdropPress}>
-          <Box
-            flex={1}
-            backgroundColor="background"
-            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-            justifyContent="flex-end"
-          >
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <Box
-                backgroundColor="surface"
-                borderTopLeftRadius="xl"
-                borderTopRightRadius="xl"
-                padding="lg"
-                maxHeight="90%"
-              >
-                {content}
-              </Box>
-            </TouchableWithoutFeedback>
-          </Box>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </RNModal>
+      {scrollable ? (
+        <ScrollContainer fillHeight>
+          {content}
+        </ScrollContainer>
+      ) : (
+        content
+      )}
+    </BottomSheetModal>
   );
 }
 
@@ -182,33 +141,39 @@ export function ConfirmModal({
 
         <Box flexDirection="row" gap="md">
           <Box flex={1}>
-            <Pressable
+            <AnimatedPressable
               onPress={onClose}
-              padding="md"
-              borderRadius="md"
-              backgroundColor="secondary"
-              alignItems="center"
               accessibilityLabel={cancelLabel}
             >
-              <Text weight="medium">{cancelLabel}</Text>
-            </Pressable>
+              <Box
+                padding="md"
+                borderRadius="md"
+                backgroundColor="secondary"
+                alignItems="center"
+              >
+                <Text weight="medium">{cancelLabel}</Text>
+              </Box>
+            </AnimatedPressable>
           </Box>
           <Box flex={1}>
-            <Pressable
+            <AnimatedPressable
               onPress={() => {
                 onConfirm();
                 onClose();
               }}
-              padding="md"
-              borderRadius="md"
-              backgroundColor={destructive ? 'error' : 'primary'}
-              alignItems="center"
               accessibilityLabel={confirmLabel}
             >
-              <Text weight="medium" color={destructive ? 'onError' : 'onPrimary'}>
-                {confirmLabel}
-              </Text>
-            </Pressable>
+              <Box
+                padding="md"
+                borderRadius="md"
+                backgroundColor={destructive ? 'error' : 'primary'}
+                alignItems="center"
+              >
+                <Text weight="medium" color={destructive ? 'onError' : 'onPrimary'}>
+                  {confirmLabel}
+                </Text>
+              </Box>
+            </AnimatedPressable>
           </Box>
         </Box>
       </Box>

@@ -1,11 +1,23 @@
 /**
  * BudgetScreen
  * Gestione budget mensile globale e per categoria
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { StyleSheet, Modal, Pressable, Alert, ScrollView } from 'react-native';
-import { Screen, Box, Text, Button, Icon, GlassCard, Input } from '@shared/ui';
+import { Alert } from 'react-native';
+import {
+  Screen,
+  Box,
+  Text,
+  Button,
+  Icon,
+  GlassCard,
+  Input,
+  ScrollContainer,
+  BottomSheetModal,
+  AnimatedPressable,
+} from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
@@ -132,7 +144,7 @@ export function BudgetScreen(): JSX.Element {
         }
       />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollContainer showsVerticalScrollIndicator={false}>
         {/* Month navigation */}
         <Box
           flexDirection="row"
@@ -207,14 +219,19 @@ export function BudgetScreen(): JSX.Element {
                   const spent = categorySpending[category.id] || 0;
 
                   return (
-                    <Pressable key={category.id} onPress={() => openCategoryForm(category)}>
+                    <AnimatedPressable
+                      key={category.id}
+                      onPress={() => openCategoryForm(category)}
+                      haptic="light"
+                      pressScale={0.98}
+                    >
                       <CategoryBudgetProgress
                         categoryName={category.name}
                         categoryColor={category.color}
                         limit={limit}
                         spent={spent}
                       />
-                    </Pressable>
+                    </AnimatedPressable>
                   );
                 })}
               </Box>
@@ -238,133 +255,105 @@ export function BudgetScreen(): JSX.Element {
             </Box>
           </GlassCard>
         </Box>
-      </ScrollView>
+      </ScrollContainer>
 
       {/* Global Budget Form Modal */}
-      <Modal
+      <BottomSheetModal
         visible={showGlobalForm}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setShowGlobalForm(false)}
+        onClose={() => setShowGlobalForm(false)}
+        showHandle
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setShowGlobalForm(false)}>
-          <Pressable
-            style={[styles.modalContent, { backgroundColor: colors.background }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <Box padding="lg" gap="lg">
-              <Text variant="headingSmall" weight="bold">
-                Budget mensile
-              </Text>
+        <Box padding="lg" gap="lg">
+          <Text variant="headingSmall" weight="bold">
+            Budget mensile
+          </Text>
 
-              <Input
-                label="Limite di spesa"
-                value={globalLimit}
-                onChangeText={setGlobalLimit}
-                keyboardType="numeric"
-                placeholder="0.00"
+          <Input
+            label="Limite di spesa"
+            value={globalLimit}
+            onChangeText={setGlobalLimit}
+            keyboardType="numeric"
+            placeholder="0.00"
+          />
+
+          <Text variant="caption" color="textSecondary">
+            Questo è il limite massimo che vuoi spendere in un mese.
+          </Text>
+
+          <Box flexDirection="row" gap="sm">
+            <Box flex={1}>
+              <Button
+                title="Annulla"
+                variant="secondary"
+                onPress={() => setShowGlobalForm(false)}
               />
-
-              <Text variant="caption" color="textSecondary">
-                Questo è il limite massimo che vuoi spendere in un mese.
-              </Text>
-
-              <Box flexDirection="row" gap="sm">
-                <Box flex={1}>
-                  <Button
-                    title="Annulla"
-                    variant="secondary"
-                    onPress={() => setShowGlobalForm(false)}
-                  />
-                </Box>
-                <Box flex={1}>
-                  <Button
-                    title="Salva"
-                    onPress={handleSaveGlobalBudget}
-                  />
-                </Box>
-              </Box>
             </Box>
-          </Pressable>
-        </Pressable>
-      </Modal>
+            <Box flex={1}>
+              <Button
+                title="Salva"
+                onPress={handleSaveGlobalBudget}
+              />
+            </Box>
+          </Box>
+        </Box>
+      </BottomSheetModal>
 
       {/* Category Budget Form Modal */}
-      <Modal
+      <BottomSheetModal
         visible={showCategoryForm}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setShowCategoryForm(false)}
+        onClose={() => setShowCategoryForm(false)}
+        showHandle
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setShowCategoryForm(false)}>
-          <Pressable
-            style={[styles.modalContent, { backgroundColor: colors.background }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <Box padding="lg" gap="lg">
-              <Box flexDirection="row" alignItems="center" gap="sm">
-                {selectedCategory && (
-                  <>
-                    <Box
-                      width={40}
-                      height={40}
-                      borderRadius="md"
-                      alignItems="center"
-                      justifyContent="center"
-                      style={{ backgroundColor: `${selectedCategory.color}20` }}
-                    >
-                      <Text style={{ fontSize: 20 }}>{selectedCategory.icon}</Text>
-                    </Box>
-                    <Text variant="headingSmall" weight="bold">
-                      Budget {selectedCategory.name}
-                    </Text>
-                  </>
-                )}
-              </Box>
+        <Box padding="lg" gap="lg">
+          <Box flexDirection="row" alignItems="center" gap="sm">
+            {selectedCategory && (
+              <>
+                <Box
+                  width={40}
+                  height={40}
+                  borderRadius="md"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: `${selectedCategory.color}20` }}
+                >
+                  <Text style={{ fontSize: 20 }}>{selectedCategory.icon}</Text>
+                </Box>
+                <Text variant="headingSmall" weight="bold">
+                  Budget {selectedCategory.name}
+                </Text>
+              </>
+            )}
+          </Box>
 
-              <Input
-                label="Limite mensile"
-                value={categoryLimit}
-                onChangeText={setCategoryLimit}
-                keyboardType="numeric"
-                placeholder="0.00 (nessun limite)"
+          <Input
+            label="Limite mensile"
+            value={categoryLimit}
+            onChangeText={setCategoryLimit}
+            keyboardType="numeric"
+            placeholder="0.00 (nessun limite)"
+          />
+
+          <Text variant="caption" color="textSecondary">
+            Lascia vuoto o 0 per non impostare un limite per questa categoria.
+          </Text>
+
+          <Box flexDirection="row" gap="sm">
+            <Box flex={1}>
+              <Button
+                title="Annulla"
+                variant="secondary"
+                onPress={() => setShowCategoryForm(false)}
               />
-
-              <Text variant="caption" color="textSecondary">
-                Lascia vuoto o 0 per non impostare un limite per questa categoria.
-              </Text>
-
-              <Box flexDirection="row" gap="sm">
-                <Box flex={1}>
-                  <Button
-                    title="Annulla"
-                    variant="secondary"
-                    onPress={() => setShowCategoryForm(false)}
-                  />
-                </Box>
-                <Box flex={1}>
-                  <Button
-                    title="Salva"
-                    onPress={handleSaveCategoryLimit}
-                  />
-                </Box>
-              </Box>
             </Box>
-          </Pressable>
-        </Pressable>
-      </Modal>
+            <Box flex={1}>
+              <Button
+                title="Salva"
+                onPress={handleSaveCategoryLimit}
+              />
+            </Box>
+          </Box>
+        </Box>
+      </BottomSheetModal>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-  },
-});

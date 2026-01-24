@@ -1,11 +1,24 @@
 /**
  * CategoriesScreen
  * Gestione categorie personalizzate
+ * SCREEN: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { FlatList, StyleSheet, Modal, Pressable, Alert } from 'react-native';
-import { Screen, Box, Text, Button, Icon, GlassCard, Input } from '@shared/ui';
+import { Alert } from 'react-native';
+import {
+  Screen,
+  Box,
+  Text,
+  Button,
+  Icon,
+  GlassCard,
+  Input,
+  VirtualList,
+  BottomSheetModal,
+  AnimatedPressable,
+  ScrollContainer,
+} from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
@@ -146,43 +159,6 @@ export function CategoriesScreen(): JSX.Element {
     );
   }, [dispatch]);
 
-  const renderCategory = useCallback(({ item }: { item: Category }) => (
-    <Pressable
-      onPress={() => openEditForm(item)}
-      onLongPress={() => handleDelete(item)}
-    >
-      <GlassCard variant="solid" padding="md" style={styles.categoryCard}>
-        <Box flexDirection="row" alignItems="center" gap="md">
-          <Box
-            width={48}
-            height={48}
-            borderRadius="lg"
-            alignItems="center"
-            justifyContent="center"
-            style={{ backgroundColor: `${item.color}20` }}
-          >
-            <Text style={{ fontSize: 24 }}>{item.icon}</Text>
-          </Box>
-          <Box flex={1}>
-            <Text variant="bodyMedium" weight="semibold">
-              {item.name}
-            </Text>
-            <Text variant="caption" color="textSecondary">
-              {item.type === 'expense' ? 'Spesa' : 'Entrata'}
-              {item.isDefault && ' • Predefinita'}
-            </Text>
-          </Box>
-          <Box
-            width={12}
-            height={12}
-            borderRadius="full"
-            style={{ backgroundColor: item.color }}
-          />
-        </Box>
-      </GlassCard>
-    </Pressable>
-  ), [openEditForm, handleDelete]);
-
   return (
     <Screen paddingHorizontal="lg">
       <ScreenTitle
@@ -208,49 +184,103 @@ export function CategoriesScreen(): JSX.Element {
 
       {/* Tab selector */}
       <Box flexDirection="row" gap="sm" marginBottom="md">
-        <Pressable
+        <AnimatedPressable
           onPress={() => setActiveTab('expense')}
-          style={[
-            styles.tab,
-            activeTab === 'expense' && { backgroundColor: colors.primary },
-          ]}
+          haptic="selection"
+          pressScale={0.98}
+          style={{ flex: 1 }}
         >
-          <Text
-            variant="bodySmall"
-            weight="semibold"
-            color={activeTab === 'expense' ? 'onPrimary' : 'textSecondary'}
+          <Box
+            paddingVertical="sm"
+            paddingHorizontal="md"
+            borderRadius="md"
+            alignItems="center"
+            style={{
+              backgroundColor: activeTab === 'expense' ? colors.primary : 'rgba(0,0,0,0.05)',
+            }}
           >
-            Spese ({expenseCategories.length})
-          </Text>
-        </Pressable>
-        <Pressable
+            <Text
+              variant="bodySmall"
+              weight="semibold"
+              color={activeTab === 'expense' ? 'onPrimary' : 'textSecondary'}
+            >
+              Spese ({expenseCategories.length})
+            </Text>
+          </Box>
+        </AnimatedPressable>
+        <AnimatedPressable
           onPress={() => setActiveTab('income')}
-          style={[
-            styles.tab,
-            activeTab === 'income' && { backgroundColor: colors.primary },
-          ]}
+          haptic="selection"
+          pressScale={0.98}
+          style={{ flex: 1 }}
         >
-          <Text
-            variant="bodySmall"
-            weight="semibold"
-            color={activeTab === 'income' ? 'onPrimary' : 'textSecondary'}
+          <Box
+            paddingVertical="sm"
+            paddingHorizontal="md"
+            borderRadius="md"
+            alignItems="center"
+            style={{
+              backgroundColor: activeTab === 'income' ? colors.primary : 'rgba(0,0,0,0.05)',
+            }}
           >
-            Entrate ({incomeCategories.length})
-          </Text>
-        </Pressable>
+            <Text
+              variant="bodySmall"
+              weight="semibold"
+              color={activeTab === 'income' ? 'onPrimary' : 'textSecondary'}
+            >
+              Entrate ({incomeCategories.length})
+            </Text>
+          </Box>
+        </AnimatedPressable>
       </Box>
 
-      <FlatList
+      <VirtualList
         data={displayedCategories}
         keyExtractor={(item) => item.id}
-        renderItem={renderCategory}
-        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => (
+          <AnimatedPressable
+            onPress={() => openEditForm(item)}
+            onLongPress={() => handleDelete(item)}
+            haptic="light"
+            pressScale={0.98}
+          >
+            <GlassCard variant="solid" padding="md" style={{ marginBottom: 8 }}>
+              <Box flexDirection="row" alignItems="center" gap="md">
+                <Box
+                  width={48}
+                  height={48}
+                  borderRadius="lg"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: `${item.color}20` }}
+                >
+                  <Text style={{ fontSize: 24 }}>{item.icon}</Text>
+                </Box>
+                <Box flex={1}>
+                  <Text variant="bodyMedium" weight="semibold">
+                    {item.name}
+                  </Text>
+                  <Text variant="caption" color="textSecondary">
+                    {item.type === 'expense' ? 'Spesa' : 'Entrata'}
+                    {item.isDefault && ' • Predefinita'}
+                  </Text>
+                </Box>
+                <Box
+                  width={12}
+                  height={12}
+                  borderRadius="full"
+                  style={{ backgroundColor: item.color }}
+                />
+              </Box>
+            </GlassCard>
+          </AnimatedPressable>
+        )}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <Box height={8} />}
         ListEmptyComponent={
           <Box alignItems="center" padding="xl">
             <Text style={{ fontSize: 48 }}>📁</Text>
-            <Text variant="bodyMedium" color="textSecondary" style={styles.emptyTitle}>
+            <Text variant="bodyMedium" color="textSecondary" style={{ marginTop: 12, marginBottom: 4 }}>
               Nessuna categoria
             </Text>
             <Text variant="caption" color="textSecondary" align="center">
@@ -281,51 +311,53 @@ export function CategoriesScreen(): JSX.Element {
       />
 
       {/* Form Modal */}
-      <Modal
+      <BottomSheetModal
         visible={showForm}
-        animationType="slide"
-        transparent
-        onRequestClose={handleCloseForm}
+        onClose={handleCloseForm}
+        showHandle
+        maxHeight="90%"
       >
-        <Pressable style={styles.modalOverlay} onPress={handleCloseForm}>
-          <Pressable
-            style={[styles.modalContent, { backgroundColor: colors.background }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <Box padding="lg" gap="lg">
-              <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                <Text variant="headingSmall" weight="bold">
-                  {editingCategory ? 'Modifica categoria' : 'Nuova categoria'}
-                </Text>
-                <Button
-                  title=""
-                  variant="ghost"
-                  size="sm"
-                  onPress={handleCloseForm}
-                  leftIcon={<Icon name="close" size="md" color="textSecondary" />}
-                />
-              </Box>
+        <ScrollContainer showsVerticalScrollIndicator={false}>
+          <Box padding="lg" gap="lg">
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+              <Text variant="headingSmall" weight="bold">
+                {editingCategory ? 'Modifica categoria' : 'Nuova categoria'}
+              </Text>
+              <AnimatedPressable onPress={handleCloseForm} haptic="light">
+                <Icon name="close" size="md" color="textSecondary" />
+              </AnimatedPressable>
+            </Box>
 
-              {/* Name */}
-              <Input
-                label="Nome"
-                value={name}
-                onChangeText={setName}
-                placeholder="Es. Abbigliamento"
-              />
+            {/* Name */}
+            <Input
+              label="Nome"
+              value={name}
+              onChangeText={setName}
+              placeholder="Es. Abbigliamento"
+            />
 
-              {/* Type */}
-              <Box gap="xs">
-                <Text variant="caption" color="textSecondary">
-                  Tipo
-                </Text>
-                <Box flexDirection="row" gap="sm">
-                  <Pressable
-                    onPress={() => setType('expense')}
-                    style={[
-                      styles.typeButton,
-                      type === 'expense' && { backgroundColor: '#FF3B3020', borderColor: '#FF3B30' },
-                    ]}
+            {/* Type */}
+            <Box gap="xs">
+              <Text variant="caption" color="textSecondary">
+                Tipo
+              </Text>
+              <Box flexDirection="row" gap="sm">
+                <AnimatedPressable
+                  onPress={() => setType('expense')}
+                  haptic="selection"
+                  pressScale={0.95}
+                  style={{ flex: 1 }}
+                >
+                  <Box
+                    paddingVertical="sm"
+                    paddingHorizontal="md"
+                    borderRadius="md"
+                    alignItems="center"
+                    borderWidth={2}
+                    style={{
+                      backgroundColor: type === 'expense' ? '#FF3B3020' : 'transparent',
+                      borderColor: type === 'expense' ? '#FF3B30' : 'transparent',
+                    }}
                   >
                     <Text
                       variant="bodyMedium"
@@ -334,13 +366,24 @@ export function CategoriesScreen(): JSX.Element {
                     >
                       Spesa
                     </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => setType('income')}
-                    style={[
-                      styles.typeButton,
-                      type === 'income' && { backgroundColor: '#34C75920', borderColor: '#34C759' },
-                    ]}
+                  </Box>
+                </AnimatedPressable>
+                <AnimatedPressable
+                  onPress={() => setType('income')}
+                  haptic="selection"
+                  pressScale={0.95}
+                  style={{ flex: 1 }}
+                >
+                  <Box
+                    paddingVertical="sm"
+                    paddingHorizontal="md"
+                    borderRadius="md"
+                    alignItems="center"
+                    borderWidth={2}
+                    style={{
+                      backgroundColor: type === 'income' ? '#34C75920' : 'transparent',
+                      borderColor: type === 'income' ? '#34C759' : 'transparent',
+                    }}
                   >
                     <Text
                       variant="bodyMedium"
@@ -349,146 +392,106 @@ export function CategoriesScreen(): JSX.Element {
                     >
                       Entrata
                     </Text>
-                  </Pressable>
-                </Box>
+                  </Box>
+                </AnimatedPressable>
               </Box>
+            </Box>
 
-              {/* Icon */}
-              <Box gap="xs">
-                <Text variant="caption" color="textSecondary">
-                  Icona
-                </Text>
-                <Box flexDirection="row" flexWrap="wrap" gap="sm">
-                  {iconOptions.map((i) => (
-                    <Pressable
-                      key={i}
-                      onPress={() => setIcon(i)}
-                      style={[
-                        styles.iconOption,
-                        icon === i && { borderColor: colors.primary, borderWidth: 2 },
-                      ]}
+            {/* Icon */}
+            <Box gap="xs">
+              <Text variant="caption" color="textSecondary">
+                Icona
+              </Text>
+              <Box flexDirection="row" flexWrap="wrap" gap="sm">
+                {iconOptions.map((i) => (
+                  <AnimatedPressable
+                    key={i}
+                    onPress={() => setIcon(i)}
+                    haptic="selection"
+                    pressScale={0.9}
+                  >
+                    <Box
+                      width={44}
+                      height={44}
+                      borderRadius="md"
+                      alignItems="center"
+                      justifyContent="center"
+                      borderWidth={2}
+                      style={{
+                        borderColor: icon === i ? colors.primary : 'transparent',
+                      }}
                     >
                       <Text style={{ fontSize: 20 }}>{i}</Text>
-                    </Pressable>
-                  ))}
-                </Box>
+                    </Box>
+                  </AnimatedPressable>
+                ))}
               </Box>
-
-              {/* Color */}
-              <Box gap="xs">
-                <Text variant="caption" color="textSecondary">
-                  Colore
-                </Text>
-                <Box flexDirection="row" flexWrap="wrap" gap="sm">
-                  {colorOptions.map((c) => (
-                    <Pressable
-                      key={c}
-                      onPress={() => setColor(c)}
-                      style={[
-                        styles.colorOption,
-                        { backgroundColor: c },
-                        color === c && styles.colorSelected,
-                      ]}
-                    />
-                  ))}
-                </Box>
-              </Box>
-
-              {/* Preview */}
-              <Box gap="xs">
-                <Text variant="caption" color="textSecondary">
-                  Anteprima
-                </Text>
-                <Box flexDirection="row" alignItems="center" gap="sm">
-                  <Box
-                    width={48}
-                    height={48}
-                    borderRadius="lg"
-                    alignItems="center"
-                    justifyContent="center"
-                    style={{ backgroundColor: `${color}20` }}
-                  >
-                    <Text style={{ fontSize: 24 }}>{icon}</Text>
-                  </Box>
-                  <Text variant="bodyMedium" weight="semibold">
-                    {name || 'Nome categoria'}
-                  </Text>
-                </Box>
-              </Box>
-
-              {/* Submit */}
-              <Button
-                title={editingCategory ? 'Salva modifiche' : 'Crea categoria'}
-                onPress={handleSubmit}
-                loading={loading}
-              />
             </Box>
-          </Pressable>
-        </Pressable>
-      </Modal>
+
+            {/* Color */}
+            <Box gap="xs">
+              <Text variant="caption" color="textSecondary">
+                Colore
+              </Text>
+              <Box flexDirection="row" flexWrap="wrap" gap="sm">
+                {colorOptions.map((c) => (
+                  <AnimatedPressable
+                    key={c}
+                    onPress={() => setColor(c)}
+                    haptic="selection"
+                    pressScale={0.9}
+                  >
+                    <Box
+                      width={36}
+                      height={36}
+                      borderRadius="full"
+                      style={{
+                        backgroundColor: c,
+                        borderWidth: color === c ? 3 : 0,
+                        borderColor: 'white',
+                        shadowColor: color === c ? '#000' : 'transparent',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: color === c ? 0.25 : 0,
+                        shadowRadius: 4,
+                        elevation: color === c ? 4 : 0,
+                      }}
+                    />
+                  </AnimatedPressable>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Preview */}
+            <Box gap="xs">
+              <Text variant="caption" color="textSecondary">
+                Anteprima
+              </Text>
+              <Box flexDirection="row" alignItems="center" gap="sm">
+                <Box
+                  width={48}
+                  height={48}
+                  borderRadius="lg"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: `${color}20` }}
+                >
+                  <Text style={{ fontSize: 24 }}>{icon}</Text>
+                </Box>
+                <Text variant="bodyMedium" weight="semibold">
+                  {name || 'Nome categoria'}
+                </Text>
+              </Box>
+            </Box>
+
+            {/* Submit */}
+            <Button
+              title={editingCategory ? 'Salva modifiche' : 'Crea categoria'}
+              onPress={handleSubmit}
+              loading={loading}
+            />
+          </Box>
+        </ScrollContainer>
+      </BottomSheetModal>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.05)',
-  },
-  listContent: {
-    paddingBottom: 40,
-  },
-  categoryCard: {
-    marginBottom: 0,
-  },
-  emptyTitle: {
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
-  },
-  typeButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  iconOption: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  colorOption: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-  },
-  colorSelected: {
-    borderWidth: 3,
-    borderColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-});

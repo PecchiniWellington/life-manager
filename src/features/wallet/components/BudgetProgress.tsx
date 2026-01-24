@@ -1,11 +1,11 @@
 /**
  * BudgetProgress Component
  * Mostra il progresso del budget con barra
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React from 'react';
-import { Pressable } from 'react-native';
-import { Box, Text, GlassCard } from '@shared/ui';
+import { Box, Text, GlassCard, AnimatedPressable } from '@shared/ui';
 import { Budget } from '../domain/types';
 
 interface BudgetProgressProps {
@@ -37,7 +37,11 @@ export function BudgetProgress({
       </GlassCard>
     );
 
-    return onPress ? <Pressable onPress={onPress}>{content}</Pressable> : content;
+    return onPress ? (
+      <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+        {content}
+      </AnimatedPressable>
+    ) : content;
   }
 
   const limit = budget.globalLimit;
@@ -88,7 +92,11 @@ export function BudgetProgress({
       </GlassCard>
     );
 
-    return onPress ? <Pressable onPress={onPress}>{compactContent}</Pressable> : compactContent;
+    return onPress ? (
+      <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+        {compactContent}
+      </AnimatedPressable>
+    ) : compactContent;
   }
 
   const fullContent = (
@@ -152,7 +160,11 @@ export function BudgetProgress({
     </GlassCard>
   );
 
-  return onPress ? <Pressable onPress={onPress}>{fullContent}</Pressable> : fullContent;
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.98}>
+      {fullContent}
+    </AnimatedPressable>
+  ) : fullContent;
 }
 
 interface CategoryBudgetProgressProps {

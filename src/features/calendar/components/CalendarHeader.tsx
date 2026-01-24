@@ -1,11 +1,11 @@
 /**
  * CalendarHeader Component - Modern Design
  * Header con navigazione mese - Stile coerente con Wallet
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React from 'react';
-import { StyleSheet, Pressable } from 'react-native';
-import { Box, Text, Icon, GlassCard } from '@shared/ui';
+import { Box, Text, Icon, GlassCard, AnimatedPressable } from '@shared/ui';
 import { getMonthName, parseISO } from '@shared/lib/date';
 
 interface CalendarHeaderProps {
@@ -52,39 +52,39 @@ export function CalendarHeader({
         {/* Navigation */}
         <Box flexDirection="row" alignItems="center" gap="xs">
           {/* Today button */}
-          <Pressable onPress={onToday} style={styles.todayButton}>
-            <Text variant="caption" weight="semibold" color="primary">
-              Oggi
-            </Text>
-          </Pressable>
+          <AnimatedPressable onPress={onToday} haptic="light" pressScale={0.95}>
+            <Box
+              paddingHorizontal="md"
+              paddingVertical="xs"
+              borderRadius="md"
+              style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+            >
+              <Text variant="caption" weight="semibold" color="primary">
+                Oggi
+              </Text>
+            </Box>
+          </AnimatedPressable>
 
           {/* Month navigation */}
-          <Box flexDirection="row" alignItems="center" style={styles.navContainer}>
-            <Pressable onPress={onPrevMonth} style={styles.navButton}>
-              <Icon name="chevronLeft" size="sm" color="textSecondary" />
-            </Pressable>
-            <Pressable onPress={onNextMonth} style={styles.navButton}>
-              <Icon name="chevronRight" size="sm" color="textSecondary" />
-            </Pressable>
+          <Box
+            flexDirection="row"
+            alignItems="center"
+            borderRadius="md"
+            style={{ backgroundColor: 'rgba(0,0,0,0.04)' }}
+          >
+            <AnimatedPressable onPress={onPrevMonth} haptic="light" pressScale={0.9}>
+              <Box padding="sm">
+                <Icon name="chevronLeft" size="sm" color="textSecondary" />
+              </Box>
+            </AnimatedPressable>
+            <AnimatedPressable onPress={onNextMonth} haptic="light" pressScale={0.9}>
+              <Box padding="sm">
+                <Icon name="chevronRight" size="sm" color="textSecondary" />
+              </Box>
+            </AnimatedPressable>
           </Box>
         </Box>
       </Box>
     </GlassCard>
   );
 }
-
-const styles = StyleSheet.create({
-  todayButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-  },
-  navContainer: {
-    backgroundColor: 'rgba(0,0,0,0.04)',
-    borderRadius: 8,
-  },
-  navButton: {
-    padding: 8,
-  },
-});

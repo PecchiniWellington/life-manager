@@ -1,17 +1,19 @@
 /**
  * CategoryPicker Component
  * Picker per selezionare una categoria
+ * FEATURE COMPONENT: Usa solo atoms e molecules del design system
  */
 
 import React, { useState, useCallback } from 'react';
 import {
-  Modal,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
-import { Box, Text, GlassCard } from '@shared/ui';
+  Box,
+  Text,
+  GlassCard,
+  AnimatedPressable,
+  BottomSheetModal,
+  VirtualList,
+  Icon,
+} from '@shared/ui';
 import { Category, TransactionType } from '../domain/types';
 import { useTheme } from '@shared/ui/theme';
 
@@ -52,42 +54,6 @@ export function CategoryPicker({
     setIsOpen(false);
   }, [onSelect]);
 
-  const renderCategory = useCallback(({ item }: { item: Category }) => (
-    <TouchableOpacity
-      onPress={() => handleSelect(item)}
-      style={[
-        styles.categoryItem,
-        selectedCategoryId === item.id && {
-          backgroundColor: `${colors.primary}20`,
-        },
-      ]}
-    >
-      <Box flexDirection="row" alignItems="center" gap="md">
-        <Box
-          width={40}
-          height={40}
-          borderRadius="md"
-          alignItems="center"
-          justifyContent="center"
-          style={{ backgroundColor: `${item.color}20` }}
-        >
-          <Text style={{ fontSize: 20 }}>{item.icon}</Text>
-        </Box>
-        <Box flex={1}>
-          <Text variant="bodyMedium" weight="medium">
-            {item.name}
-          </Text>
-          <Text variant="caption" color="textSecondary">
-            {item.type === 'expense' ? 'Spesa' : 'Entrata'}
-          </Text>
-        </Box>
-        {selectedCategoryId === item.id && (
-          <Text style={{ color: colors.primary }}>✓</Text>
-        )}
-      </Box>
-    </TouchableOpacity>
-  ), [selectedCategoryId, colors.primary, handleSelect]);
-
   return (
     <>
       <Box gap="xs">
@@ -96,14 +62,16 @@ export function CategoryPicker({
             {label}
           </Text>
         )}
-        <TouchableOpacity
+        <AnimatedPressable
           onPress={() => !disabled && setIsOpen(true)}
           disabled={disabled}
+          haptic="light"
+          pressScale={0.98}
         >
           <GlassCard
             variant="solid"
             padding="sm"
-            style={disabled ? styles.disabled : undefined}
+            style={disabled ? { opacity: 0.5 } : undefined}
           >
             <Box flexDirection="row" alignItems="center" gap="sm">
               {selectedCategory ? (
@@ -131,63 +99,93 @@ export function CategoryPicker({
                   </Text>
                 </Box>
               )}
-              <Text color="textSecondary">▼</Text>
+              <Icon name="chevronDown" size="sm" color="textSecondary" />
             </Box>
           </GlassCard>
-        </TouchableOpacity>
+        </AnimatedPressable>
       </Box>
 
-      <Modal
+      <BottomSheetModal
         visible={isOpen}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setIsOpen(false)}
+        onClose={() => setIsOpen(false)}
+        showHandle
+        maxHeight="70%"
       >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setIsOpen(false)}
-        >
-          <Pressable
-            style={[styles.modalContent, { backgroundColor: colors.background }]}
-            onPress={(e) => e.stopPropagation()}
+        <Box padding="md">
+          {/* Header */}
+          <Box
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+            marginBottom="md"
           >
-            {/* Header */}
-            <Box
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-              padding="md"
-              style={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
-            >
-              <Text variant="headingSmall" weight="bold">
-                Seleziona categoria
-              </Text>
-              <TouchableOpacity onPress={() => setIsOpen(false)}>
-                <Text color="primary" variant="bodyMedium">
-                  Chiudi
-                </Text>
-              </TouchableOpacity>
-            </Box>
+            <Text variant="headingSmall" weight="bold">
+              Seleziona categoria
+            </Text>
+            <AnimatedPressable onPress={() => setIsOpen(false)} haptic="light">
+              <Icon name="close" size="md" color="textSecondary" />
+            </AnimatedPressable>
+          </Box>
 
-            {/* Category list */}
-            {filteredCategories.length > 0 ? (
-              <FlatList
-                data={filteredCategories}
-                keyExtractor={(item) => item.id}
-                renderItem={renderCategory}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-              />
-            ) : (
-              <Box padding="xl" alignItems="center">
-                <Text variant="bodyMedium" color="textSecondary">
-                  Nessuna categoria disponibile
-                </Text>
-              </Box>
-            )}
-          </Pressable>
-        </Pressable>
-      </Modal>
+          {/* Category list */}
+          {filteredCategories.length > 0 ? (
+            <VirtualList
+              data={filteredCategories}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <AnimatedPressable
+                  onPress={() => handleSelect(item)}
+                  haptic="selection"
+                  pressScale={0.98}
+                >
+                  <Box
+                    flexDirection="row"
+                    alignItems="center"
+                    gap="md"
+                    paddingHorizontal="md"
+                    paddingVertical="sm"
+                    borderRadius="md"
+                    style={
+                      selectedCategoryId === item.id
+                        ? { backgroundColor: `${colors.primary}20` }
+                        : undefined
+                    }
+                  >
+                    <Box
+                      width={40}
+                      height={40}
+                      borderRadius="md"
+                      alignItems="center"
+                      justifyContent="center"
+                      style={{ backgroundColor: `${item.color}20` }}
+                    >
+                      <Text style={{ fontSize: 20 }}>{item.icon}</Text>
+                    </Box>
+                    <Box flex={1}>
+                      <Text variant="bodyMedium" weight="medium">
+                        {item.name}
+                      </Text>
+                      <Text variant="caption" color="textSecondary">
+                        {item.type === 'expense' ? 'Spesa' : 'Entrata'}
+                      </Text>
+                    </Box>
+                    {selectedCategoryId === item.id && (
+                      <Icon name="check" size="sm" color="primary" />
+                    )}
+                  </Box>
+                </AnimatedPressable>
+              )}
+              style={{ maxHeight: 400 }}
+            />
+          ) : (
+            <Box padding="xl" alignItems="center">
+              <Text variant="bodyMedium" color="textSecondary">
+                Nessuna categoria disponibile
+              </Text>
+            </Box>
+          )}
+        </Box>
+      </BottomSheetModal>
     </>
   );
 }
@@ -207,45 +205,43 @@ export function CategoryChip({
   size = 'md',
   onPress,
 }: CategoryChipProps): JSX.Element {
-  if (!category) {
-    return (
-      <TouchableOpacity onPress={onPress} disabled={!onPress}>
-        <Box
-          flexDirection="row"
-          alignItems="center"
-          gap="xxs"
-          padding="xs"
-          borderRadius="full"
-          backgroundColor="backgroundSecondary"
-        >
-          <Text variant={size === 'sm' ? 'caption' : 'bodySmall'} color="textSecondary">
-            Nessuna categoria
-          </Text>
-        </Box>
-      </TouchableOpacity>
-    );
-  }
-
-  return (
-    <TouchableOpacity onPress={onPress} disabled={!onPress}>
-      <Box
-        flexDirection="row"
-        alignItems="center"
-        gap="xxs"
-        padding="xs"
-        borderRadius="full"
-        style={{ backgroundColor: `${category.color}20` }}
+  const content = !category ? (
+    <Box
+      flexDirection="row"
+      alignItems="center"
+      gap="xxs"
+      padding="xs"
+      borderRadius="full"
+      backgroundColor="backgroundSecondary"
+    >
+      <Text variant={size === 'sm' ? 'caption' : 'bodySmall'} color="textSecondary">
+        Nessuna categoria
+      </Text>
+    </Box>
+  ) : (
+    <Box
+      flexDirection="row"
+      alignItems="center"
+      gap="xxs"
+      padding="xs"
+      borderRadius="full"
+      style={{ backgroundColor: `${category.color}20` }}
+    >
+      <Text style={{ fontSize: size === 'sm' ? 12 : 14 }}>{category.icon}</Text>
+      <Text
+        variant={size === 'sm' ? 'caption' : 'bodySmall'}
+        style={{ color: category.color }}
       >
-        <Text style={{ fontSize: size === 'sm' ? 12 : 14 }}>{category.icon}</Text>
-        <Text
-          variant={size === 'sm' ? 'caption' : 'bodySmall'}
-          style={{ color: category.color }}
-        >
-          {category.name}
-        </Text>
-      </Box>
-    </TouchableOpacity>
+        {category.name}
+      </Text>
+    </Box>
   );
+
+  return onPress ? (
+    <AnimatedPressable onPress={onPress} haptic="light" pressScale={0.95}>
+      {content}
+    </AnimatedPressable>
+  ) : content;
 }
 
 /**
@@ -274,71 +270,43 @@ export function CategoryGrid({
   return (
     <Box flexDirection="row" flexWrap="wrap" gap="sm">
       {filteredCategories.map((category) => (
-        <TouchableOpacity
+        <AnimatedPressable
           key={category.id}
           onPress={() => onSelect(category)}
-          style={[
-            styles.gridItem,
-            selectedCategoryId === category.id && {
-              borderColor: colors.primary,
-              borderWidth: 2,
-            },
-          ]}
+          haptic="selection"
+          pressScale={0.95}
         >
           <Box
-            width={60}
-            height={60}
-            borderRadius="md"
             alignItems="center"
-            justifyContent="center"
-            style={{ backgroundColor: `${category.color}20` }}
+            gap="xxs"
+            padding="sm"
+            borderRadius="lg"
+            borderWidth={2}
+            style={{
+              borderColor: selectedCategoryId === category.id ? colors.primary : 'transparent',
+            }}
           >
-            <Text style={{ fontSize: 24 }}>{category.icon}</Text>
+            <Box
+              width={60}
+              height={60}
+              borderRadius="md"
+              alignItems="center"
+              justifyContent="center"
+              style={{ backgroundColor: `${category.color}20` }}
+            >
+              <Text style={{ fontSize: 24 }}>{category.icon}</Text>
+            </Box>
+            <Text
+              variant="caption"
+              align="center"
+              numberOfLines={1}
+              style={{ maxWidth: 60 }}
+            >
+              {category.name}
+            </Text>
           </Box>
-          <Text
-            variant="caption"
-            align="center"
-            numberOfLines={1}
-            style={{ maxWidth: 60 }}
-          >
-            {category.name}
-          </Text>
-        </TouchableOpacity>
+        </AnimatedPressable>
       ))}
     </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '70%',
-  },
-  modalHeader: {
-    borderBottomWidth: 1,
-  },
-  listContent: {
-    paddingBottom: 40,
-  },
-  categoryItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  gridItem: {
-    alignItems: 'center',
-    gap: 4,
-    padding: 8,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-});
