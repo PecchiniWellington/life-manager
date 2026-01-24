@@ -5,7 +5,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { WalletStackParamList } from '../types';
-import { WalletScreen } from '@features/wallet/screens';
+import {
+  WalletScreen,
+  AccountsScreen,
+  BudgetScreen,
+  GoalsScreen,
+  RecurringScreen,
+  CategoriesScreen,
+  ReportsScreen,
+} from '@features/wallet/screens';
 import { useTheme } from '@shared/ui/theme';
 
 const Stack = createNativeStackNavigator<WalletStackParamList>();
@@ -24,7 +32,30 @@ export function WalletStack(): JSX.Element {
         name="WalletMain"
         component={WalletScreen}
       />
-      {/* TransactionDetail screen can be added later */}
+      <Stack.Screen
+        name="Accounts"
+        component={AccountsScreen}
+      />
+      <Stack.Screen
+        name="Budget"
+        component={BudgetScreen}
+      />
+      <Stack.Screen
+        name="Goals"
+        component={GoalsScreen}
+      />
+      <Stack.Screen
+        name="Recurring"
+        component={RecurringScreen}
+      />
+      <Stack.Screen
+        name="Categories"
+        component={CategoriesScreen}
+      />
+      <Stack.Screen
+        name="Reports"
+        component={ReportsScreen}
+      />
     </Stack.Navigator>
   );
 }

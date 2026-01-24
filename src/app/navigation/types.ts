@@ -54,6 +54,13 @@ export type TodosStackParamList = {
 export type WalletStackParamList = {
   WalletMain: undefined;
   TransactionDetail: { transactionId: string };
+  Accounts: undefined;
+  Budget: undefined;
+  Goals: undefined;
+  GoalDetail: { goalId: string };
+  Recurring: undefined;
+  Categories: undefined;
+  Reports: undefined;
 };
 
 /**

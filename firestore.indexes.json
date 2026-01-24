@@ -1,0 +1,54 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "categories",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "sortOrder", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "accounts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isArchived", "order": "ASCENDING" },
+        { "fieldPath": "isDefault", "order": "DESCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "budgets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "month", "order": "DESCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goals",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "recurringTransactions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isActive", "order": "ASCENDING" },
+        { "fieldPath": "nextExecution", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "transactions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "date", "order": "DESCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -111,6 +111,8 @@ export interface ScreenTitleProps {
   title: string;
   /** Sottotitolo */
   subtitle?: string;
+  /** Azione a sinistra (es. pulsante indietro) */
+  leftAction?: React.ReactNode;
   /** Azione a destra */
   rightAction?: React.ReactNode;
   /** Contenuto sopra il titolo (es. SpaceSelector) */
@@ -123,6 +125,7 @@ export interface ScreenTitleProps {
 export function ScreenTitle({
   title,
   subtitle,
+  leftAction,
   rightAction,
   topContent,
 }: ScreenTitleProps): JSX.Element {
@@ -134,6 +137,7 @@ export function ScreenTitle({
         alignItems="flex-start"
         justifyContent="space-between"
       >
+        {leftAction && <Box marginRight="sm">{leftAction}</Box>}
         <Box flex={1}>
           <Heading level={3}>{title}</Heading>
           {subtitle && (

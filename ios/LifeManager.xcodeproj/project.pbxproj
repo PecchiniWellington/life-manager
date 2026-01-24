@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C29F6DAF9D81073C59D3139 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6E8AFDBAA1E25790B1F29D2C /* PrivacyInfo.xcprivacy */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		54BA60FA908A49B982258F9E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 748143CCD7584AB2BF4F758C /* GoogleService-Info.plist */; };
-		6EC63839E40A47BC86BDC13C /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC2669779E44DF4B037AB43 /* noop-file.swift */; };
+		7F99B48DBC5A43BFBD3B23C7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EFB77FE42F074A7DAC6B8A79 /* GoogleService-Info.plist */; };
+		89DFF59D56CB0D8C1D79E951 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 990BD990268E596091190AED /* PrivacyInfo.xcprivacy */; };
+		A2724CCC9CC249A8B4359E0E /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA674364FF344F1AE68B480 /* noop-file.swift */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
-		B685B461F1D5CD30A426B395 /* Pods_LifeManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5EBB9791C3C7CC81C87EE7 /* Pods_LifeManager.framework */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		FA2517D573CD4F881D4F2ADC /* Pods_LifeManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD5E607591FE8A638F15468 /* Pods_LifeManager.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,16 +26,16 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = LifeManager/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = LifeManager/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = LifeManager/main.m; sourceTree = "<group>"; };
-		4D695360876A43618E301EDF /* LifeManager-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "LifeManager-Bridging-Header.h"; path = "LifeManager/LifeManager-Bridging-Header.h"; sourceTree = "<group>"; };
+		309CF5CA33FD419D9321ECC7 /* LifeManager-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "LifeManager-Bridging-Header.h"; path = "LifeManager/LifeManager-Bridging-Header.h"; sourceTree = "<group>"; };
+		3FD5E607591FE8A638F15468 /* Pods_LifeManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-LifeManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeManager.debug.xcconfig"; path = "Target Support Files/Pods-LifeManager/Pods-LifeManager.debug.xcconfig"; sourceTree = "<group>"; };
-		6E8AFDBAA1E25790B1F29D2C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = LifeManager/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		748143CCD7584AB2BF4F758C /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "LifeManager/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-LifeManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeManager.release.xcconfig"; path = "Target Support Files/Pods-LifeManager/Pods-LifeManager.release.xcconfig"; sourceTree = "<group>"; };
+		990BD990268E596091190AED /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = LifeManager/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = LifeManager/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		EB5EBB9791C3C7CC81C87EE7 /* Pods_LifeManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEA674364FF344F1AE68B480 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "LifeManager/noop-file.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EFC2669779E44DF4B037AB43 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "LifeManager/noop-file.swift"; sourceTree = "<group>"; };
+		EFB77FE42F074A7DAC6B8A79 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "LifeManager/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-LifeManager/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -44,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B685B461F1D5CD30A426B395 /* Pods_LifeManager.framework in Frameworks */,
+				FA2517D573CD4F881D4F2ADC /* Pods_LifeManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,10 +61,10 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				748143CCD7584AB2BF4F758C /* GoogleService-Info.plist */,
-				EFC2669779E44DF4B037AB43 /* noop-file.swift */,
-				4D695360876A43618E301EDF /* LifeManager-Bridging-Header.h */,
-				6E8AFDBAA1E25790B1F29D2C /* PrivacyInfo.xcprivacy */,
+				EFB77FE42F074A7DAC6B8A79 /* GoogleService-Info.plist */,
+				CEA674364FF344F1AE68B480 /* noop-file.swift */,
+				309CF5CA33FD419D9321ECC7 /* LifeManager-Bridging-Header.h */,
+				990BD990268E596091190AED /* PrivacyInfo.xcprivacy */,
 			);
 			name = LifeManager;
 			sourceTree = "<group>";
@@ -73,7 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				EB5EBB9791C3C7CC81C87EE7 /* Pods_LifeManager.framework */,
+				3FD5E607591FE8A638F15468 /* Pods_LifeManager.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -150,14 +150,14 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "LifeManager" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				0F636B0BDD3C28930C0163C3 /* [Expo] Configure project */,
+				AA706747F7419164D4DD5E97 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				52D4713018C966FAB26403CF /* [CP] Embed Pods Frameworks */,
-				CE02BFD20CCA5C2D9BCA19C3 /* [CP-User] [RNFB] Core Configuration */,
+				1425CB16F8AF4E0E79CF08E7 /* [CP] Embed Pods Frameworks */,
+				FC46A031BCCA37F0FD291AEA /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -207,8 +207,8 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				54BA60FA908A49B982258F9E /* GoogleService-Info.plist in Resources */,
-				0C29F6DAF9D81073C59D3139 /* PrivacyInfo.xcprivacy in Resources */,
+				7F99B48DBC5A43BFBD3B23C7 /* GoogleService-Info.plist in Resources */,
+				89DFF59D56CB0D8C1D79E951 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,26 +252,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		0F636B0BDD3C28930C0163C3 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-LifeManager/expo-configure-project.sh\"\n";
-		};
-		52D4713018C966FAB26403CF /* [CP] Embed Pods Frameworks */ = {
+		1425CB16F8AF4E0E79CF08E7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -349,7 +330,26 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LifeManager/Pods-LifeManager-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CE02BFD20CCA5C2D9BCA19C3 /* [CP-User] [RNFB] Core Configuration */ = {
+		AA706747F7419164D4DD5E97 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-LifeManager/expo-configure-project.sh\"\n";
+		};
+		FC46A031BCCA37F0FD291AEA /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -372,7 +372,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				6EC63839E40A47BC86BDC13C /* noop-file.swift in Sources */,
+				A2724CCC9CC249A8B4359E0E /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

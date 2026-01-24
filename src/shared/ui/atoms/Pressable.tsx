@@ -46,7 +46,7 @@ export interface PressableProps extends Omit<RNPressableProps, 'style'> {
   activeScale?: number;
 
   // Accessibility
-  accessibilityLabel: string;
+  accessibilityLabel?: string;
   accessibilityHint?: string;
   accessibilityRole?: AccessibilityRole;
 

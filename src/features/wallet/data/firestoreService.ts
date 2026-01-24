@@ -139,7 +139,6 @@ export async function getTransactionsForMonth(spaceId: string, monthDate: Date):
 
   const snapshot = await getTransactionsCollection(spaceId)
     .where('monthYear', '==', monthYear)
-    .orderBy('date', 'desc')
     .get();
 
   const transactions: Transaction[] = [];
@@ -150,7 +149,8 @@ export async function getTransactionsForMonth(spaceId: string, monthDate: Date):
     } as Transaction);
   });
 
-  return transactions;
+  // Sort client-side by date descending
+  return transactions.sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /**

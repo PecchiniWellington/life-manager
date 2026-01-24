@@ -20,7 +20,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authReducer } from '@features/auth/store';
 import { calendarReducer } from '@features/calendar/store';
 import { todosReducer } from '@features/todos/store';
-import { walletReducer } from '@features/wallet/store';
+import {
+  walletReducer,
+  accountsReducer,
+  budgetsReducer,
+  goalsReducer,
+  recurringReducer,
+  categoriesReducer,
+} from '@features/wallet/store';
 import { spacesReducer } from '@features/spaces/store';
 
 // API slice (predisposto per RTK Query)
@@ -34,6 +41,11 @@ const rootReducer = combineReducers({
   calendar: calendarReducer,
   todos: todosReducer,
   wallet: walletReducer,
+  accounts: accountsReducer,
+  budgets: budgetsReducer,
+  goals: goalsReducer,
+  recurring: recurringReducer,
+  categories: categoriesReducer,
   spaces: spacesReducer,
   // RTK Query API reducer
   [api.reducerPath]: api.reducer,
@@ -50,8 +62,18 @@ const persistConfig = {
   storage: AsyncStorage,
   // Non persistiamo più i dati sincronizzati con Firestore
   whitelist: [],
-  // Blacklist API cache
-  blacklist: [api.reducerPath, 'calendar', 'todos', 'wallet'],
+  // Blacklist API cache and Firestore-synced data
+  blacklist: [
+    api.reducerPath,
+    'calendar',
+    'todos',
+    'wallet',
+    'accounts',
+    'budgets',
+    'goals',
+    'recurring',
+    'categories',
+  ],
 };
 
 /**

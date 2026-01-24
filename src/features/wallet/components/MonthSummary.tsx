@@ -5,7 +5,7 @@
 import React from 'react';
 import { Box, Text, Card, Pressable, Icon } from '@shared/ui';
 import { formatCurrency } from '@shared/lib/format';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 
 interface MonthSummaryProps {

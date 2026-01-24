@@ -88,6 +88,14 @@ export const selectMonthlyTotalExpenses = createSelector(
 );
 
 /**
+ * Select total income for month
+ */
+export const selectMonthlyTotalIncome = createSelector(
+  [selectMonthlySummary],
+  (summary): number => summary?.totalIncome || 0
+);
+
+/**
  * Select expenses by category
  */
 export const selectExpensesByCategory = createSelector(

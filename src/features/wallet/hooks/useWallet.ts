@@ -22,6 +22,7 @@ import {
   selectWalletError,
   selectTopCategories,
   selectMonthlyTotalExpenses,
+  selectMonthlyTotalIncome,
 } from '../store';
 import { selectCurrentSpaceId } from '@features/spaces/store';
 import { CreateTransactionPayload, UpdateTransactionPayload, ExpenseCategory } from '../domain/types';
@@ -39,6 +40,7 @@ export function useWallet() {
   const error = useAppSelector(selectWalletError);
   const topCategories = useAppSelector(selectTopCategories);
   const totalExpenses = useAppSelector(selectMonthlyTotalExpenses);
+  const totalIncome = useAppSelector(selectMonthlyTotalIncome);
   const currentSpaceId = useAppSelector(selectCurrentSpaceId);
 
   // Note: I dati vengono caricati automaticamente dal SpacesProvider
@@ -121,6 +123,7 @@ export function useWallet() {
     error,
     topCategories,
     totalExpenses,
+    totalIncome,
 
     // Actions
     createTransaction: handleCreateTransaction,

@@ -1,16 +1,27 @@
 /**
- * WalletScreen - NO TAG NATIVI
- * FEATURE COMPONENT: con statistiche e lista transazioni
+ * WalletScreen - Modern Fintech UI
+ * Design pulito e professionale con icone vettoriali
  */
 
 import React, { useState, useCallback } from 'react';
-import { Screen, Box, VStack, Button, Icon, Text, GlassCard } from '@shared/ui';
+import { Pressable, StyleSheet } from 'react-native';
+import { Screen, Box, VStack, Button, Icon, Text, GlassCard, IconName } from '@shared/ui';
 import { ScreenTitle, EmptyState } from '@shared/ui/molecules';
 import {
   TransactionItem,
   TransactionForm,
+  BudgetProgress,
+  MiniGoalProgress,
+  RecurringStats,
 } from '../components';
 import { useWallet } from '../hooks';
+import { useAppSelector } from '@app/store/hooks';
+import {
+  selectAllAccounts,
+  selectBudgetForMonth,
+  selectActiveGoals,
+  selectActiveRecurring,
+} from '../store';
 import {
   Transaction,
   CreateTransactionPayload,
@@ -21,6 +32,12 @@ import {
 import { SemanticColorKey } from '@shared/ui';
 import { SpaceSelector, CreateSpaceModal, SpaceSettingsModal, PendingInvitesModal } from '@features/spaces';
 import { Space } from '@features/spaces/domain/types';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { WalletStackParamList } from '@app/navigation/types';
+import { useTheme } from '@shared/ui/theme';
+
+type WalletNavigation = NativeStackNavigationProp<WalletStackParamList, 'WalletMain'>;
 
 // Mapping categorie a colori
 const categoryColors: Record<ExpenseCategory, SemanticColorKey> = {
@@ -33,11 +50,35 @@ const categoryColors: Record<ExpenseCategory, SemanticColorKey> = {
   other: 'textSecondary',
 };
 
+// Mapping categorie a icone
+const categoryIcons: Record<ExpenseCategory, IconName> = {
+  food: 'food',
+  transport: 'transport',
+  entertainment: 'entertainment',
+  shopping: 'shopping',
+  health: 'health',
+  bills: 'bills',
+  other: 'other',
+};
+
+// Quick action buttons data - con icone invece di emoji
+const quickActions: { key: keyof WalletStackParamList; icon: IconName; label: string }[] = [
+  { key: 'Accounts', icon: 'creditCard', label: 'Conti' },
+  { key: 'Budget', icon: 'pieChart', label: 'Budget' },
+  { key: 'Goals', icon: 'target', label: 'Obiettivi' },
+  { key: 'Recurring', icon: 'repeat', label: 'Ricorrenti' },
+  { key: 'Categories', icon: 'layers', label: 'Categorie' },
+  { key: 'Reports', icon: 'statsChart', label: 'Report' },
+];
+
 export function WalletScreen(): JSX.Element {
+  const navigation = useNavigation<WalletNavigation>();
+  const { colors } = useTheme();
   const {
     transactions,
     selectedMonth,
     totalExpenses,
+    totalIncome,
     topCategories,
     createTransaction,
     updateTransaction,
@@ -52,6 +93,15 @@ export function WalletScreen(): JSX.Element {
   const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
   const [showInvites, setShowInvites] = useState(false);
 
+  // Selectors for new features
+  const accounts = useAppSelector(selectAllAccounts);
+  const currentBudget = useAppSelector(selectBudgetForMonth(selectedMonth));
+  const activeGoals = useAppSelector(selectActiveGoals);
+  const activeRecurring = useAppSelector(selectActiveRecurring);
+
+  // Calculate total balance across all accounts
+  const totalBalance = accounts.reduce((sum, acc) => sum + acc.initialBalance, 0);
+
   const handleOpenSpaceSettings = useCallback((space: Space) => {
     setSelectedSpace(space);
     setShowSpaceSettings(true);
@@ -61,10 +111,6 @@ export function WalletScreen(): JSX.Element {
     setShowSpaceSettings(false);
     setSelectedSpace(null);
   }, []);
-
-  // Stats
-  const transactionCount = transactions.length;
-  const avgTransaction = transactionCount > 0 ? totalExpenses / transactionCount : 0;
 
   const handleTransactionPress = useCallback((transaction: Transaction) => {
     setEditingTransaction(transaction);
@@ -94,6 +140,10 @@ export function WalletScreen(): JSX.Element {
     [editingTransaction, createTransaction, updateTransaction]
   );
 
+  const handleQuickAction = useCallback((action: keyof WalletStackParamList) => {
+    navigation.navigate(action as never);
+  }, [navigation]);
+
   // Month navigation header
   const monthLabel = new Date(selectedMonth + '-01').toLocaleDateString('it-IT', {
     month: 'long',
@@ -112,115 +162,254 @@ export function WalletScreen(): JSX.Element {
             onOpenInvites={() => setShowInvites(true)}
           />
         }
-        subtitle={monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}
         rightAction={
           <Button
-            title="Nuova"
+            title=""
             size="sm"
             onPress={handleAddTransaction}
             accessibilityLabel="Aggiungi nuova spesa"
-            leftIcon={<Icon name="add" size="sm" color="onPrimary" />}
+            leftIcon={<Icon name="add" size="md" color="onPrimary" />}
           />
         }
       />
 
-      {/* Month navigation */}
-      <Box flexDirection="row" alignItems="center" justifyContent="center" gap="lg" marginBottom="lg">
-        <Button
-          title=""
-          variant="secondary"
-          size="sm"
-          onPress={goToPrevMonth}
-          accessibilityLabel="Mese precedente"
-          leftIcon={<Icon name="chevronLeft" size="sm" color="textPrimary" />}
-        />
-        <Text variant="bodyMedium" weight="semibold">
-          {monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}
-        </Text>
-        <Button
-          title=""
-          variant="secondary"
-          size="sm"
-          onPress={goToNextMonth}
-          accessibilityLabel="Mese successivo"
-          leftIcon={<Icon name="chevronRight" size="sm" color="textPrimary" />}
-        />
-      </Box>
-
       <VStack spacing="lg">
-        {/* Simple Stats Cards */}
-        <Box flexDirection="row" gap="md">
-          <Box flex={1}>
-            <GlassCard variant="solid" padding="md">
-              <Box gap="xs">
-                <Box flexDirection="row" alignItems="center" gap="sm">
-                  <Icon name="receipt" size="sm" color="primary" />
-                  <Text variant="caption" color="textSecondary">Transazioni</Text>
+        {/* Main Balance Card */}
+        <Box
+          borderRadius="xl"
+          padding="md"
+          style={styles.balanceCard}
+        >
+          <Box gap="md">
+            {/* Saldo principale */}
+            <Box>
+              <Text variant="caption" color="textSecondary">
+                Saldo totale
+              </Text>
+              <Text variant="headingLarge" weight="bold" color="textPrimary" style={styles.balanceText}>
+                {totalBalance >= 0 ? '' : '-'}€{Math.abs(totalBalance).toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text variant="caption" color="textTertiary">
+                {accounts.length} {accounts.length === 1 ? 'conto attivo' : 'conti attivi'}
+              </Text>
+            </Box>
+
+            {/* Month selector */}
+            <Box
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-between"
+              padding="sm"
+              borderRadius="lg"
+              style={styles.monthSelector}
+            >
+              <Pressable onPress={goToPrevMonth} style={styles.monthButton}>
+                <Icon name="chevronLeft" size="sm" color="textSecondary" />
+              </Pressable>
+              <Text variant="bodyMedium" weight="semibold" color="textPrimary">
+                {monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}
+              </Text>
+              <Pressable onPress={goToNextMonth} style={styles.monthButton}>
+                <Icon name="chevronRight" size="sm" color="textSecondary" />
+              </Pressable>
+            </Box>
+
+            {/* Summary row */}
+            <Box flexDirection="row" gap="sm">
+              <Box flex={1} padding="sm" borderRadius="lg" style={styles.summaryBox}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={styles.incomeIconBg}>
+                    <Icon name="arrowDown" size="xs" color="onPrimary" />
+                  </Box>
+                  <Text variant="caption" color="textSecondary">Entrate</Text>
                 </Box>
-                <Text variant="headingSmall" weight="bold">{transactionCount}</Text>
+                <Text variant="bodyMedium" weight="bold" style={styles.incomeText}>
+                  +€{totalIncome.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                </Text>
               </Box>
-            </GlassCard>
-          </Box>
-          <Box flex={1}>
-            <GlassCard variant="solid" padding="md">
-              <Box gap="xs">
-                <Box flexDirection="row" alignItems="center" gap="sm">
-                  <Icon name="trending" size="sm" color="success" />
-                  <Text variant="caption" color="textSecondary">Media</Text>
+              <Box flex={1} padding="sm" borderRadius="lg" style={styles.summaryBox}>
+                <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
+                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={styles.expenseIconBg}>
+                    <Icon name="arrowUp" size="xs" color="onPrimary" />
+                  </Box>
+                  <Text variant="caption" color="textSecondary">Uscite</Text>
                 </Box>
-                <Text variant="headingSmall" weight="bold">€{avgTransaction.toFixed(2)}</Text>
+                <Text variant="bodyMedium" weight="bold" style={styles.expenseText}>
+                  -€{totalExpenses.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                </Text>
               </Box>
-            </GlassCard>
+            </Box>
           </Box>
         </Box>
 
-        {/* Total Expenses Card */}
-        <GlassCard variant="solid" padding="lg">
-          <Box gap="md">
-            <Text variant="bodySmall" color="textSecondary">Speso questo mese</Text>
-            <Text variant="headingLarge" weight="bold" color="primary">
-              €{totalExpenses.toFixed(2)}
-            </Text>
-
-            {/* Categories breakdown */}
-            {topCategories.length > 0 && (
-              <Box gap="sm" marginTop="md">
-                <Text variant="bodySmall" weight="semibold">Per categoria</Text>
-                {topCategories.slice(0, 4).map((cat) => (
-                  <Box key={cat.category} flexDirection="row" justifyContent="space-between" alignItems="center">
-                    <Box flexDirection="row" alignItems="center" gap="sm">
-                      <Box
-                        width={8}
-                        height={8}
-                        borderRadius="full"
-                        backgroundColor={categoryColors[cat.category]}
-                      />
-                      <Text variant="bodySmall">{categoryLabels[cat.category]}</Text>
-                    </Box>
-                    <Text variant="bodySmall" weight="semibold">€{cat.amount.toFixed(2)}</Text>
+        {/* Quick Actions - Design a griglia moderna */}
+        <Box>
+          <Text variant="bodySmall" weight="semibold" color="textSecondary" style={styles.sectionTitle}>
+            AZIONI RAPIDE
+          </Text>
+          <Box flexDirection="row" flexWrap="wrap" gap="sm">
+            {quickActions.map((action) => (
+              <Pressable
+                key={action.key}
+                onPress={() => handleQuickAction(action.key)}
+                style={({ pressed }) => [
+                  styles.quickActionButton,
+                  pressed && styles.quickActionPressed,
+                ]}
+              >
+                <Box
+                  alignItems="center"
+                  justifyContent="center"
+                  gap="xs"
+                  padding="md"
+                  borderRadius="lg"
+                  backgroundColor="backgroundSecondary"
+                  style={styles.quickActionInner}
+                >
+                  <Box
+                    width={40}
+                    height={40}
+                    borderRadius="md"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ backgroundColor: `${colors.primary}15` }}
+                  >
+                    <Icon name={action.icon} size="md" color="primary" />
                   </Box>
-                ))}
-              </Box>
-            )}
+                  <Text variant="caption" weight="medium" color="textPrimary">
+                    {action.label}
+                  </Text>
+                </Box>
+              </Pressable>
+            ))}
           </Box>
-        </GlassCard>
+        </Box>
 
-        {/* Empty State or Transactions */}
+        {/* Budget Progress - Compatto */}
+        {currentBudget && (
+          <Box>
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="sm">
+              <Box flexDirection="row" alignItems="center" gap="xs">
+                <Icon name="pieChart" size="sm" color="textSecondary" />
+                <Text variant="bodySmall" weight="semibold" color="textSecondary">
+                  BUDGET MENSILE
+                </Text>
+              </Box>
+              <Pressable onPress={() => navigation.navigate('Budget')}>
+                <Text variant="caption" color="primary" weight="semibold">
+                  Gestisci
+                </Text>
+              </Pressable>
+            </Box>
+            <BudgetProgress
+              budget={currentBudget}
+              spent={totalExpenses}
+              onPress={() => navigation.navigate('Budget')}
+              compact
+            />
+          </Box>
+        )}
+
+        {/* Goals & Recurring - Compatto */}
+        <Box gap="sm">
+          <MiniGoalProgress
+            goals={activeGoals}
+            onPress={() => navigation.navigate('Goals')}
+          />
+          <RecurringStats
+            recurring={activeRecurring}
+            onPress={() => navigation.navigate('Recurring')}
+          />
+        </Box>
+
+        {/* Categories breakdown - Design moderno */}
+        {topCategories.length > 0 && (
+          <Box>
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="sm">
+              <Box flexDirection="row" alignItems="center" gap="xs">
+                <Icon name="layers" size="sm" color="textSecondary" />
+                <Text variant="bodySmall" weight="semibold" color="textSecondary">
+                  PER CATEGORIA
+                </Text>
+              </Box>
+              <Pressable onPress={() => navigation.navigate('Reports')}>
+                <Text variant="caption" color="primary" weight="semibold">
+                  Report
+                </Text>
+              </Pressable>
+            </Box>
+            <GlassCard variant="solid" padding="md">
+              <VStack spacing="sm">
+                {topCategories.slice(0, 4).map((cat) => {
+                  const percentage = totalExpenses > 0 ? (cat.amount / totalExpenses) * 100 : 0;
+                  return (
+                    <Box key={cat.category}>
+                      <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="xs">
+                        <Box flexDirection="row" alignItems="center" gap="sm">
+                          <Box
+                            width={32}
+                            height={32}
+                            borderRadius="md"
+                            alignItems="center"
+                            justifyContent="center"
+                            backgroundColor={categoryColors[cat.category]}
+                            style={{ opacity: 0.15 }}
+                          />
+                          <Box style={styles.categoryIconOverlay}>
+                            <Icon name={categoryIcons[cat.category]} size="sm" color={categoryColors[cat.category]} />
+                          </Box>
+                          <Text variant="bodySmall" weight="medium">{categoryLabels[cat.category]}</Text>
+                        </Box>
+                        <Box alignItems="flex-end">
+                          <Text variant="bodySmall" weight="bold">€{cat.amount.toFixed(2)}</Text>
+                          <Text variant="caption" color="textSecondary">{percentage.toFixed(0)}%</Text>
+                        </Box>
+                      </Box>
+                      {/* Progress bar */}
+                      <Box height={4} borderRadius="full" backgroundColor="border" overflow="hidden">
+                        <Box
+                          height={4}
+                          borderRadius="full"
+                          backgroundColor={categoryColors[cat.category]}
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </VStack>
+            </GlassCard>
+          </Box>
+        )}
+
+        {/* Transactions */}
         {transactions.length === 0 ? (
           <EmptyState
             icon="wallet"
-            title="Nessuna spesa"
+            title="Nessuna transazione"
             description="Inizia a tracciare le tue spese"
-            actionLabel="Aggiungi spesa"
+            actionLabel="Aggiungi transazione"
             onAction={handleAddTransaction}
           />
         ) : (
           <Box>
-            <Text variant="headingSmall" weight="semibold" style={{ marginBottom: 12 }}>
-              Ultimi movimenti
-            </Text>
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="sm">
+              <Box flexDirection="row" alignItems="center" gap="xs">
+                <Icon name="list" size="sm" color="textSecondary" />
+                <Text variant="bodySmall" weight="semibold" color="textSecondary">
+                  ULTIMI MOVIMENTI
+                </Text>
+              </Box>
+              {transactions.length > 5 && (
+                <Pressable>
+                  <Text variant="caption" color="primary" weight="semibold">
+                    Vedi tutti ({transactions.length})
+                  </Text>
+                </Pressable>
+              )}
+            </Box>
 
-            <VStack spacing="sm">
+            <VStack spacing="xs">
               {transactions.slice(0, 5).map((transaction) => (
                 <TransactionItem
                   key={transaction.id}
@@ -229,16 +418,11 @@ export function WalletScreen(): JSX.Element {
                 />
               ))}
             </VStack>
-
-            {transactions.length > 5 && (
-              <Box marginTop="md" alignItems="center">
-                <Text variant="bodySmall" color="primary" weight="semibold">
-                  Vedi tutti ({transactions.length})
-                </Text>
-              </Box>
-            )}
           </Box>
         )}
+
+        {/* Bottom spacing */}
+        <Box height={20} />
       </VStack>
 
       {/* Form modal */}
@@ -270,3 +454,55 @@ export function WalletScreen(): JSX.Element {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  balanceCard: {
+    backgroundColor: '#f8fafc',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+    paddingTop: 20,
+  },
+  balanceText: {
+    fontSize: 32,
+    letterSpacing: -0.5,
+  },
+  monthSelector: {
+    backgroundColor: 'rgba(0,0,0,0.04)',
+  },
+  monthButton: {
+    padding: 8,
+  },
+  summaryBox: {
+    backgroundColor: 'rgba(0,0,0,0.03)',
+  },
+  incomeIconBg: {
+    backgroundColor: '#22c55e',
+  },
+  expenseIconBg: {
+    backgroundColor: '#ef4444',
+  },
+  incomeText: {
+    color: '#16a34a',
+  },
+  expenseText: {
+    color: '#dc2626',
+  },
+  sectionTitle: {
+    marginBottom: 12,
+    letterSpacing: 0.5,
+  },
+  quickActionButton: {
+    width: '31%',
+  },
+  quickActionPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
+  },
+  quickActionInner: {
+    minHeight: 80,
+  },
+  categoryIconOverlay: {
+    position: 'absolute',
+    left: 6,
+  },
+});

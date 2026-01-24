@@ -17,9 +17,26 @@ import * as spacesService from '../data/spacesService';
 import * as todosService from '@features/todos/data/firestoreService';
 import * as calendarService from '@features/calendar/data/firestoreService';
 import * as walletService from '@features/wallet/data/firestoreService';
+import * as accountsService from '@features/wallet/data/accountsService';
+import * as budgetsService from '@features/wallet/data/budgetsService';
+import * as goalsService from '@features/wallet/data/goalsService';
+import * as recurringService from '@features/wallet/data/recurringService';
+import * as categoriesService from '@features/wallet/data/categoriesService';
 import { setTodos, clearTodos } from '@features/todos/store/slice';
 import { setEvents, clearEvents } from '@features/calendar/store/slice';
 import { setTransactions, clearTransactions } from '@features/wallet/store/slice';
+import {
+  setAccounts,
+  clearAccounts,
+  setBudgets,
+  clearBudgets,
+  setGoals,
+  clearGoals,
+  setRecurring,
+  clearRecurring,
+  setCategories,
+  clearCategories,
+} from '@features/wallet/store';
 import { useAuth } from '@features/auth/hooks';
 import { useThemeContext } from '@shared/ui/theme';
 
@@ -63,6 +80,11 @@ function SpaceDataSynchronizer(): null {
       dispatch(clearTodos());
       dispatch(clearEvents());
       dispatch(clearTransactions());
+      dispatch(clearAccounts());
+      dispatch(clearBudgets());
+      dispatch(clearGoals());
+      dispatch(clearRecurring());
+      dispatch(clearCategories());
       previousSpaceIdRef.current = null;
       return;
     }
@@ -72,26 +94,65 @@ function SpaceDataSynchronizer(): null {
       dispatch(clearTodos());
       dispatch(clearEvents());
       dispatch(clearTransactions());
+      dispatch(clearAccounts());
+      dispatch(clearBudgets());
+      dispatch(clearGoals());
+      dispatch(clearRecurring());
+      dispatch(clearCategories());
     }
     previousSpaceIdRef.current = currentSpaceId;
 
     // Setup real-time listeners per lo spazio corrente
+
+    // Todos listener
     const unsubscribeTodos = todosService.onTodosChanged(currentSpaceId, (todos) => {
       dispatch(setTodos(todos));
     });
 
+    // Calendar events listener
     const unsubscribeEvents = calendarService.onEventsChanged(currentSpaceId, (events) => {
       dispatch(setEvents(events));
     });
 
+    // Transactions listener
     const unsubscribeTransactions = walletService.onTransactionsChanged(currentSpaceId, (transactions) => {
       dispatch(setTransactions(transactions));
+    });
+
+    // Accounts listener
+    const unsubscribeAccounts = accountsService.onAccountsChanged(currentSpaceId, (accounts) => {
+      dispatch(setAccounts(accounts));
+    });
+
+    // Budgets listener
+    const unsubscribeBudgets = budgetsService.onBudgetsChanged(currentSpaceId, (budgets) => {
+      dispatch(setBudgets(budgets));
+    });
+
+    // Goals listener
+    const unsubscribeGoals = goalsService.onGoalsChanged(currentSpaceId, (goals) => {
+      dispatch(setGoals(goals));
+    });
+
+    // Recurring transactions listener
+    const unsubscribeRecurring = recurringService.onRecurringChanged(currentSpaceId, (recurring) => {
+      dispatch(setRecurring(recurring));
+    });
+
+    // Categories listener
+    const unsubscribeCategories = categoriesService.onCategoriesChanged(currentSpaceId, (categories) => {
+      dispatch(setCategories(categories));
     });
 
     return () => {
       unsubscribeTodos();
       unsubscribeEvents();
       unsubscribeTransactions();
+      unsubscribeAccounts();
+      unsubscribeBudgets();
+      unsubscribeGoals();
+      unsubscribeRecurring();
+      unsubscribeCategories();
     };
   }, [currentSpaceId, dispatch]);
 
@@ -115,6 +176,11 @@ export function SpacesProvider({ children }: SpacesProviderProps): JSX.Element {
       dispatch(clearTodos());
       dispatch(clearEvents());
       dispatch(clearTransactions());
+      dispatch(clearAccounts());
+      dispatch(clearBudgets());
+      dispatch(clearGoals());
+      dispatch(clearRecurring());
+      dispatch(clearCategories());
       return;
     }
 
