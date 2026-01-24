@@ -11,6 +11,7 @@ import {
   UpdateGoalPayload,
   GoalStatus,
 } from '../domain/types';
+import { appleColors } from '@shared/ui/tokens';
 
 /**
  * Get the goals collection for a specific space
@@ -75,7 +76,7 @@ export async function createGoal(spaceId: string, payload: CreateGoalPayload): P
     currentAmount: payload.currentAmount || 0,
     deadline: payload.deadline || null,
     icon: payload.icon || 'target',
-    color: payload.color || '#007AFF',
+    color: payload.color || appleColors.systemBlue,
     status: 'active' as GoalStatus,
     createdBy: currentUser.uid,
     createdAt: now,

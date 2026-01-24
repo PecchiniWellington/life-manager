@@ -2,6 +2,8 @@
  * Wallet Domain Types
  */
 
+import { appleColors } from '@shared/ui/tokens';
+
 // ============================================================
 // TRANSACTION TYPES
 // ============================================================
@@ -450,23 +452,23 @@ export interface UpdateCategoryPayload {
  * Default categories to seed
  */
 export const DEFAULT_EXPENSE_CATEGORIES: Omit<CreateCategoryPayload, 'sortOrder'>[] = [
-  { name: 'Cibo', icon: 'food', color: '#FF9500', type: 'expense' },
-  { name: 'Trasporti', icon: 'transport', color: '#007AFF', type: 'expense' },
-  { name: 'Svago', icon: 'entertainment', color: '#FF2D55', type: 'expense' },
-  { name: 'Shopping', icon: 'shopping', color: '#AF52DE', type: 'expense' },
-  { name: 'Salute', icon: 'health', color: '#34C759', type: 'expense' },
-  { name: 'Bollette', icon: 'bills', color: '#FF3B30', type: 'expense' },
-  { name: 'Casa', icon: 'home', color: '#5856D6', type: 'expense' },
-  { name: 'Abbonamenti', icon: 'subscription', color: '#00C7BE', type: 'expense' },
-  { name: 'Altro', icon: 'other', color: '#8E8E93', type: 'expense' },
+  { name: 'Cibo', icon: 'food', color: appleColors.systemOrange, type: 'expense' },
+  { name: 'Trasporti', icon: 'transport', color: appleColors.systemBlue, type: 'expense' },
+  { name: 'Svago', icon: 'entertainment', color: appleColors.systemPink, type: 'expense' },
+  { name: 'Shopping', icon: 'shopping', color: appleColors.systemPurple, type: 'expense' },
+  { name: 'Salute', icon: 'health', color: appleColors.systemGreen, type: 'expense' },
+  { name: 'Bollette', icon: 'bills', color: appleColors.systemRed, type: 'expense' },
+  { name: 'Casa', icon: 'home', color: appleColors.systemIndigo, type: 'expense' },
+  { name: 'Abbonamenti', icon: 'subscription', color: appleColors.systemTeal, type: 'expense' },
+  { name: 'Altro', icon: 'other', color: appleColors.systemGray, type: 'expense' },
 ];
 
 export const DEFAULT_INCOME_CATEGORIES: Omit<CreateCategoryPayload, 'sortOrder'>[] = [
-  { name: 'Stipendio', icon: 'salary', color: '#34C759', type: 'income' },
-  { name: 'Freelance', icon: 'freelance', color: '#007AFF', type: 'income' },
-  { name: 'Investimenti', icon: 'trending', color: '#FF9500', type: 'income' },
-  { name: 'Regalo', icon: 'gift', color: '#FF2D55', type: 'income' },
-  { name: 'Altro', icon: 'other', color: '#8E8E93', type: 'income' },
+  { name: 'Stipendio', icon: 'salary', color: appleColors.systemGreen, type: 'income' },
+  { name: 'Freelance', icon: 'freelance', color: appleColors.systemBlue, type: 'income' },
+  { name: 'Investimenti', icon: 'trending', color: appleColors.systemOrange, type: 'income' },
+  { name: 'Regalo', icon: 'gift', color: appleColors.systemPink, type: 'income' },
+  { name: 'Altro', icon: 'other', color: appleColors.systemGray, type: 'income' },
 ];
 
 // ============================================================

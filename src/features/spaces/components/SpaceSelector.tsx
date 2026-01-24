@@ -12,6 +12,7 @@ import {
   AnimatedPressable,
   BottomSheetModal,
   VirtualList,
+  palette,
 } from '@shared/ui';
 import { useSpaces } from '../hooks';
 import { Space, SPACE_COLORS } from '../domain/types';
@@ -79,7 +80,7 @@ export function SpaceSelector({ onCreateSpace, onOpenSettings, onOpenInvites }: 
               alignItems="center"
               justifyContent="center"
             >
-              <Text variant="caption" weight="bold" style={{ color: '#FFFFFF', fontSize: 10 }}>
+              <Text variant="caption" weight="bold" style={{ color: palette.white, fontSize: 10 }}>
                 {pendingInvitesCount}
               </Text>
             </Box>

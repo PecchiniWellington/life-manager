@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Box, Text, GlassCard, Icon, IconName, AnimatedPressable } from '@shared/ui';
+import { Box, Text, GlassCard, Icon, IconName, AnimatedPressable, appleColors, transactionColors } from '@shared/ui';
 import { RecurringTransaction, Category, Account, RecurrenceFrequency } from '../domain/types';
 import { format, parseISO, isToday, isTomorrow, differenceInDays } from 'date-fns';
 import { it } from 'date-fns/locale';
@@ -62,7 +62,7 @@ export function RecurringItem({
   const isExpense = recurring.type === 'expense';
   const nextDate = parseISO(recurring.nextExecution);
   const iconName = getCategoryIcon(category?.icon, recurring.type);
-  const iconColor = category?.color || (isExpense ? '#FF3B30' : '#34C759');
+  const iconColor = category?.color || (isExpense ? appleColors.systemRed : appleColors.systemGreen);
 
   // Format next execution date
   const getNextExecutionText = () => {
@@ -75,9 +75,9 @@ export function RecurringItem({
 
   // Determine status color
   const getStatusColor = () => {
-    if (!recurring.isActive) return '#8E8E93'; // Gray for paused
-    if (isToday(nextDate)) return '#FF9500'; // Orange for due today
-    return '#34C759'; // Green for active
+    if (!recurring.isActive) return appleColors.systemGray;
+    if (isToday(nextDate)) return appleColors.systemOrange;
+    return appleColors.systemGreen;
   };
 
   const content = (
@@ -273,7 +273,7 @@ export function RecurringStats({ recurring, onPress }: RecurringStatsProps): JSX
                 borderRadius="full"
                 style={{ backgroundColor: 'rgba(249, 115, 22, 0.15)' }}
               >
-                <Text variant="caption" style={{ color: '#f97316', fontSize: 11 }}>
+                <Text variant="caption" style={{ color: appleColors.systemOrange, fontSize: 11 }}>
                   {dueToday} oggi
                 </Text>
               </Box>

@@ -18,6 +18,8 @@ import {
   BottomSheetModal,
   AnimatedPressable,
   ScrollContainer,
+  accountColors,
+  appleColors,
 } from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
@@ -40,10 +42,8 @@ const iconOptions = [
   '✈️', '🎓', '💰', '📦', '🎁', '🍺', '☕', '🐕', '💇', '🏋️',
 ];
 
-const colorOptions = [
-  '#007AFF', '#34C759', '#FF9500', '#FF3B30', '#5856D6',
-  '#AF52DE', '#FF2D55', '#00C7BE', '#FFD60A', '#8E8E93',
-];
+// Use centralized colors from tokens
+const colorOptions = [...accountColors];
 
 export function CategoriesScreen(): JSX.Element {
   const navigation = useNavigation();
@@ -355,8 +355,8 @@ export function CategoriesScreen(): JSX.Element {
                     alignItems="center"
                     borderWidth={2}
                     style={{
-                      backgroundColor: type === 'expense' ? '#FF3B3020' : 'transparent',
-                      borderColor: type === 'expense' ? '#FF3B30' : 'transparent',
+                      backgroundColor: type === 'expense' ? `${appleColors.systemRed}20` : 'transparent',
+                      borderColor: type === 'expense' ? appleColors.systemRed : 'transparent',
                     }}
                   >
                     <Text
@@ -381,8 +381,8 @@ export function CategoriesScreen(): JSX.Element {
                     alignItems="center"
                     borderWidth={2}
                     style={{
-                      backgroundColor: type === 'income' ? '#34C75920' : 'transparent',
-                      borderColor: type === 'income' ? '#34C759' : 'transparent',
+                      backgroundColor: type === 'income' ? `${appleColors.systemGreen}20` : 'transparent',
+                      borderColor: type === 'income' ? appleColors.systemGreen : 'transparent',
                     }}
                   >
                     <Text

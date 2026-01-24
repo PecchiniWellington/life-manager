@@ -13,6 +13,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { store, persistor } from '../store';
 import { ThemeProvider } from '@shared/ui/theme';
 import { SpacesProvider } from '@features/spaces';
+import { appleColors, palette } from '@shared/ui/tokens';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -23,12 +24,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: palette.white,
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#666666',
+    color: palette.gray500,
   },
 });
 
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
 function LoadingScreen(): JSX.Element {
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#007AFF" />
+      <ActivityIndicator size="large" color={appleColors.systemBlue} />
       <RNText style={styles.loadingText}>Caricamento...</RNText>
     </View>
   );

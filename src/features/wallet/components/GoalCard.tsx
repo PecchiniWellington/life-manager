@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { Box, Text, GlassCard, Icon, IconName, AnimatedPressable } from '@shared/ui';
+import { Box, Text, GlassCard, Icon, IconName, AnimatedPressable, appleColors, progressColors } from '@shared/ui';
 import { SavingsGoal } from '../domain/types';
 import { parseISO, differenceInDays } from 'date-fns';
 
@@ -49,7 +49,7 @@ export function GoalCard({ goal, onPress, compact = false }: GoalCardProps): JSX
   const remaining = goal.targetAmount - goal.currentAmount;
   const isCompleted = goal.status === 'completed' || goal.currentAmount >= goal.targetAmount;
   const iconName = getGoalIcon(goal.icon);
-  const goalColor = goal.color || '#007AFF';
+  const goalColor = goal.color || appleColors.systemBlue;
 
   // Calculate days remaining
   const daysRemaining = goal.deadline
@@ -58,10 +58,10 @@ export function GoalCard({ goal, onPress, compact = false }: GoalCardProps): JSX
 
   // Get progress color
   const getProgressColor = () => {
-    if (isCompleted) return '#34C759'; // Green
-    if (progress >= 75) return '#34C759'; // Green
-    if (progress >= 50) return '#FFCC00'; // Yellow
-    if (progress >= 25) return '#FF9500'; // Orange
+    if (isCompleted) return appleColors.systemGreen;
+    if (progress >= 75) return appleColors.systemGreen;
+    if (progress >= 50) return appleColors.systemYellow;
+    if (progress >= 25) return appleColors.systemOrange;
     return goalColor;
   };
 
@@ -277,10 +277,10 @@ export function MiniGoalProgress({ goals, onPress }: MiniGoalProgressProps): JSX
 
   // Get progress color based on percentage
   const getProgressColor = () => {
-    if (overallProgress >= 75) return '#22c55e';
-    if (overallProgress >= 50) return '#eab308';
-    if (overallProgress >= 25) return '#f97316';
-    return '#3b82f6';
+    if (overallProgress >= 75) return progressColors.excellent;
+    if (overallProgress >= 50) return progressColors.good;
+    if (overallProgress >= 25) return progressColors.warning;
+    return progressColors.neutral;
   };
 
   if (activeGoals.length === 0) {

@@ -11,6 +11,7 @@ import {
   UpdateAccountPayload,
   accountTypeIcons,
 } from '../domain/types';
+import { appleColors } from '@shared/ui/tokens';
 
 /**
  * Get the accounts collection for a specific space
@@ -97,7 +98,7 @@ export async function createAccount(spaceId: string, payload: CreateAccountPaylo
     name: payload.name,
     type: payload.type,
     icon: payload.icon || accountTypeIcons[payload.type],
-    color: payload.color || '#007AFF',
+    color: payload.color || appleColors.systemBlue,
     initialBalance: payload.initialBalance || 0,
     isDefault: payload.isDefault || false,
     isArchived: false,
@@ -122,7 +123,7 @@ export async function createDefaultAccount(spaceId: string): Promise<Account> {
     name: 'Principale',
     type: 'bank',
     icon: 'wallet',
-    color: '#007AFF',
+    color: appleColors.systemBlue,
     initialBalance: 0,
     isDefault: true,
   });

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Box, Text, GlassCard, AnimatedPressable } from '@shared/ui';
+import { Box, Text, GlassCard, AnimatedPressable, appleColors, palette } from '@shared/ui';
 import { Category } from '../domain/types';
 
 interface CategorySpending {
@@ -155,7 +155,7 @@ export function SpendingDonutChart({
             <Box
               style={{
                 width: `${othersPercentage}%`,
-                backgroundColor: '#8E8E93',
+                backgroundColor: appleColors.systemGray,
               }}
             />
           )}
@@ -195,7 +195,7 @@ export function SpendingDonutChart({
                   width={12}
                   height={12}
                   borderRadius="sm"
-                  style={{ backgroundColor: '#8E8E93' }}
+                  style={{ backgroundColor: appleColors.systemGray }}
                 />
                 <Text variant="caption">Altro</Text>
               </Box>
@@ -264,7 +264,7 @@ export function MiniSpendingOverview({
           {topCategories.length < data.length && (
             <Box
               flex={1}
-              style={{ backgroundColor: '#E5E5E5' }}
+              style={{ backgroundColor: palette.gray200 }}
             />
           )}
         </Box>

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Box, Text, GlassCard, AnimatedPressable } from '@shared/ui';
+import { Box, Text, GlassCard, AnimatedPressable, appleColors, transactionColors } from '@shared/ui';
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
 
@@ -126,7 +126,7 @@ export function TrendLineChart({
                       borderRadius="sm"
                       style={{
                         height: `${incomeHeight}%`,
-                        backgroundColor: '#34C759',
+                        backgroundColor: appleColors.systemGreen,
                         minHeight: point.income > 0 ? 4 : 0,
                       }}
                     />
@@ -136,7 +136,7 @@ export function TrendLineChart({
                       borderRadius="sm"
                       style={{
                         height: `${expenseHeight}%`,
-                        backgroundColor: '#FF3B30',
+                        backgroundColor: appleColors.systemRed,
                         minHeight: point.expense > 0 ? 4 : 0,
                       }}
                     />
@@ -165,7 +165,7 @@ export function TrendLineChart({
               width={12}
               height={12}
               borderRadius="sm"
-              style={{ backgroundColor: '#34C759' }}
+              style={{ backgroundColor: appleColors.systemGreen }}
             />
             <Text variant="caption" color="textSecondary">
               Entrate
@@ -176,7 +176,7 @@ export function TrendLineChart({
               width={12}
               height={12}
               borderRadius="sm"
-              style={{ backgroundColor: '#FF3B30' }}
+              style={{ backgroundColor: appleColors.systemRed }}
             />
             <Text variant="caption" color="textSecondary">
               Uscite
@@ -381,7 +381,7 @@ export function BalanceHistoryMini({
                 borderRadius="sm"
                 style={{
                   height: Math.max(height, 2),
-                  backgroundColor: point.balance >= 0 ? '#34C759' : '#FF3B30',
+                  backgroundColor: point.balance >= 0 ? appleColors.systemGreen : appleColors.systemRed,
                 }}
               />
             );

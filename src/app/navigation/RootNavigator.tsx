@@ -10,6 +10,7 @@ import { useAuth } from '@features/auth/hooks';
 import { RootStackParamList } from './types';
 import { MainTabNavigator } from './MainTabNavigator';
 import { AuthStack } from './stacks';
+import { appleColors, palette } from '@shared/ui/tokens';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,7 +20,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function LoadingScreen(): JSX.Element {
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#007AFF" />
+      <ActivityIndicator size="large" color={appleColors.systemBlue} />
     </View>
   );
 }
@@ -53,6 +54,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: palette.white,
   },
 });

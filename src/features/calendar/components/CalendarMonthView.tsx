@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 import { Dimensions } from 'react-native';
 import { Box, Text, AnimatedPressable } from '@shared/ui';
 import { useTheme } from '@shared/ui/theme';
-import { eventColors, EventColor } from '@shared/ui/tokens';
+import { eventColors, EventColor, surfaceColors, palette } from '@shared/ui/tokens';
 import { CalendarEvent } from '../domain/types';
 import {
   startOfMonth,
@@ -173,7 +173,7 @@ export function CalendarMonthView({
     <Box
       flex={1}
       style={{
-        backgroundColor: '#f8fafc',
+        backgroundColor: surfaceColors.calendarBackground,
         overflow: 'hidden',
         marginTop: 12,
       }}
@@ -184,7 +184,7 @@ export function CalendarMonthView({
         style={{
           paddingBottom: 8,
           paddingTop: 12,
-          backgroundColor: '#f8fafc',
+          backgroundColor: surfaceColors.calendarBackground,
         }}
       >
         {weekDayNames.map((day, index) => (
@@ -298,7 +298,7 @@ export function CalendarMonthView({
                       style={{
                         fontSize: 10,
                         fontWeight: '600',
-                        color: '#FFFFFF',
+                        color: palette.white,
                       }}
                     >
                       {bar.event.title}

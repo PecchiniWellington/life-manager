@@ -13,30 +13,32 @@ import {
   SwipeableRow,
   type IconName,
   type SwipeAction,
+  categoryColors,
+  transactionColors,
 } from '@shared/ui';
 import { Transaction, categoryLabels, categoryIcons } from '../domain/types';
 import { formatCurrency } from '@shared/lib/format';
 import { formatRelativeDate } from '@shared/lib/date';
 
-// Category colors for background
+// Category colors for background (derived from tokens)
 const categoryBgColors: Record<string, string> = {
-  food: 'rgba(251, 146, 60, 0.12)',
-  transport: 'rgba(59, 130, 246, 0.12)',
-  entertainment: 'rgba(239, 68, 68, 0.12)',
-  shopping: 'rgba(168, 85, 247, 0.12)',
-  health: 'rgba(34, 197, 94, 0.12)',
-  bills: 'rgba(249, 115, 22, 0.12)',
-  other: 'rgba(107, 114, 128, 0.12)',
+  food: `${categoryColors.food}1F`,
+  transport: `${categoryColors.transport}1F`,
+  entertainment: `${categoryColors.entertainment}1F`,
+  shopping: `${categoryColors.shopping}1F`,
+  health: `${categoryColors.health}1F`,
+  bills: `${categoryColors.bills}1F`,
+  other: `${categoryColors.other}1F`,
 };
 
 const categoryIconColors: Record<string, string> = {
-  food: '#fb923c',
-  transport: '#3b82f6',
-  entertainment: '#ef4444',
-  shopping: '#a855f7',
-  health: '#22c55e',
-  bills: '#f97316',
-  other: '#6b7280',
+  food: categoryColors.food,
+  transport: categoryColors.transport,
+  entertainment: categoryColors.entertainment,
+  shopping: categoryColors.shopping,
+  health: categoryColors.health,
+  bills: categoryColors.bills,
+  other: categoryColors.other,
 };
 
 interface TransactionItemProps {
@@ -118,7 +120,7 @@ export function TransactionItem({
               <Text
                 variant="bodyMedium"
                 weight="bold"
-                style={{ color: isExpense ? '#ef4444' : '#22c55e' }}
+                style={{ color: isExpense ? transactionColors.expense : transactionColors.income }}
               >
                 {isExpense ? '-' : '+'}€{formatCurrency(transaction.amount)}
               </Text>

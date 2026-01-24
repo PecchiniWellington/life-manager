@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { Screen, Box, VStack, Icon, Text, GlassCard, IconName, AnimatedPressable } from '@shared/ui';
+import { Screen, Box, VStack, Icon, Text, GlassCard, IconName, AnimatedPressable, statusColors, transactionColors } from '@shared/ui';
 import { EmptyState } from '@shared/ui/molecules';
 import {
   TransactionItem,
@@ -195,7 +195,7 @@ export function WalletScreen(): JSX.Element {
                   borderRadius="lg"
                   alignItems="center"
                   justifyContent="center"
-                  style={{ backgroundColor: '#f59e0b' }}
+                  style={{ backgroundColor: statusColors.doing }}
                 >
                   <Icon name="add" size="md" color="onPrimary" />
                 </Box>
@@ -230,23 +230,23 @@ export function WalletScreen(): JSX.Element {
             <Box flexDirection="row" gap="sm">
               <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#22c55e' }}>
+                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: transactionColors.income }}>
                     <Icon name="arrowDown" size="xs" color="onPrimary" />
                   </Box>
                   <Text variant="caption" color="textSecondary">Entrate</Text>
                 </Box>
-                <Text variant="bodyMedium" weight="bold" style={{ color: '#16a34a' }}>
+                <Text variant="bodyMedium" weight="bold" style={{ color: transactionColors.income }}>
                   +€{totalIncome.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                 </Text>
               </Box>
               <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#ef4444' }}>
+                  <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: transactionColors.expense }}>
                     <Icon name="arrowUp" size="xs" color="onPrimary" />
                   </Box>
                   <Text variant="caption" color="textSecondary">Uscite</Text>
                 </Box>
-                <Text variant="bodyMedium" weight="bold" style={{ color: '#dc2626' }}>
+                <Text variant="bodyMedium" weight="bold" style={{ color: transactionColors.expense }}>
                   -€{totalExpenses.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                 </Text>
               </Box>

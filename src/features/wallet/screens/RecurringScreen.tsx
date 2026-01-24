@@ -18,6 +18,7 @@ import {
   BottomSheetModal,
   AnimatedPressable,
   ScrollContainer,
+  appleColors,
 } from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
@@ -319,8 +320,8 @@ export function RecurringScreen(): JSX.Element {
                   alignItems="center"
                   borderWidth={2}
                   style={{
-                    backgroundColor: type === 'expense' ? '#FF3B3020' : 'transparent',
-                    borderColor: type === 'expense' ? '#FF3B30' : 'transparent',
+                    backgroundColor: type === 'expense' ? `${appleColors.systemRed}20` : 'transparent',
+                    borderColor: type === 'expense' ? appleColors.systemRed : 'transparent',
                   }}
                 >
                   <Text
@@ -345,8 +346,8 @@ export function RecurringScreen(): JSX.Element {
                   alignItems="center"
                   borderWidth={2}
                   style={{
-                    backgroundColor: type === 'income' ? '#34C75920' : 'transparent',
-                    borderColor: type === 'income' ? '#34C759' : 'transparent',
+                    backgroundColor: type === 'income' ? `${appleColors.systemGreen}20` : 'transparent',
+                    borderColor: type === 'income' ? appleColors.systemGreen : 'transparent',
                   }}
                 >
                   <Text

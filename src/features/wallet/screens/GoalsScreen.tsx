@@ -18,6 +18,7 @@ import {
   BottomSheetModal,
   AnimatedPressable,
   ScrollContainer,
+  accountColors,
 } from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
@@ -39,10 +40,8 @@ import { useNavigation } from '@react-navigation/native';
 import { format, addMonths } from 'date-fns';
 
 const iconOptions = ['🎯', '🏠', '🚗', '✈️', '💻', '📱', '🎓', '💍', '🏖️', '🎁', '💰', '🐷'];
-const colorOptions = [
-  '#007AFF', '#34C759', '#FF9500', '#FF3B30', '#5856D6',
-  '#AF52DE', '#FF2D55', '#00C7BE', '#FFD60A', '#8E8E93',
-];
+// Use centralized colors from tokens
+const colorOptions = [...accountColors];
 
 export function GoalsScreen(): JSX.Element {
   const navigation = useNavigation();

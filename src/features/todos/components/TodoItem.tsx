@@ -12,6 +12,8 @@ import {
   SwipeableRow,
   AnimatedPressable,
   type SwipeAction,
+  statusColors as tokenStatusColors,
+  priorityColors as tokenPriorityColors,
 } from '@shared/ui';
 import { Todo, priorityLabels, statusLabels } from '../domain/types';
 import { formatRelativeDate } from '@shared/lib/date';
@@ -23,24 +25,24 @@ interface TodoItemProps {
   onDelete?: (id: string) => void;
 }
 
-// Colori per stato
+// Colori per stato (from tokens)
 const statusColors: Record<string, string> = {
-  todo: '#3b82f6',
-  doing: '#f59e0b',
-  done: '#22c55e',
+  todo: tokenStatusColors.todo,
+  doing: tokenStatusColors.doing,
+  done: tokenStatusColors.done,
 };
 
 const statusBgColors: Record<string, string> = {
-  todo: 'rgba(59, 130, 246, 0.12)',
-  doing: 'rgba(245, 158, 11, 0.12)',
-  done: 'rgba(34, 197, 94, 0.12)',
+  todo: `${tokenStatusColors.todo}1F`, // 12% opacity
+  doing: `${tokenStatusColors.doing}1F`,
+  done: `${tokenStatusColors.done}1F`,
 };
 
-// Colori per priorità
-const priorityColors: Record<string, string> = {
-  high: '#ef4444',
-  medium: '#f59e0b',
-  low: '#6b7280',
+// Colori per priorità (from tokens)
+const priorityColorsMap: Record<string, string> = {
+  high: tokenPriorityColors.high,
+  medium: tokenPriorityColors.medium,
+  low: tokenPriorityColors.low,
 };
 
 export function TodoItem({
@@ -164,7 +166,7 @@ export function TodoItem({
                       width={6}
                       height={6}
                       borderRadius="full"
-                      style={{ backgroundColor: priorityColors[todo.priority] }}
+                      style={{ backgroundColor: priorityColorsMap[todo.priority] }}
                     />
                     <Text variant="caption" color="textSecondary">
                       {priorityLabels[todo.priority]}
@@ -175,7 +177,7 @@ export function TodoItem({
                 {todo.dueDate && (
                   <Text
                     variant="caption"
-                    style={{ color: isOverdue ? '#ef4444' : '#9ca3af' }}
+                    color={isOverdue ? 'error' : 'textTertiary'}
                   >
                     {formatRelativeDate(todo.dueDate)}
                   </Text>

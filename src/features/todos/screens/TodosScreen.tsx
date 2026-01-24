@@ -14,6 +14,8 @@ import {
   VStack,
   GlassCard,
   AnimatedPressable,
+  statusColors,
+  progressColors,
 } from '@shared/ui';
 import { EmptyState } from '@shared/ui/molecules';
 import { TodoItem, TodoFilters, TodoForm } from '../components';
@@ -143,7 +145,7 @@ export function TodosScreen(): JSX.Element {
                   borderRadius="lg"
                   alignItems="center"
                   justifyContent="center"
-                  style={{ backgroundColor: '#f59e0b' }}
+                  style={{ backgroundColor: statusColors.doing }}
                 >
                   <Icon name="add" size="md" color="onPrimary" />
                 </Box>
@@ -158,7 +160,7 @@ export function TodosScreen(): JSX.Element {
                   borderRadius="full"
                   style={{
                     width: `${completionProgress}%`,
-                    backgroundColor: '#22c55e',
+                    backgroundColor: progressColors.excellent,
                   }}
                 />
               </Box>
@@ -168,7 +170,7 @@ export function TodosScreen(): JSX.Element {
             <Box flexDirection="row" gap="sm">
               <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#3b82f6' }} />
+                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.todo }} />
                   <Text variant="caption" color="textSecondary">Da fare</Text>
                 </Box>
                 <Text variant="bodyMedium" weight="bold" color="textPrimary">
@@ -177,7 +179,7 @@ export function TodosScreen(): JSX.Element {
               </Box>
               <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#f59e0b' }} />
+                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.doing }} />
                   <Text variant="caption" color="textSecondary">In corso</Text>
                 </Box>
                 <Text variant="bodyMedium" weight="bold" color="textPrimary">
@@ -186,7 +188,7 @@ export function TodosScreen(): JSX.Element {
               </Box>
               <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                 <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#22c55e' }} />
+                  <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.done }} />
                   <Text variant="caption" color="textSecondary">Completati</Text>
                 </Box>
                 <Text variant="bodyMedium" weight="bold" color="textPrimary">

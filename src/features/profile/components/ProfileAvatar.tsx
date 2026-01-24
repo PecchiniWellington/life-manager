@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { Image } from 'react-native';
-import { Box, Text } from '@shared/ui';
+import { Box, Text, palette } from '@shared/ui';
 import { useTheme } from '@shared/ui/theme';
 
 interface ProfileAvatarProps {
@@ -48,7 +48,7 @@ export function ProfileAvatar({
       <Text
         variant="title1"
         weight="bold"
-        style={{ color: '#FFFFFF', fontSize: size * 0.4 }}
+        style={{ color: palette.white, fontSize: size * 0.4 }}
       >
         {initials}
       </Text>

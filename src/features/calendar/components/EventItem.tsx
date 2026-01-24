@@ -31,7 +31,7 @@ export function EventItem({
   onPress,
   onDelete,
 }: EventItemProps): JSX.Element {
-  const eventColor = eventColors[event.color] || '#3b82f6';
+  const eventColor = eventColors[event.color] || eventColors.blue;
 
   const handlePress = useCallback(() => {
     onPress(event);

@@ -18,6 +18,7 @@ import {
   BottomSheetModal,
   AnimatedPressable,
   ScrollContainer,
+  accountColors,
 } from '@shared/ui';
 import { ScreenTitle } from '@shared/ui/molecules';
 import { useTheme } from '@shared/ui/theme';
@@ -41,10 +42,8 @@ const accountTypeOptions: { type: AccountType; label: string; icon: string }[] =
   { type: 'investment', label: 'Investimento', icon: '📈' },
 ];
 
-const colorOptions = [
-  '#007AFF', '#34C759', '#FF9500', '#FF3B30', '#5856D6',
-  '#AF52DE', '#FF2D55', '#00C7BE', '#FFD60A', '#8E8E93',
-];
+// Use centralized account colors from tokens
+const colorOptions = [...accountColors];
 
 export function AccountsScreen(): JSX.Element {
   const navigation = useNavigation();

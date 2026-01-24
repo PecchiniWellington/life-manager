@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { Box, Text, GlassCard, AnimatedPressable } from '@shared/ui';
+import { Box, Text, GlassCard, AnimatedPressable, appleColors, progressColors } from '@shared/ui';
 import { Budget } from '../domain/types';
 
 interface BudgetProgressProps {
@@ -51,10 +51,10 @@ export function BudgetProgress({
 
   // Determine color based on percentage
   const getBarColor = () => {
-    if (isOverBudget) return '#FF3B30'; // Red
-    if (percentage > 80) return '#FF9500'; // Orange
-    if (percentage > 60) return '#FFCC00'; // Yellow
-    return '#34C759'; // Green
+    if (isOverBudget) return appleColors.systemRed;
+    if (percentage > 80) return appleColors.systemOrange;
+    if (percentage > 60) return appleColors.systemYellow;
+    return appleColors.systemGreen;
   };
 
   if (compact) {
@@ -214,7 +214,7 @@ export function CategoryBudgetProgress({
           borderRadius="full"
           style={{
             width: `${percentage}%`,
-            backgroundColor: isOverBudget ? '#FF3B30' : categoryColor,
+            backgroundColor: isOverBudget ? appleColors.systemRed : categoryColor,
           }}
         />
       </Box>

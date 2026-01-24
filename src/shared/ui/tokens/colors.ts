@@ -344,3 +344,158 @@ export const eventColors = {
 } as const;
 
 export type EventColor = keyof typeof eventColors;
+
+/**
+ * Status colors for todos and tasks
+ */
+export const statusColors = {
+  todo: palette.blue500,
+  doing: palette.yellow500,
+  done: palette.green500,
+} as const;
+
+export type StatusColor = keyof typeof statusColors;
+
+/**
+ * Priority colors
+ */
+export const priorityColors = {
+  high: palette.red500,
+  medium: palette.yellow500,
+  low: palette.gray500,
+} as const;
+
+export type PriorityColor = keyof typeof priorityColors;
+
+/**
+ * Progress colors for budget, goals, etc.
+ */
+export const progressColors = {
+  excellent: palette.green500, // 75%+
+  good: palette.yellow500, // 50-75%
+  warning: palette.orange500, // 25-50%
+  danger: palette.red500, // <25% or over budget
+  neutral: palette.blue500, // default
+} as const;
+
+export type ProgressColor = keyof typeof progressColors;
+
+/**
+ * Transaction type colors
+ */
+export const transactionColors = {
+  income: palette.green600,
+  incomeLight: palette.green500,
+  expense: palette.red500,
+  expenseLight: palette.red400,
+} as const;
+
+/**
+ * Category colors for wallet
+ */
+export const categoryColors = {
+  food: palette.orange400,
+  transport: palette.blue500,
+  entertainment: palette.red500,
+  shopping: palette.purple500,
+  health: palette.green500,
+  bills: palette.orange500,
+  home: '#5856D6',
+  subscription: '#00C7BE',
+  other: palette.gray500,
+  salary: palette.green500,
+  freelance: palette.blue600,
+  investments: palette.orange500,
+  gift: '#FF2D55',
+} as const;
+
+export type CategoryColorKey = keyof typeof categoryColors;
+
+/**
+ * Space colors palette (iOS-style)
+ */
+export const spaceColors = [
+  // Blues
+  appleColors.systemBlue,
+  '#5856D6', // Indigo
+  '#0A84FF',
+  appleColors.systemTeal,
+  '#32ADE6',
+  '#1E90FF',
+  '#4169E1',
+  '#6495ED',
+
+  // Greens
+  appleColors.systemGreen,
+  '#30D158',
+  '#00C7BE',
+  '#2E8B57',
+  '#3CB371',
+  '#66CDAA',
+  '#20B2AA',
+  '#00CED1',
+
+  // Oranges/Yellows
+  appleColors.systemOrange,
+  '#FF9F0A',
+  appleColors.systemYellow,
+  '#FFD60A',
+  '#F0A500',
+  '#FF8C00',
+  '#FFA07A',
+  '#E67E22',
+
+  // Reds/Pinks
+  appleColors.systemRed,
+  '#FF453A',
+  appleColors.systemPink,
+  '#FF375F',
+  '#FF6B6B',
+  '#E74C3C',
+  '#C0392B',
+  '#FF69B4',
+
+  // Purples
+  appleColors.systemPurple,
+  '#BF5AF2',
+  '#9B59B6',
+  '#8E44AD',
+  '#7B68EE',
+  '#9370DB',
+  '#BA55D3',
+  '#DA70D6',
+
+  // Neutrals/Browns
+  '#A2845E',
+  '#D4A574',
+  '#8B4513',
+  '#CD853F',
+  '#B8860B',
+  '#708090',
+  '#778899',
+  palette.gray500,
+] as const;
+
+/**
+ * Account colors for wallet
+ */
+export const accountColors = [
+  appleColors.systemBlue,
+  appleColors.systemGreen,
+  appleColors.systemOrange,
+  appleColors.systemRed,
+  '#5856D6',
+  appleColors.systemPurple,
+  appleColors.systemPink,
+  '#00C7BE',
+  '#FFD60A',
+  appleColors.systemGray,
+] as const;
+
+/**
+ * Background colors for calendar/list views
+ */
+export const surfaceColors = {
+  calendarBackground: '#f8fafc',
+  listBackground: palette.gray50,
+} as const;

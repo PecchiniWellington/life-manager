@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { Screen, Box, Icon, Text, AnimatedPressable } from '@shared/ui';
+import { Screen, Box, Icon, Text, AnimatedPressable, statusColors, progressColors } from '@shared/ui';
 import {
   CalendarHeader,
   CalendarMonthView,
@@ -169,7 +169,7 @@ export function CalendarScreen(): JSX.Element {
                 borderRadius="lg"
                 alignItems="center"
                 justifyContent="center"
-                style={{ backgroundColor: '#f59e0b' }}
+                style={{ backgroundColor: statusColors.doing }}
               >
                 <Icon name="add" size="md" color="onPrimary" />
               </Box>
@@ -180,7 +180,7 @@ export function CalendarScreen(): JSX.Element {
           <Box flexDirection="row" gap="sm">
             <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
               <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#3b82f6' }} />
+                <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.todo }} />
                 <Text variant="caption" color="textSecondary">Questo mese</Text>
               </Box>
               <Text variant="bodyMedium" weight="bold" color="textPrimary">
@@ -189,7 +189,7 @@ export function CalendarScreen(): JSX.Element {
             </Box>
             <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
               <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#f59e0b' }} />
+                <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.doing }} />
                 <Text variant="caption" color="textSecondary">Oggi</Text>
               </Box>
               <Text variant="bodyMedium" weight="bold" color="textPrimary">
@@ -198,7 +198,7 @@ export function CalendarScreen(): JSX.Element {
             </Box>
             <Box flex={1} padding="sm" borderRadius="lg" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
               <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="xs">
-                <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: '#22c55e' }} />
+                <Box width={8} height={8} borderRadius="full" style={{ backgroundColor: statusColors.done }} />
                 <Text variant="caption" color="textSecondary">In arrivo</Text>
               </Box>
               <Text variant="bodyMedium" weight="bold" color="textPrimary">
