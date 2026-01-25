@@ -314,7 +314,7 @@ export function EventForm({
     >
       <VStack spacing="md">
         {/* Header with close and save */}
-        <Box flexDirection="row" alignItems="center" justifyContent="space-between" marginBottom="sm">
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between">
           <AnimatedPressable onPress={onClose} haptic="light" pressScale={0.9}>
             <Icon name="close" size="md" color="textSecondary" />
           </AnimatedPressable>

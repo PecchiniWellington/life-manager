@@ -48,39 +48,31 @@ export function Modal({
   dismissOnBackdrop = true,
   children,
 }: ModalProps): JSX.Element {
-  const content = (
-    <>
-      {/* Header */}
-      {(title || showCloseButton) && (
-        <Box
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-          marginBottom="lg"
-          paddingHorizontal="lg"
-        >
-          {title ? (
-            <Heading level={5}>{title}</Heading>
-          ) : (
-            <Box />
-          )}
-          {showCloseButton && (
-            <Pressable
-              onPress={onClose}
-              accessibilityLabel="Chiudi"
-              padding="xs"
-            >
-              <Icon name="close" size="md" color="textSecondary" />
-            </Pressable>
-          )}
-        </Box>
-      )}
+  const hasHeader = title || showCloseButton;
 
-      {/* Content */}
-      <Box paddingHorizontal="lg" flex={scrollable ? 1 : undefined}>
-        {children}
-      </Box>
-    </>
+  const header = hasHeader && (
+    <Box
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="space-between"
+      paddingHorizontal="lg"
+      paddingVertical="sm"
+    >
+      {title ? (
+        <Heading level={5}>{title}</Heading>
+      ) : (
+        <Box />
+      )}
+      {showCloseButton && (
+        <Pressable
+          onPress={onClose}
+          accessibilityLabel="Chiudi"
+          padding="xs"
+        >
+          <Icon name="close" size="md" color="textSecondary" />
+        </Pressable>
+      )}
+    </Box>
   );
 
   return (
@@ -90,12 +82,24 @@ export function Modal({
       dismissOnBackdrop={dismissOnBackdrop}
       showHandle
     >
+      {header}
       {scrollable ? (
-        <ScrollContainer fillHeight>
-          {content}
+        <ScrollContainer
+          fillHeight
+          paddingHorizontal="lg"
+          paddingTop="sm"
+          paddingBottom="lg"
+        >
+          {children}
         </ScrollContainer>
       ) : (
-        content
+        <Box
+          paddingHorizontal="lg"
+          paddingTop="sm"
+          paddingBottom="lg"
+        >
+          {children}
+        </Box>
       )}
     </BottomSheetModal>
   );

@@ -4,7 +4,7 @@
  * ATOM: Può usare componenti nativi RN
  */
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import {
   Modal as RNModal,
   View,
@@ -14,9 +14,13 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { spacing, radius, sizes, overlay } from '../tokens';
+import { spacing, radius, sizes, overlay, timings, easings } from '../tokens';
 import { useTheme } from '../theme';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -107,40 +111,75 @@ export function BottomSheetModal({
     ? SCREEN_HEIGHT * (parseInt(maxHeight) / 100)
     : maxHeight;
 
+  // Animazioni separate per backdrop e contenuto
+  const backdropOpacity = useSharedValue(0);
+  const translateY = useSharedValue(SCREEN_HEIGHT);
+
+  useEffect(() => {
+    if (visible) {
+      backdropOpacity.value = withTiming(1, { duration: timings.normal, easing: easings.decelerate });
+      translateY.value = withTiming(0, { duration: timings.normal, easing: easings.decelerate });
+    } else {
+      backdropOpacity.value = withTiming(0, { duration: timings.fast, easing: easings.accelerate });
+      translateY.value = withTiming(SCREEN_HEIGHT, { duration: timings.fast, easing: easings.accelerate });
+    }
+  }, [visible]);
+
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: backdropOpacity.value,
+  }));
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
-    <BaseModal
+    <RNModal
       visible={visible}
-      onClose={onClose}
-      dismissOnBackdrop={dismissOnBackdrop}
-      animationType="slide"
+      onRequestClose={onClose}
+      transparent
+      animationType="none"
     >
-      <View style={styles.bottomSheetWrapper}>
-        <View
-          style={[
-            styles.bottomSheet,
-            {
-              backgroundColor: theme.colors.surface,
-              maxHeight: maxHeightValue,
-              paddingBottom: insets.bottom + spacing.lg,
-            },
-          ]}
-        >
-          {showHandle && (
-            <View style={styles.handleContainer}>
-              <View
-                style={[
-                  styles.handle,
-                  { backgroundColor: theme.colors.border },
-                ]}
-              />
-            </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        {/* Backdrop animato separatamente */}
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: overlay.heavy }, backdropStyle]}>
+          {dismissOnBackdrop && (
+            <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
           )}
-          <View style={{ paddingTop: spacing.sm }}>
-            {children}
-          </View>
+        </Animated.View>
+
+        {/* Contenuto che scivola dal basso */}
+        <View style={styles.overlay} pointerEvents="box-none">
+          <Animated.View style={[styles.bottomSheetWrapper, sheetStyle]}>
+            <View
+              style={[
+                styles.bottomSheet,
+                {
+                  backgroundColor: theme.colors.surface,
+                  maxHeight: maxHeightValue,
+                  paddingBottom: insets.bottom + spacing.lg,
+                },
+              ]}
+            >
+              {showHandle && (
+                <View style={styles.handleContainer}>
+                  <View
+                    style={[
+                      styles.handle,
+                      { backgroundColor: theme.colors.border },
+                    ]}
+                  />
+                </View>
+              )}
+              {children}
+            </View>
+          </Animated.View>
         </View>
-      </View>
-    </BaseModal>
+      </KeyboardAvoidingView>
+    </RNModal>
   );
 }
 

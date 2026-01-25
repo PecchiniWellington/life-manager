@@ -137,7 +137,7 @@ export function TransactionForm({
       snapPoints={['85%']}
       scrollable
     >
-      <VStack spacing="lg" paddingBottom="xl">
+      <VStack spacing="lg">
         {/* Amount - Large input */}
         <Box gap="xs">
           <Text variant="labelMedium" color="textSecondary">
@@ -280,7 +280,7 @@ export function TransactionForm({
         )}
 
         {/* Actions */}
-        <HStack spacing="md" marginTop="md">
+        <HStack spacing="md" marginTop="lg">
           <Box flex={1}>
             <Button
               title="Annulla"

@@ -26,6 +26,10 @@ export interface ScrollContainerProps extends Omit<ScrollViewProps, 'contentCont
   paddingVertical?: SpacingKey;
   /** Padding uniforme */
   padding?: SpacingKey;
+  /** Padding top */
+  paddingTop?: SpacingKey;
+  /** Padding bottom */
+  paddingBottom?: SpacingKey;
   /** Gap tra elementi (per contentContainerStyle) */
   gap?: SpacingKey;
   /** Se true, il contenuto si espande per riempire lo spazio */
@@ -41,6 +45,8 @@ export function ScrollContainer({
   paddingHorizontal,
   paddingVertical,
   padding,
+  paddingTop,
+  paddingBottom,
   gap,
   fillHeight,
   refreshing,
@@ -54,6 +60,8 @@ export function ScrollContainer({
     padding !== undefined && { padding: spacing[padding] },
     paddingHorizontal !== undefined && { paddingHorizontal: spacing[paddingHorizontal] },
     paddingVertical !== undefined && { paddingVertical: spacing[paddingVertical] },
+    paddingTop !== undefined && { paddingTop: spacing[paddingTop] },
+    paddingBottom !== undefined && { paddingBottom: spacing[paddingBottom] },
     gap !== undefined && { gap: spacing[gap] },
     fillHeight && styles.fillHeight,
   ];

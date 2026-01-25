@@ -16,7 +16,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Box, Text, AnimatedPressable, Icon } from '../atoms';
 import { useTheme } from '../theme';
-import { radius, shadows, sizes, overlay } from '../tokens';
+import { radius, shadows, sizes, spacing } from '../tokens';
 
 export interface BottomSheetRef {
   open: (index?: number) => void;
@@ -179,7 +179,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
         style={shadows.sheet}
       >
         <ContentWrapper
-          style={{ flex: 1, paddingBottom: insets.bottom }}
+          style={{ flex: 1, paddingBottom: insets.bottom + spacing.lg }}
         >
           {/* Header */}
           {(title || showCloseButton) && (
@@ -188,7 +188,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
               alignItems="center"
               justifyContent="space-between"
               paddingHorizontal="lg"
-              paddingBottom="md"
+              paddingVertical="sm"
               borderBottomWidth={1}
               borderColor="separator"
             >
