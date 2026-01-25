@@ -236,17 +236,33 @@ export const goalsReducer = goalsSlice.reducer;
 /**
  * Selectors
  */
+import { createSelector } from '@reduxjs/toolkit';
+
 export const selectAllGoals = (state: { goals: GoalsState }) => state.goals.items;
-export const selectActiveGoals = (state: { goals: GoalsState }) =>
-  state.goals.items.filter(g => g.status === 'active');
-export const selectCompletedGoals = (state: { goals: GoalsState }) =>
-  state.goals.items.filter(g => g.status === 'completed');
-export const selectGoalById = (id: string) => (state: { goals: GoalsState }) =>
-  state.goals.items.find(g => g.id === id);
-export const selectGoalsLoading = (state: { goals: GoalsState }) =>
-  state.goals.status === 'loading';
+export const selectGoalsStatus = (state: { goals: GoalsState }) => state.goals.status;
 export const selectGoalsError = (state: { goals: GoalsState }) => state.goals.error;
-export const selectTotalSavings = (state: { goals: GoalsState }) =>
-  state.goals.items
-    .filter(g => g.status === 'active')
-    .reduce((sum, g) => sum + g.currentAmount, 0);
+
+export const selectActiveGoals = createSelector(
+  [selectAllGoals],
+  (goals) => goals.filter(g => g.status === 'active')
+);
+
+export const selectCompletedGoals = createSelector(
+  [selectAllGoals],
+  (goals) => goals.filter(g => g.status === 'completed')
+);
+
+export const selectGoalById = (id: string) => createSelector(
+  [selectAllGoals],
+  (goals) => goals.find(g => g.id === id)
+);
+
+export const selectGoalsLoading = createSelector(
+  [selectGoalsStatus],
+  (status) => status === 'loading'
+);
+
+export const selectTotalSavings = createSelector(
+  [selectActiveGoals],
+  (activeGoals) => activeGoals.reduce((sum, g) => sum + g.currentAmount, 0)
+);
