@@ -4,7 +4,7 @@
  * ATOM: Può usare componenti nativi RN
  */
 
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect, useCallback } from 'react';
 import {
   Modal as RNModal,
   View,
@@ -18,7 +18,12 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  withSpring,
+  runOnJS,
+  interpolate,
+  Extrapolation,
 } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { spacing, radius, sizes, overlay, timings, easings } from '../tokens';
 import { useTheme } from '../theme';
@@ -96,6 +101,8 @@ export interface BottomSheetModalProps {
   dismissOnBackdrop?: boolean;
 }
 
+const DISMISS_THRESHOLD = 100; // Soglia in px per chiudere
+
 export function BottomSheetModal({
   visible,
   onClose,
@@ -115,6 +122,10 @@ export function BottomSheetModal({
   const backdropOpacity = useSharedValue(0);
   const translateY = useSharedValue(SCREEN_HEIGHT);
 
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
   useEffect(() => {
     if (visible) {
       backdropOpacity.value = withTiming(1, { duration: timings.normal, easing: easings.decelerate });
@@ -124,6 +135,34 @@ export function BottomSheetModal({
       translateY.value = withTiming(SCREEN_HEIGHT, { duration: timings.fast, easing: easings.accelerate });
     }
   }, [visible]);
+
+  // Pan gesture per swipe down to close
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      // Solo movimento verso il basso (translateY > 0)
+      if (event.translationY > 0) {
+        translateY.value = event.translationY;
+        // Fade out backdrop proporzionalmente
+        backdropOpacity.value = interpolate(
+          event.translationY,
+          [0, SCREEN_HEIGHT * 0.5],
+          [1, 0],
+          Extrapolation.CLAMP
+        );
+      }
+    })
+    .onEnd((event) => {
+      // Se supera la soglia o ha velocità sufficiente, chiudi
+      if (event.translationY > DISMISS_THRESHOLD || event.velocityY > 500) {
+        translateY.value = withTiming(SCREEN_HEIGHT, { duration: timings.fast, easing: easings.accelerate });
+        backdropOpacity.value = withTiming(0, { duration: timings.fast, easing: easings.accelerate });
+        runOnJS(handleClose)();
+      } else {
+        // Altrimenti torna alla posizione originale
+        translateY.value = withSpring(0, { damping: 20, stiffness: 300 });
+        backdropOpacity.value = withTiming(1, { duration: timings.fast });
+      }
+    });
 
   const backdropStyle = useAnimatedStyle(() => ({
     opacity: backdropOpacity.value,
@@ -153,30 +192,32 @@ export function BottomSheetModal({
 
         {/* Contenuto che scivola dal basso */}
         <View style={styles.overlay} pointerEvents="box-none">
-          <Animated.View style={[styles.bottomSheetWrapper, sheetStyle]}>
-            <View
-              style={[
-                styles.bottomSheet,
-                {
-                  backgroundColor: theme.colors.surface,
-                  maxHeight: maxHeightValue,
-                  paddingBottom: insets.bottom + spacing.lg,
-                },
-              ]}
-            >
-              {showHandle && (
-                <View style={styles.handleContainer}>
-                  <View
-                    style={[
-                      styles.handle,
-                      { backgroundColor: theme.colors.border },
-                    ]}
-                  />
-                </View>
-              )}
-              {children}
-            </View>
-          </Animated.View>
+          <GestureDetector gesture={panGesture}>
+            <Animated.View style={[styles.bottomSheetWrapper, sheetStyle]}>
+              <View
+                style={[
+                  styles.bottomSheet,
+                  {
+                    backgroundColor: theme.colors.surface,
+                    maxHeight: maxHeightValue,
+                    paddingBottom: insets.bottom + spacing.lg,
+                  },
+                ]}
+              >
+                {showHandle && (
+                  <View style={styles.handleContainer}>
+                    <View
+                      style={[
+                        styles.handle,
+                        { backgroundColor: theme.colors.border },
+                      ]}
+                    />
+                  </View>
+                )}
+                {children}
+              </View>
+            </Animated.View>
+          </GestureDetector>
         </View>
       </KeyboardAvoidingView>
     </RNModal>

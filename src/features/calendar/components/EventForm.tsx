@@ -308,48 +308,19 @@ export function EventForm({
     <Modal
       visible={visible}
       onClose={onClose}
-      showCloseButton={false}
       scrollable
       dismissOnBackdrop={false}
     >
       <VStack spacing="md">
-        {/* Header with close and save */}
-        <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-          <AnimatedPressable onPress={onClose} haptic="light" pressScale={0.9}>
-            <Icon name="close" size="md" color="textSecondary" />
-          </AnimatedPressable>
-          <AnimatedPressable
-            onPress={handleSubmit}
-            haptic="light"
-            pressScale={0.95}
-            disabled={!title.trim() || isSubmitting}
-          >
-            <Box
-              paddingX="lg"
-              paddingY="sm"
-              backgroundColor={title.trim() ? 'surfaceSecondary' : 'transparent'}
-              borderRadius="full"
-            >
-              <Text
-                variant="bodyMedium"
-                color={title.trim() ? 'textPrimary' : 'textTertiary'}
-                weight="semibold"
-              >
-                Salva
-              </Text>
-            </Box>
-          </AnimatedPressable>
-        </Box>
-
-        {/* Title input - large, prominent */}
+        {/* Title */}
         <Input
-          placeholder="Titolo"
+          label="Titolo"
+          placeholder="Cosa devi fare?"
           value={title}
           onChangeText={setTitle}
           error={errors.title}
+          autoFocus
           size="lg"
-          variant="ghost"
-          style={{ fontSize: typography.headingMedium.fontSize, fontWeight: '600' }}
         />
 
         {/* All Day Toggle */}
@@ -681,6 +652,32 @@ export function EventForm({
             style={{ marginTop: spacing.sm }}
           />
         )}
+
+        {/* Submit button */}
+        <Box marginTop="md">
+          <AnimatedPressable
+            onPress={handleSubmit}
+            haptic="light"
+            pressScale={0.98}
+            disabled={!title.trim() || isSubmitting}
+          >
+            <Box
+              padding="md"
+              backgroundColor={title.trim() ? 'primary' : 'surfaceSecondary'}
+              borderRadius="lg"
+              alignItems="center"
+              opacity={!title.trim() || isSubmitting ? 0.5 : 1}
+            >
+              <Text
+                variant="bodyMedium"
+                color={title.trim() ? 'onPrimary' : 'textTertiary'}
+                weight="semibold"
+              >
+                {isSubmitting ? 'Caricamento...' : isEditing ? 'Salva' : 'Crea'}
+              </Text>
+            </Box>
+          </AnimatedPressable>
+        </Box>
 
         {/* DateTimePickers */}
         <DateTimePicker

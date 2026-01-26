@@ -7,9 +7,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
-  HStack,
   VStack,
-  Button,
   Input,
   Text,
   Icon,
@@ -133,7 +131,6 @@ export function TransactionForm({
     <BottomSheet
       isOpen={visible}
       onClose={onClose}
-      title={isEditing ? 'Modifica spesa' : 'Nuova spesa'}
       snapPoints={['85%']}
       scrollable
     >
@@ -279,28 +276,31 @@ export function TransactionForm({
           </Box>
         )}
 
-        {/* Actions */}
-        <HStack spacing="md" marginTop="lg">
-          <Box flex={1}>
-            <Button
-              title="Annulla"
-              variant="secondary"
-              onPress={onClose}
-              accessibilityLabel="Annulla"
-              fullWidth
-            />
-          </Box>
-          <Box flex={1}>
-            <Button
-              title={isEditing ? 'Salva' : 'Aggiungi'}
-              onPress={handleSubmit}
-              loading={isSubmitting}
-              disabled={!amount}
-              accessibilityLabel={isEditing ? 'Salva spesa' : 'Aggiungi spesa'}
-              fullWidth
-            />
-          </Box>
-        </HStack>
+        {/* Submit button */}
+        <Box marginTop="md">
+          <AnimatedPressable
+            onPress={handleSubmit}
+            haptic="light"
+            pressScale={0.98}
+            disabled={!amount || isSubmitting}
+          >
+            <Box
+              padding="md"
+              backgroundColor={amount ? 'primary' : 'surfaceSecondary'}
+              borderRadius="lg"
+              alignItems="center"
+              opacity={!amount || isSubmitting ? 0.5 : 1}
+            >
+              <Text
+                variant="bodyMedium"
+                color={amount ? 'onPrimary' : 'textTertiary'}
+                weight="semibold"
+              >
+                {isSubmitting ? 'Caricamento...' : isEditing ? 'Salva' : 'Aggiungi'}
+              </Text>
+            </Box>
+          </AnimatedPressable>
+        </Box>
       </VStack>
     </BottomSheet>
   );

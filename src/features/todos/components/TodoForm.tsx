@@ -9,7 +9,6 @@ import {
   Box,
   HStack,
   VStack,
-  Button,
   Input,
   TextArea,
   Text,
@@ -170,11 +169,10 @@ export function TodoForm({
     <Modal
       visible={visible}
       onClose={onClose}
-      title={isEditing ? 'Modifica todo' : 'Nuovo todo'}
       scrollable
       dismissOnBackdrop={false}
     >
-      <VStack spacing="lg" paddingBottom="xl">
+      <VStack spacing="lg">
         {/* Title */}
         <Input
           label="Titolo"
@@ -330,14 +328,22 @@ export function TodoForm({
                 size="md"
               />
             </Box>
-            <Button
-              title=""
+            <AnimatedPressable
               onPress={handleAddTag}
-              size="md"
+              haptic="light"
+              pressScale={0.95}
               disabled={!newTag.trim()}
               accessibilityLabel="Aggiungi tag"
-              leftIcon={<Icon name="add" size="sm" color="onPrimary" />}
-            />
+            >
+              <Box
+                padding="md"
+                backgroundColor={newTag.trim() ? 'primary' : 'surfaceSecondary'}
+                borderRadius="input"
+                opacity={!newTag.trim() ? 0.5 : 1}
+              >
+                <Icon name="add" size="sm" color={newTag.trim() ? 'onPrimary' : 'textTertiary'} />
+              </Box>
+            </AnimatedPressable>
           </HStack>
 
           {/* Suggested tags */}
@@ -387,28 +393,31 @@ export function TodoForm({
           </Box>
         )}
 
-        {/* Actions */}
-        <HStack spacing="md" marginTop="md">
-          <Box flex={1}>
-            <Button
-              title="Annulla"
-              variant="secondary"
-              onPress={onClose}
-              accessibilityLabel="Annulla"
-              fullWidth
-            />
-          </Box>
-          <Box flex={1}>
-            <Button
-              title={isEditing ? 'Salva' : 'Crea'}
-              onPress={handleSubmit}
-              loading={isSubmitting}
-              disabled={!title.trim()}
-              accessibilityLabel={isEditing ? 'Salva todo' : 'Crea todo'}
-              fullWidth
-            />
-          </Box>
-        </HStack>
+        {/* Submit button */}
+        <Box marginTop="md">
+          <AnimatedPressable
+            onPress={handleSubmit}
+            haptic="light"
+            pressScale={0.98}
+            disabled={!title.trim() || isSubmitting}
+          >
+            <Box
+              padding="md"
+              backgroundColor={title.trim() ? 'primary' : 'surfaceSecondary'}
+              borderRadius="lg"
+              alignItems="center"
+              opacity={!title.trim() || isSubmitting ? 0.5 : 1}
+            >
+              <Text
+                variant="bodyMedium"
+                color={title.trim() ? 'onPrimary' : 'textTertiary'}
+                weight="semibold"
+              >
+                {isSubmitting ? 'Caricamento...' : isEditing ? 'Salva' : 'Crea'}
+              </Text>
+            </Box>
+          </AnimatedPressable>
+        </Box>
       </VStack>
     </Modal>
   );

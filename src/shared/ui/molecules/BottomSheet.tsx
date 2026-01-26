@@ -37,7 +37,7 @@ export interface BottomSheetProps {
   title?: string;
   /** Mostra handle */
   showHandle?: boolean;
-  /** Mostra pulsante chiudi */
+  /** @deprecated Non più usato - si chiude con swipe down */
   showCloseButton?: boolean;
   /** Abilita backdrop blur */
   blurBackdrop?: boolean;
@@ -144,7 +144,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
     const renderHandle = useCallback(
       () =>
         showHandle ? (
-          <Box alignItems="center" paddingVertical="sm">
+          <Box alignItems="center" paddingY="md">
             <Box
               width={sizes.modalHandle.width}
               height={sizes.modalHandle.height}
@@ -157,7 +157,35 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
     );
 
     // Content wrapper
-    const ContentWrapper = scrollable ? BottomSheetScrollView : BottomSheetView;
+    // Contenuto scrollabile o statico
+    const contentContainerStyle = {
+      paddingBottom: insets.bottom + spacing.xl,
+    };
+
+    const renderContent = () => (
+      <>
+        {/* Header - solo se c'è un titolo */}
+        {title && (
+          <Box
+            alignItems="center"
+            paddingX="lg"
+            paddingTop="md"
+            paddingBottom="md"
+            borderBottomWidth={1}
+            borderColor="separator"
+          >
+            <Text variant="headingSmall" weight="semibold">
+              {title}
+            </Text>
+          </Box>
+        )}
+
+        {/* Content */}
+        <Box flex={1} paddingX="lg" paddingTop="lg" paddingBottom="md">
+          {children}
+        </Box>
+      </>
+    );
 
     return (
       <BottomSheetModal
@@ -178,53 +206,17 @@ export const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
         }}
         style={shadows.sheet}
       >
-        <ContentWrapper
-          style={{ flex: 1, paddingBottom: insets.bottom + spacing.lg }}
-        >
-          {/* Header */}
-          {(title || showCloseButton) && (
-            <Box
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="space-between"
-              paddingHorizontal="lg"
-              paddingVertical="sm"
-              borderBottomWidth={1}
-              borderColor="separator"
-            >
-              <Box flex={1}>
-                {title && (
-                  <Text variant="headingSmall" weight="semibold">
-                    {title}
-                  </Text>
-                )}
-              </Box>
-
-              {showCloseButton && (
-                <AnimatedPressable
-                  onPress={() => bottomSheetRef.current?.dismiss()}
-                  haptic="light"
-                >
-                  <Box
-                    width={sizes.closeButton}
-                    height={sizes.closeButton}
-                    borderRadius="full"
-                    backgroundColor="backgroundTertiary"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Icon name="close" size="sm" color="textSecondary" />
-                  </Box>
-                </AnimatedPressable>
-              )}
-            </Box>
-          )}
-
-          {/* Content */}
-          <Box flex={1} paddingHorizontal="lg" paddingTop="md">
-            {children}
-          </Box>
-        </ContentWrapper>
+        {scrollable ? (
+          <BottomSheetScrollView
+            contentContainerStyle={contentContainerStyle}
+          >
+            {renderContent()}
+          </BottomSheetScrollView>
+        ) : (
+          <BottomSheetView style={{ flex: 1, paddingBottom: insets.bottom + spacing.xl }}>
+            {renderContent()}
+          </BottomSheetView>
+        )}
       </BottomSheetModal>
     );
   }

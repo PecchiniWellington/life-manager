@@ -26,7 +26,7 @@ export interface ModalProps {
   onClose: () => void;
   /** Titolo del modal */
   title?: string;
-  /** Se true, mostra il pulsante di chiusura */
+  /** @deprecated Non più usato - le modali si chiudono con swipe down */
   showCloseButton?: boolean;
   /** Abilita scroll interno */
   scrollable?: boolean;
@@ -38,40 +38,24 @@ export interface ModalProps {
 
 /**
  * Modal Component
+ * Si chiude con swipe down o tap sullo sfondo
  */
 export function Modal({
   visible,
   onClose,
   title,
-  showCloseButton = true,
   scrollable = false,
   dismissOnBackdrop = true,
   children,
 }: ModalProps): JSX.Element {
-  const hasHeader = title || showCloseButton;
-
-  const header = hasHeader && (
+  // Header solo se c'è un titolo
+  const header = title && (
     <Box
-      flexDirection="row"
       alignItems="center"
-      justifyContent="space-between"
-      paddingHorizontal="lg"
-      paddingVertical="sm"
+      paddingX="lg"
+      paddingY="sm"
     >
-      {title ? (
-        <Heading level={5}>{title}</Heading>
-      ) : (
-        <Box />
-      )}
-      {showCloseButton && (
-        <Pressable
-          onPress={onClose}
-          accessibilityLabel="Chiudi"
-          padding="xs"
-        >
-          <Icon name="close" size="md" color="textSecondary" />
-        </Pressable>
-      )}
+      <Heading level={5}>{title}</Heading>
     </Box>
   );
 
@@ -94,7 +78,7 @@ export function Modal({
         </ScrollContainer>
       ) : (
         <Box
-          paddingHorizontal="lg"
+          paddingX="lg"
           paddingTop="sm"
           paddingBottom="lg"
         >

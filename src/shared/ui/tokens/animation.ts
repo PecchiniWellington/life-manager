@@ -3,7 +3,7 @@
  * Configurazioni per animazioni Apple-style
  */
 
-import { WithSpringConfig, WithTimingConfig, Easing } from 'react-native-reanimated';
+import { WithSpringConfig, Easing } from 'react-native-reanimated';
 
 /**
  * Spring configurations for react-native-reanimated
