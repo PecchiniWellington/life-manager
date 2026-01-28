@@ -154,48 +154,44 @@ export const authService = {
     try {
       // Path su Storage: avatars/{userId}.jpg
       const storagePath = `avatars/${currentUser.uid}.jpg`;
-      // Usa il bucket specifico configurato in GoogleService-Info.plist
       const reference = storage().ref(storagePath);
 
-      console.log('Uploading to path:', storagePath);
+      console.log('=== UPLOAD DEBUG ===');
       console.log('Storage bucket:', storage().app.options.storageBucket);
+      console.log('User ID:', currentUser.uid);
+      console.log('Upload path:', storagePath);
+      console.log('Source URI:', imageUri);
 
-      // Copia il file in una posizione temporanea con path pulito per iOS
-      const tempPath = `${FileSystem.cacheDirectory}avatar_temp.jpg`;
-      await FileSystem.copyAsync({
-        from: imageUri,
-        to: tempPath,
+      // Leggi il file come base64
+      const base64Data = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
       });
 
-      // Rimuovi il prefisso file:// per putFile su iOS
-      const cleanPath = tempPath.replace('file://', '');
+      console.log('Base64 data length:', base64Data.length);
 
-      // Upload usando putFile
-      console.log('Starting upload from:', cleanPath);
-      const task = reference.putFile(cleanPath);
-
-      // Ascolta eventi di progresso per debug
-      task.on('state_changed', (snapshot) => {
-        console.log('Upload progress:', snapshot.bytesTransferred, '/', snapshot.totalBytes);
+      // Upload usando putString con base64
+      const task = await reference.putString(base64Data, 'base64', {
+        contentType: 'image/jpeg',
       });
 
-      await task;
-      console.log('Upload completed');
+      console.log('Upload completed, state:', task.state);
 
       // Ottieni URL pubblico
       const downloadURL = await reference.getDownloadURL();
+      console.log('Download URL:', downloadURL);
 
       // Aggiorna profilo con nuovo photoURL
       await currentUser.updateProfile({ photoURL: downloadURL });
       await currentUser.reload();
 
-      // Pulizia file temporaneo
-      await FileSystem.deleteAsync(tempPath, { idempotent: true });
-
       return mapFirebaseUser(auth().currentUser!);
     } catch (error: unknown) {
-      const firebaseError = error as { code?: string; message?: string };
-      console.error('Upload avatar error:', firebaseError.code, firebaseError.message);
+      const firebaseError = error as { code?: string; message?: string; nativeErrorMessage?: string };
+      console.error('=== UPLOAD ERROR ===');
+      console.error('Error code:', firebaseError.code);
+      console.error('Error message:', firebaseError.message);
+      console.error('Native error:', firebaseError.nativeErrorMessage);
+      console.error('Full error:', JSON.stringify(error, null, 2));
 
       // Se è un errore di permessi, diamo un messaggio più chiaro
       if (firebaseError.code === 'storage/unauthorized') {

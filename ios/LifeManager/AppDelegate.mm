@@ -8,6 +8,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  // Initialize Firebase
   [FIRApp configure];
 
   self.moduleName = @"main";
