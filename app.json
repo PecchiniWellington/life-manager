@@ -15,7 +15,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lifemanager.app",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Questa app richiede l'accesso alla libreria foto per selezionare un'immagine del profilo.",
+        "NSCameraUsageDescription": "Questa app richiede l'accesso alla fotocamera per scattare una foto del profilo."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -36,6 +40,13 @@
             "useFrameworks": "static",
             "deploymentTarget": "15.1"
           }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Questa app richiede l'accesso alla libreria foto per selezionare un'immagine del profilo.",
+          "cameraPermission": "Questa app richiede l'accesso alla fotocamera per scattare una foto del profilo."
         }
       ]
     ]

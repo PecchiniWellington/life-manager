@@ -70,6 +70,12 @@ export function useAuth() {
     dispatch(clearError());
   }, [dispatch]);
 
+  // Refresh user from Firebase (after profile updates)
+  const refreshUser = useCallback(() => {
+    const currentUser = authService.getCurrentUser();
+    dispatch(setUser(currentUser));
+  }, [dispatch]);
+
   return {
     user,
     status,
@@ -81,5 +87,6 @@ export function useAuth() {
     register,
     logout,
     clearError: clearAuthError,
+    refreshUser,
   };
 }

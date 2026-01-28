@@ -7,6 +7,8 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   Box,
   Text,
@@ -21,11 +23,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@features/auth/hooks';
 import { ProfileAvatar } from '../components/ProfileAvatar';
 import { SettingsRow } from '../components/SettingsRow';
+import { ProfileStackParamList } from '@app/navigation/stacks/ProfileStack';
+
+type ProfileScreenNavigationProp = NativeStackNavigationProp<ProfileStackParamList, 'ProfileMain'>;
 
 export function ProfileScreen(): JSX.Element {
   const { theme, toggleTheme } = useThemeContext();
   const insets = useSafeAreaInsets();
   const { user, logout, isLoading } = useAuth();
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
 
   const handleLogout = () => {
     Alert.alert(
@@ -112,13 +118,13 @@ export function ProfileScreen(): JSX.Element {
               <SettingsRow
                 icon="personOutline"
                 label="Modifica profilo"
-                onPress={() => {}}
+                onPress={() => navigation.navigate('EditProfile')}
                 showChevron
               />
               <SettingsRow
                 icon="lockOutline"
                 label="Cambia password"
-                onPress={() => {}}
+                onPress={() => navigation.navigate('ChangePassword')}
                 showChevron
                 showDivider={false}
               />

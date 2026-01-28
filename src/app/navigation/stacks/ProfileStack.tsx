@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ProfileScreen } from '@features/profile';
+import { ProfileScreen, EditProfileScreen, ChangePasswordScreen } from '@features/profile';
 
 export type ProfileStackParamList = {
   ProfileMain: undefined;
@@ -22,6 +22,8 @@ export function ProfileStack(): JSX.Element {
       }}
     >
       <Stack.Screen name="ProfileMain" component={ProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
     </Stack.Navigator>
   );
 }

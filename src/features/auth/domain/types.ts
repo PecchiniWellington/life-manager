@@ -69,3 +69,39 @@ export const authErrorMessages: Record<string, string> = {
 export function getAuthErrorMessage(errorCode: string): string {
   return authErrorMessages[errorCode] || authErrorMessages.default;
 }
+
+/**
+ * Update profile payload
+ */
+export interface UpdateProfilePayload {
+  displayName: string;
+}
+
+/**
+ * Update email payload
+ */
+export interface UpdateEmailPayload {
+  newEmail: string;
+  currentPassword: string;
+}
+
+/**
+ * Change password payload
+ */
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+/**
+ * Profile validation errors
+ */
+export interface ProfileValidationErrors {
+  displayName?: string;
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  general?: string;
+}
